@@ -1,0 +1,232 @@
+/* GENERATED from starter/src/shadcn.css (sha256:ce5734d04413f7f6). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite. */
+/* Tailwind v4 entry — CSS-first config (no tailwind.config.js, no postcss.config.js).
+   Loaded by @tailwindcss/vite (see vite.config.js). */
+
+/* CRITICAL: preflight is OFF. v4 dropped `corePlugins`, so opting out is done by
+   importing the layers individually and simply never importing
+   `tailwindcss/preflight.css`. Without this, Tailwind's global reset flattens the
+   hand-crafted kf design system (kf-ui.css / index.css). */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities) source(none);
+
+/* v3 `darkMode: "class"`. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* v3 `content: [...]`. Automatic detection is off (`source(none)` above) so the
+   scan stays inside this app and never walks the monorepo or node_modules. */
+@source "./**/*.{js,jsx}";
+@source "../index.html";
+
+/* enter/exit animations (data-[state=open]:animate-in, fade-in-0, zoom-in-95, …).
+   Replaces the v3-only `tailwindcss-animate` plugin. */
+@import "tw-animate-css";
+
+/* Generated pages may use semantic HTML instead of kit controls. Give those
+   controls a themed baseline even with preflight disabled. Utilities remain
+   authoritative; never paint entire data-cx-action rows as primary buttons. */
+@layer base {
+  :where([data-cx-page], .bespoke-page) :where(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=hidden]), select, textarea) {
+    box-sizing: border-box;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 2.25rem;
+    border: 1px solid var(--field-border);
+    border-radius: var(--radius-md, 0.5rem);
+    padding: 0.375rem 0.625rem;
+    background: var(--field-surface);
+    color: var(--ctl-fg);
+    font: inherit;
+    font-size: 0.875rem;
+  }
+  :where([data-cx-page], .bespoke-page) :where(input, select, textarea):focus-visible {
+    outline: 2px solid var(--brand-ring);
+    outline-offset: 2px;
+  }
+  :where([data-cx-page], .bespoke-page) :where(input, select, textarea):disabled {
+    background: var(--field-disabled);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+/* Candy Gloss uses Quicksand for both display and body text. Keep the Latin face inside the
+   application bundle: generated previews run with connect-src disabled and may not be able to
+   attach the Google Fonts stylesheet, which otherwise leaves the correct theme token rendering
+   through a generic sans-serif fallback. `?inline` is intentional — the prototype and the live
+   custom component each ship as one JavaScript/HTML payload with no separately-addressable font
+   asset. The downloaded face is the official Google Fonts v37 WOFF2; its OFL is stored beside it. */
+@font-face {
+  font-family: "Quicksand";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("./assets/fonts/quicksand-latin.woff2") format("woff2");
+}
+
+/* Tailwind's semantic names resolve through the component system's whole-colour contract. Only
+   names with live utility consumers belong in this bridge; canonical runtime values live in
+   tokens.css. */
+@theme inline {
+  --color-background: var(--ctl-offset);
+  --color-foreground: var(--ctl-fg);
+
+  --color-muted: var(--ctl-raise);
+  --color-muted-foreground: var(--ctl-fg-muted);
+  --color-row-divider: var(--ctl-track);
+  --color-edge: var(--ctl-border);
+
+  --color-accent: var(--field-selected);
+  --color-accent-foreground: var(--brand-text);
+
+  --color-popover: var(--layer-surface);
+  --color-popover-foreground: var(--ctl-fg);
+
+  /* --material-surface exists only inside a Card's material scope; the fallback keeps bg-card
+     honest for anything rendered outside one instead of silently transparent. */
+  --color-card: var(--material-surface, var(--ctl-surface));
+  --color-card-foreground: var(--ctl-fg);
+
+  /* ── App design-language bridge ─────────────────────────────────────────────
+     Maps semantic tokens onto Tailwind names that do not already share the same
+     canonical name. Fonts, text sizes and shadows need no alias: Tailwind's native
+     utilities read --font-*, --text-* and --shadow-* from tokens.css directly.
+
+     THIS MUST LIVE HERE, not in index.css. Tailwind only resolves `@theme` inside
+     the stylesheet that imports Tailwind — index.css:533 has an identical-looking
+     block that has never once executed, because index.css is a separate stylesheet
+     that main.jsx imports from JS. It parses, ships, and is silently inert.
+
+     Spacing also needs no bridge: Tailwind utilities already consume the public
+     `--spacing` runtime token. */
+  --color-meta-foreground: var(--ctl-fg-muted);
+  --color-sidebar: var(--chrome-base-surface);
+  --color-sidebar-border: var(--chrome-base-border);
+
+  /* New component-system whole-colour vocabulary. These aliases intentionally do not replace the
+     shadcn names above yet; they let the new kit and the remaining Kissflow-specific components
+     coexist while both resolve from the same five theme inputs. */
+  --color-brand-100: var(--brand-100);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-fg: var(--brand-fg);
+  --color-brand-text: var(--brand-text);
+  --color-brand-ring: var(--brand-ring);
+  --color-danger-100: var(--danger-100);
+  --color-danger-600: var(--danger-600);
+  --color-danger-700: var(--danger-700);
+  --color-danger-800: var(--danger-800);
+  --color-danger-fg: var(--danger-fg);
+  --color-danger-text: var(--danger-text);
+  --color-danger-ring: var(--danger-ring);
+  --color-field-surface: var(--field-surface);
+  --color-field-border: var(--field-border);
+  --color-field-border-hover: var(--field-border-hover);
+  --color-field-placeholder: var(--field-placeholder);
+  --color-field-disabled: var(--field-disabled);
+  --color-field-selected: var(--field-selected);
+  --color-layer-surface: var(--layer-surface);
+  --color-layer-border: var(--layer-border);
+  --color-tooltip-surface: var(--tooltip-surface);
+  --color-tooltip-fg: var(--tooltip-fg);
+  --color-skeleton-base: var(--skeleton-base);
+  --color-skeleton-sheen: var(--skeleton-sheen);
+  --color-cal-selected: var(--cal-selected);
+  --color-cal-selected-fg: var(--cal-selected-fg);
+  --color-cal-range: var(--cal-range);
+  --color-cal-today: var(--cal-today);
+  --color-cal-outside: var(--cal-outside);
+  --color-chrome-surface: var(--chrome-surface);
+  --color-chrome-border: var(--chrome-border);
+  --color-chrome-fg: var(--chrome-fg);
+  --color-chrome-muted: var(--chrome-muted);
+  --color-chrome-hover: var(--chrome-hover);
+  --color-chrome-active-bg: var(--chrome-active-bg);
+  --color-chrome-active-fg: var(--chrome-active-fg);
+  --color-material-surface: var(--material-surface);
+  --color-material-border: var(--material-border);
+  --color-material-rule: var(--material-rule);
+  --color-success-100: var(--success-100);
+  --color-success-600: var(--success-600);
+  --color-success-700: var(--success-700);
+  --color-success-text: var(--success-text);
+  --color-success-fg: var(--success-fg);
+  --color-warning-100: var(--warning-100);
+  --color-warning-600: var(--warning-600);
+  --color-warning-700: var(--warning-700);
+  --color-warning-text: var(--warning-text);
+  --color-warning-fg: var(--warning-fg);
+  --color-info-100: var(--info-100);
+  --color-info-600: var(--info-600);
+  --color-info-700: var(--info-700);
+  --color-info-text: var(--info-text);
+  --color-info-fg: var(--info-fg);
+  --color-ctl-surface: var(--ctl-surface);
+  --color-ctl-raise: var(--ctl-raise);
+  --color-table-header-surface: var(--table-header-surface);
+  --color-table-header-border: var(--table-header-border);
+  --color-ctl-track: var(--ctl-track);
+  --color-ctl-border: var(--ctl-border);
+  --color-ctl-border-strong: var(--ctl-border-strong);
+  --color-ctl-offset: var(--ctl-offset);
+  --color-ctl-fg: var(--ctl-fg);
+  --color-ctl-fg-muted: var(--ctl-fg-muted);
+  --color-ctl-fg-soft: var(--ctl-fg-soft);
+  --color-ctl-fg-subtle: var(--ctl-fg-subtle);
+  --color-overlay-scrim: var(--overlay-scrim);
+
+  --spacing-chart: var(--chart-gap);
+  --spacing-chart-label: var(--chart-label-gap);
+  --container-layer: 11rem;
+  --container-calendar: 17rem;
+  --container-panel: 20rem;
+  --container-modal-sm: 26.25rem;
+  --container-modal-md: 35rem;
+  --container-modal-lg: 47.5rem;
+  --container-drawer-sm: 22.5rem;
+  --container-drawer-md: 30rem;
+  --container-drawer-lg: 42.5rem;
+  --container-toast: 23.75rem;
+  --container-palette: 40rem;
+  --ease-ctl: var(--default-transition-timing-function);
+  --animate-layer-in: layer-in var(--default-transition-duration) var(--default-transition-timing-function);
+  --animate-modal-in: modal-in var(--default-transition-duration) var(--default-transition-timing-function);
+  --animate-scrim-in: scrim-in var(--default-transition-duration) var(--default-transition-timing-function);
+  --animate-toast-in: toast-in var(--default-transition-duration) var(--default-transition-timing-function);
+  --animate-drawer-right: drawer-in-right var(--default-transition-duration) var(--default-transition-timing-function);
+  --animate-drawer-left: drawer-in-left var(--default-transition-duration) var(--default-transition-timing-function);
+  --animate-skeleton: skeleton-sweep 1.4s var(--default-transition-timing-function) infinite;
+
+}
+
+/* `font-display` is not part of Tailwind's stock font-family namespace. Keep the
+   utility while reading the canonical runtime theme token directly. */
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+/* Theme-selectable semantic font roles. Unlike font-display, these are not
+   Tailwind family names by default, so the utilities bridge the runtime theme
+   tokens to component markup explicitly. */
+@utility font-chrome-label {
+  font-family: var(--font-chrome-label);
+}
+
+@utility font-data-emphasis {
+  font-family: var(--font-data-emphasis);
+}
+
+/* Card surface utilities used to live here — `card-elevation` (border-width + box-shadow)
+ * and `card-pad`. Both are gone, superseded by direct Tailwind utilities:
+ *   card-elevation -> Tailwind `border` + `shadow-sm`
+ *   card-pad       -> ordinary spacing utilities; card padding is not a themed token
+ * The split matters: card-elevation set `box-shadow` directly, which swallowed focus rings —
+ * a `ring-2` on a card could never render. `shadow-sm` composes through Tailwind's
+ * --tw-shadow slots instead. See the note at the top of tokens.css. */
+
+/* The new stack's token contract. Imported HERE and not from main.jsx because Tailwind only
+   processes @theme / @utility inside its own CSS graph — a JS-side import would leave both
+   at-rules unhandled. Last import wins, so tokens.css is the authority for anything it names. */
+@import "./tokens.css";

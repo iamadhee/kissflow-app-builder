@@ -1,0 +1,16 @@
+/* GENERATED from starter/src/components/kit/DonutLegend.css (sha256:4a6ce79d9bd0a42c). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite. */
+/* Respond to the card's width, not the viewport: a desktop sidebar can still be narrow. */
+[data-donut-ledger-layout] { grid-template-columns: minmax(0, 1fr); }
+@container donut-chart (min-width: 32rem) {
+  [data-donut-ledger-layout="row"] { grid-template-columns: var(--donut-row-columns); }
+}
+
+@container donut-chart (max-width: 24rem) {
+  [data-legend-view="simple-rows"] > div,
+  [data-legend-view="column-ledger"] > div {
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    column-gap: .5rem;
+  }
+  [data-legend-view="simple-rows"] .truncate,
+  [data-legend-view="column-ledger"] .truncate { white-space: normal; overflow-wrap: anywhere; }
+}

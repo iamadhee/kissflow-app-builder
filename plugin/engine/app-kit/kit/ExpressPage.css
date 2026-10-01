@@ -1,0 +1,43 @@
+/* GENERATED from starter/src/components/kit/ExpressPage.css (sha256:5484482558452bc9). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite. */
+/* Component-owned so the same layout rules travel with app-kit into generated apps. */
+[data-express-catalog-grid] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: none;
+  align-items: start;
+}
+/* Bare cells must cover the rule-colored grid, including space beneath
+   shorter content. Keep ordinary panel layouts content-sized. */
+[data-express-catalog-grid][data-material="bare"] {
+  align-items: stretch;
+}
+
+[data-express-workbench] {
+  display: grid;
+  min-height: 0;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+/* Wide workbench gutters are page space, not SurfaceGroup hairline rules. */
+[data-material="bare"] [data-express-workbench] {
+  background-color: var(--ctl-surface);
+}
+[data-express-workbench-pane] {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+[data-express-workbench-pane] > [data-kf-component="card"] { min-height: 100%; }
+[data-express-workbench][data-show-detail="false"] [data-express-workbench-pane="detail"],
+[data-express-workbench][data-show-detail="true"] [data-express-workbench-pane="list"] { display: none; }
+
+@media (min-width: 1024px) {
+  [data-express-catalog-grid] {
+    grid-template-columns: var(--express-layout-columns, minmax(0, 1fr));
+    grid-template-areas: var(--express-layout-areas, none);
+  }
+  [data-express-layout-area] { grid-area: var(--express-layout-area, auto); }
+  [data-express-workbench] { grid-template-columns: minmax(16rem, 21rem) minmax(0, 1fr); }
+  [data-express-workbench][data-show-detail] [data-express-workbench-pane] { display: block; }
+  [data-express-back] { display: none; }
+}

@@ -1,0 +1,22 @@
+{
+  "hooks": {
+    "SessionStart": [
+      { "hooks": [
+        { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs\" hook confidentiality session" },
+        { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs\" version-check" }
+      ] }
+    ],
+    "UserPromptSubmit": [
+      { "hooks": [ { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs\" hook confidentiality prompt" } ] }
+    ],
+    "PreToolUse": [
+      { "matcher": "Read", "hooks": [ { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs\" hook guard-reads" } ] }
+    ],
+    "PostToolUse": [
+      { "matcher": "Write|Edit", "hooks": [ { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs\" hook validate-express-plan" } ] }
+    ],
+    "SubagentStop": [
+      { "matcher": "(.*:)?kf-.*", "hooks": [ { "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs\" token-stamp" } ] }
+    ]
+  }
+}

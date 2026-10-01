@@ -1,0 +1,10 @@
+{
+  "id": "specialized",
+  "version": 1,
+  "description": "Semantic capabilities that intentionally escalate to a bounded custom anchor until a native adapter exists.",
+  "capabilities": [
+    { "id": "geospatial-map", "renderMode": "anchor", "jobs": ["locate", "map", "route"], "requires": ["geo"], "fallbackKind": "table" },
+    { "id": "gantt-schedule", "renderMode": "anchor", "jobs": ["gantt", "schedule-ranges", "critical-path"], "requires": ["dateRange"], "fallbackKind": "timeline" },
+    { "id": "relationship-canvas", "renderMode": "anchor", "jobs": ["diagram", "network", "relationship"], "fallbackKind": "table" }
+  ]
+}

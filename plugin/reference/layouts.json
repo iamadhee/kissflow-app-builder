@@ -1,0 +1,1992 @@
+{
+  "version": 1,
+  "scope": "express-only",
+  "scopeNote": "This registry is consumed ONLY by the express path (compileExpressPlan / ExpressPage). The comprehensive path keeps its specialist pipeline - kf-ux-architect researches the domain and designs bespoke layouts; it must NOT be constrained to or scored against this catalog.",
+  "note": "Layout template registry for the express compiler. Layouts are STRUCTURE ONLY: grid areas, slot contracts, and token REFERENCES into the active ui-themes.json entry. No literal colors, shadows, radii, font sizes or px values other than structural minimums may appear here. The renderer (ExpressPage) resolves every style key against the selected theme's light/dark token maps.",
+  "stylingContract": {
+    "source": "plugins/app-agents/reference/ui-themes.json",
+    "rules": [
+      "Panels are surface + border-width-medium sidebar-border hairline + radius; nested panels use radiusNested; canvas is background.",
+      "Type sizes only from text-xs..text-2xl, text-kpi, text-display; weights from font-weight-*; tracking from tracking-*; data values use font-mono-var.",
+      "Emphasis only via primary/accent/muted; semantic state only via success/warning/destructive/info; series colors only via chart-1..chart-8 in order.",
+      "Elevation only via shadow-2xs..shadow-2xl as the theme defines them (Beacon = hairlines and no shadow; Orbit siblings = shadow-panel style; Halo = soft).",
+      "All gaps and paddings are integer multiples of the theme's spacing token, written here as spacing unit counts.",
+      "Motion only via default-transition-duration / transition-duration-move with default-transition-timing-function."
+    ]
+  },
+  "selection": {
+    "how": "The conductor's express-plan.json names a layout per page (pages[i].layout = catalog id) or 'auto'. compileExpressPlan resolves 'auto' by scoring every catalog entry: archetype match (from fit.archetypes) + slot satisfiability against the page's sections/metrics/flow shape (dataNeeds) + fit.keywords hits on the domain text + diversity penalty from layouts already assigned in this app. A named layout whose required slots cannot be filled honestly is REJECTED fail-closed (same path as auto), never silently downgraded.",
+    "diversity": {
+      "maxPerApp": 2,
+      "roleLandingsMustDiffer": true,
+      "fingerprintKey": "layout.id",
+      "note": "Template id is the primary structural fingerprint signature; the adaptive scorer treats two pages sharing a layout id as near-identical regardless of section shuffle."
+    },
+    "rejectCodes": [
+      "LAYOUT_UNKNOWN",
+      "LAYOUT_SLOT_UNFILLED",
+      "LAYOUT_MISFIT",
+      "LAYOUT_OVERUSED",
+      "LAYOUT_FORBIDDEN_KIND",
+      "LAYOUT_LANDING_DUPLICATE"
+    ],
+    "escapeHatch": "Pages that fit no template keep the existing custom-JSX anchor path (writeOwned anchors); the catalog never blocks it.",
+    "qualityCodes": {
+      "LAYOUT_SLOT_UNUSED": "warning: an optional slot the data could honestly fill was left empty — fill it to lift the page past the contractual minimum (approval-desk:checks and record-hub:context self-derive in the renderer and are exempt)"
+    }
+  },
+  "grammar": {
+    "existingKinds": [
+      "form",
+      "queue",
+      "table",
+      "bar-chart",
+      "donut-chart",
+      "trend-chart",
+      "progress",
+      "timeline",
+      "callout",
+      "detail-pane",
+      "decision",
+      "record-detail"
+    ],
+    "existingVariants": {
+      "queue": [
+        "list",
+        "board",
+        "stages"
+      ],
+      "trend-chart": [
+        "line",
+        "heatmap"
+      ],
+      "progress": [
+        "list",
+        "gauge",
+        "segments",
+        "steps"
+      ],
+      "timeline": [
+        "list",
+        "calendar",
+        "activity",
+        "steps"
+      ],
+      "table": [
+        "gallery"
+      ]
+    },
+    "newKindsNeeded": {},
+    "newVariantsNeeded": {},
+    "newBehaviorNeeded": {}
+  },
+  "layouts": [
+    {
+      "id": "command-center",
+      "name": "Ops Command Center",
+      "family": "overview",
+      "status": "ready",
+      "exemplars": [
+        "Linear Triage",
+        "Stripe home",
+        "ServiceNow workspaces"
+      ],
+      "description": "The queue owns the page; metrics and one trend are peripheral vision. For roles whose job is clearing decisions.",
+      "signature": "List dominates left 60%; charts shrink to a rail. Inverse of every dashboard.",
+      "fit": {
+        "archetypes": [
+          "operations",
+          "queue",
+          "overview"
+        ],
+        "emphases": [
+          "operational",
+          "data"
+        ],
+        "densities": [
+          "compact",
+          "comfortable"
+        ],
+        "keywords": {
+          "queue": 8,
+          "triage": 10,
+          "dispatch": 9,
+          "approvals": 6,
+          "incidents": 8,
+          "workload": 6
+        }
+      },
+      "grid": {
+        "columns": "3fr 2fr",
+        "areas": [
+          [
+            "alert",
+            "alert"
+          ],
+          [
+            "main",
+            "side"
+          ]
+        ],
+        "gap": 4,
+        "mobile": [
+          "alert",
+          "main",
+          "side"
+        ]
+      },
+      "slots": [
+        {
+          "id": "alert",
+          "area": "alert",
+          "accepts": [
+            "callout"
+          ],
+          "min": 0,
+          "max": 1,
+          "style": {
+            "bg": "accent",
+            "ink": "foreground-ink",
+            "radius": "radiusNested"
+          }
+        },
+        {
+          "id": "main",
+          "area": "main",
+          "accepts": [
+            "queue:list"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "rowActions": true,
+            "agingField": true,
+            "minSeedRows": 5
+          },
+          "style": {
+            "rowHeight": "compact",
+            "title": "text-lg",
+            "meta": "font-mono-var"
+          }
+        },
+        {
+          "id": "side",
+          "area": "side",
+          "accepts": [
+            "trend-chart:line",
+            "bar-chart",
+            "progress:gauge"
+          ],
+          "min": 1,
+          "max": 2,
+          "style": {
+            "kpiValue": "text-kpi",
+            "kpiLabel": "text-xs tracking-wider"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 2,
+        "max": 4,
+        "placement": "side-top"
+      },
+      "forbids": [
+        "donut-chart"
+      ],
+      "maxPerApp": 2
+    },
+    {
+      "id": "metric-hero",
+      "name": "Executive Metric Hero",
+      "family": "overview",
+      "status": "ready",
+      "exemplars": [
+        "Stripe revenue",
+        "Amplitude insights",
+        "PostHog home"
+      ],
+      "description": "One dominant metric + large trend, ranked breakdown rail, exactly three supporting KPIs below. For pages where one number IS the business.",
+      "signature": "Extreme hierarchy: one huge number set in text-display, everything else visibly subordinate. Rejected if the domain has no honest hero metric.",
+      "fit": {
+        "archetypes": [
+          "overview",
+          "analytics"
+        ],
+        "emphases": [
+          "data",
+          "balanced"
+        ],
+        "densities": [
+          "comfortable"
+        ],
+        "keywords": {
+          "revenue": 9,
+          "portfolio": 8,
+          "executive": 9,
+          "spend": 8,
+          "pipeline": 6,
+          "total": 4
+        }
+      },
+      "grid": {
+        "columns": "3fr 1fr",
+        "areas": [
+          [
+            "hero",
+            "rail"
+          ],
+          [
+            "support",
+            "rail"
+          ]
+        ],
+        "gap": 4,
+        "mobile": [
+          "hero",
+          "support",
+          "rail"
+        ]
+      },
+      "slots": [
+        {
+          "id": "hero",
+          "area": "hero",
+          "accepts": [
+            "trend-chart:line"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "heroMetric": {
+              "op": [
+                "sum",
+                "count",
+                "avg"
+              ],
+              "domainHonest": true
+            }
+          },
+          "style": {
+            "value": "text-display font-weight-black tracking-tighter",
+            "delta": "success|destructive",
+            "series": "chart-1"
+          }
+        },
+        {
+          "id": "rail",
+          "area": "rail",
+          "accepts": [
+            "table",
+            "donut-chart",
+            "progress:list"
+          ],
+          "min": 1,
+          "max": 2,
+          "style": {
+            "panel": "surface radiusNested",
+            "rows": "text-sm"
+          }
+        },
+        {
+          "id": "support",
+          "area": "support",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "reserved for the three support metrics; no sections"
+        }
+      ],
+      "metrics": {
+        "min": 3,
+        "max": 3,
+        "placement": "support",
+        "style": {
+          "value": "text-kpi",
+          "label": "text-xs tracking-wider"
+        }
+      },
+      "forbids": [],
+      "maxPerApp": 1
+    },
+    {
+      "id": "capacity-hero",
+      "name": "Capacity Ratio Hero",
+      "family": "overview",
+      "status": "ready",
+      "exemplars": [
+        "Warehouse occupancy dashboards",
+        "Datadog capacity gauges",
+        "Cloud quota widgets"
+      ],
+      "description": "One dominant ratio read as a gauge, not a trend: a dial with a plain-language sentence interpreting it, a ranked per-entity breakdown rail, exactly three supporting counts below, and the registers the console acts on. For pages where the story is 'how full are we', not 'how much did we make'.",
+      "signature": "Same extreme hierarchy as metric-hero, but the hero is a gauge reading a ratio with a sentence interpreting it, not a trend line. Rejected when the domain has no honest ratio metric.",
+      "fit": {
+        "archetypes": [
+          "overview",
+          "operations"
+        ],
+        "emphases": [
+          "visual",
+          "balanced"
+        ],
+        "densities": [
+          "comfortable"
+        ],
+        "keywords": {
+          "occupancy": 9,
+          "capacity": 8,
+          "utilization": 8,
+          "utilisation": 8,
+          "warehouse": 7,
+          "zone": 6,
+          "load": 5,
+          "fill": 4
+        }
+      },
+      "grid": {
+        "columns": "3fr 1fr",
+        "areas": [
+          [
+            "hero",
+            "rail"
+          ],
+          [
+            "support",
+            "rail"
+          ],
+          [
+            "registers",
+            "registers"
+          ]
+        ],
+        "gap": 4,
+        "mobile": [
+          "hero",
+          "support",
+          "rail",
+          "registers"
+        ]
+      },
+      "slots": [
+        {
+          "id": "hero",
+          "area": "hero",
+          "accepts": [
+            "progress:gauge"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "heroMetric": {
+              "op": [
+                "avg",
+                "percentWhere"
+              ],
+              "domainHonest": true
+            }
+          },
+          "note": "the interpreting sentence and the three exception tone chips are gauge chrome derived from the same ratio data, not separate sections",
+          "style": {
+            "value": "text-display font-weight-black tracking-tighter",
+            "ring": "chart-1",
+            "sentence": "text-base muted",
+            "chipOver": "destructive",
+            "chipNear": "warning",
+            "chipHealthy": "success"
+          }
+        },
+        {
+          "id": "rail",
+          "area": "rail",
+          "accepts": [
+            "progress:list",
+            "bar-chart",
+            "donut-chart"
+          ],
+          "min": 1,
+          "max": 2,
+          "style": {
+            "panel": "surface radiusNested",
+            "rowLabel": "text-sm",
+            "rowValue": "font-mono-var"
+          }
+        },
+        {
+          "id": "registers",
+          "area": "registers",
+          "accepts": [
+            "table",
+            "queue",
+            "callout"
+          ],
+          "min": 1,
+          "max": 2,
+          "style": {
+            "panel": "surface radiusNested",
+            "rowHeight": "compact",
+            "severityChip": "destructive|warning|success"
+          }
+        },
+        {
+          "id": "support",
+          "area": "support",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "reserved for the three support metrics; no sections"
+        }
+      ],
+      "metrics": {
+        "min": 3,
+        "max": 3,
+        "placement": "support",
+        "style": {
+          "value": "text-kpi",
+          "label": "text-xs tracking-wider"
+        }
+      },
+      "forbids": [],
+      "maxPerApp": 1
+    },
+    {
+      "id": "my-day",
+      "name": "My Day",
+      "family": "overview",
+      "status": "ready",
+      "exemplars": [
+        "Asana My Tasks",
+        "Things Today",
+        "Monday my week"
+      ],
+      "description": "Chartless personal landing: a 'needs you now' priority stack beside time-grouped lists, greeting header with personal counts. For individual contributors, not monitors.",
+      "signature": "The only chartless landing. Priority cards are 2x list-row height; warmth over monitoring.",
+      "fit": {
+        "archetypes": [
+          "overview",
+          "queue"
+        ],
+        "emphases": [
+          "balanced",
+          "editorial"
+        ],
+        "densities": [
+          "comfortable",
+          "airy"
+        ],
+        "keywords": {
+          "my": 6,
+          "personal": 8,
+          "tasks": 7,
+          "requester": 6,
+          "employee": 5,
+          "self-service": 8
+        }
+      },
+      "grid": {
+        "columns": "1fr 1fr",
+        "areas": [
+          [
+            "priority",
+            "today"
+          ],
+          [
+            "priority",
+            "week"
+          ]
+        ],
+        "gap": 4,
+        "mobile": [
+          "priority",
+          "today",
+          "week"
+        ]
+      },
+      "slots": [
+        {
+          "id": "priority",
+          "area": "priority",
+          "accepts": [
+            "queue:list"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "scope": "my-items",
+            "minSeedRows": 2
+          },
+          "style": {
+            "card": "surface shadow-sm radius",
+            "cardScale": 2,
+            "title": "text-lg font-weight-semibold"
+          }
+        },
+        {
+          "id": "today",
+          "area": "today",
+          "accepts": [
+            "queue:list",
+            "timeline:list"
+          ],
+          "min": 1,
+          "max": 1,
+          "style": {
+            "groupHeader": "text-xs tracking-wider font-weight-semibold"
+          }
+        },
+        {
+          "id": "week",
+          "area": "week",
+          "accepts": [
+            "queue:list",
+            "timeline:list",
+            "progress:list"
+          ],
+          "min": 0,
+          "max": 1
+        }
+      ],
+      "metrics": {
+        "min": 1,
+        "max": 3,
+        "placement": "header-chips",
+        "style": {
+          "chip": "muted radiusNested text-sm font-mono-var"
+        }
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart"
+      ],
+      "maxPerApp": 2,
+      "landingOnly": true
+    },
+    {
+      "id": "pipeline-review",
+      "name": "Pipeline Review",
+      "family": "overview",
+      "status": "ready",
+      "exemplars": [
+        "HubSpot deals",
+        "Salesforce pipeline",
+        "Carta fundraise"
+      ],
+      "description": "Value flowing through stages: stage funnel with per-stage totals, conversion bars, at-risk table beneath. Answers 'where is it stuck, what is it worth'.",
+      "signature": "Funnel silhouette; requires a numeric value field and >=3 stages or the pick is rejected.",
+      "fit": {
+        "archetypes": [
+          "overview",
+          "analytics",
+          "operations"
+        ],
+        "emphases": [
+          "data"
+        ],
+        "densities": [
+          "compact",
+          "comfortable"
+        ],
+        "keywords": {
+          "pipeline": 10,
+          "deals": 9,
+          "funnel": 10,
+          "conversion": 8,
+          "stage": 6,
+          "forecast": 7,
+          "leasing": 4,
+          "procurement": 4
+        }
+      },
+      "grid": {
+        "columns": "1fr 1fr",
+        "areas": [
+          [
+            "funnel",
+            "conversion"
+          ],
+          [
+            "risk",
+            "risk"
+          ]
+        ],
+        "gap": 4,
+        "mobile": [
+          "funnel",
+          "conversion",
+          "risk"
+        ]
+      },
+      "slots": [
+        {
+          "id": "funnel",
+          "area": "funnel",
+          "accepts": [
+            "bar-chart",
+            "queue:stages",
+            "progress:segments"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "stagedFlow": {
+              "minStages": 3
+            },
+            "valueField": true
+          },
+          "style": {
+            "stageValue": "font-mono-var text-lg",
+            "bars": "chart-1..chart-5 in stage order"
+          }
+        },
+        {
+          "id": "conversion",
+          "area": "conversion",
+          "accepts": [
+            "bar-chart"
+          ],
+          "min": 0,
+          "max": 1,
+          "style": {
+            "series": "chart-1"
+          }
+        },
+        {
+          "id": "risk",
+          "area": "risk",
+          "accepts": [
+            "table"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "agingField": true
+          },
+          "style": {
+            "riskChip": "warning",
+            "overdueChip": "destructive"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 1,
+        "max": 3,
+        "placement": "header-right"
+      },
+      "forbids": [
+        "donut-chart"
+      ],
+      "maxPerApp": 1
+    },
+    {
+      "id": "triage-board",
+      "name": "Triage Board",
+      "family": "working",
+      "status": "ready",
+      "exemplars": [
+        "Linear board",
+        "Height",
+        "Jira",
+        "Trello"
+      ],
+      "description": "Full-width kanban of a Case flow's statuses: card counts per column, WIP emphasis on the actionable column, uneven depths left honest.",
+      "signature": "Vertical columns break every row-based rhythm; statuses render as their true shape instead of another table.",
+      "fit": {
+        "archetypes": [
+          "queue",
+          "operations"
+        ],
+        "emphases": [
+          "operational",
+          "balanced"
+        ],
+        "densities": [
+          "compact",
+          "comfortable"
+        ],
+        "keywords": {
+          "kanban": 10,
+          "board": 8,
+          "tickets": 7,
+          "cases": 6,
+          "status": 4,
+          "workflow": 4
+        }
+      },
+      "grid": {
+        "columns": "repeat(status-count, minmax(220px, 1fr))",
+        "areas": [
+          [
+            "board"
+          ]
+        ],
+        "gap": 3,
+        "overflow": "page-scroll-x-at-5-columns",
+        "mobile": [
+          "board (columns stack as accordions)"
+        ]
+      },
+      "slots": [
+        {
+          "id": "board",
+          "area": "board",
+          "accepts": [
+            "queue:board"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "flowType": "case",
+            "minStatuses": 3,
+            "maxStatuses": 6,
+            "cardFields": 2,
+            "assigneeField": true
+          },
+          "style": {
+            "columnHeader": "text-xs tracking-wider font-weight-semibold",
+            "count": "font-mono-var",
+            "card": "surface radiusNested shadow-2xs",
+            "wipColumnAccent": "primary",
+            "agingTint": "warning"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 2,
+        "placement": "header-right"
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart",
+        "table"
+      ],
+      "maxPerApp": 2
+    },
+    {
+      "id": "split-master-detail",
+      "name": "Split Master-Detail",
+      "family": "working",
+      "status": "ready",
+      "exemplars": [
+        "Front",
+        "Superhuman",
+        "Zendesk agent workspace"
+      ],
+      "description": "The classic inbox: a fixed-width list pane with selection and unread/aging cues beside a detail pane with an action header. Processing one-by-one without losing the list.",
+      "signature": "Two independent scroll regions and a persistent selection - an interaction model, not a chart arrangement.",
+      "fit": {
+        "archetypes": [
+          "queue",
+          "operations"
+        ],
+        "emphases": [
+          "operational"
+        ],
+        "densities": [
+          "compact"
+        ],
+        "keywords": {
+          "inbox": 10,
+          "review": 6,
+          "messages": 8,
+          "requests": 5,
+          "helpdesk": 9,
+          "support": 7
+        }
+      },
+      "grid": {
+        "columns": "340px 1fr",
+        "areas": [
+          [
+            "list",
+            "detail"
+          ]
+        ],
+        "gap": 0,
+        "divider": "border-width-medium sidebar-border",
+        "scroll": "independent-per-pane",
+        "mobile": [
+          "list",
+          "detail (push navigation)"
+        ]
+      },
+      "slots": [
+        {
+          "id": "list",
+          "area": "list",
+          "accepts": [
+            "queue:list"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "minSeedRows": 5,
+            "agingField": true
+          },
+          "style": {
+            "selectedRow": "accent",
+            "unreadDot": "primary",
+            "row": "text-sm"
+          }
+        },
+        {
+          "id": "detail",
+          "area": "detail",
+          "accepts": [
+            "detail-pane"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "detailFields": 4,
+            "primaryAction": true
+          },
+          "style": {
+            "actionBar": "surface shadow-xs",
+            "fieldLabel": "text-xs tracking-wide",
+            "fieldValue": "text-base"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 0,
+        "placement": "none"
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart"
+      ],
+      "maxPerApp": 1
+    },
+    {
+      "id": "dense-register",
+      "name": "Dense Register",
+      "family": "working",
+      "status": "ready",
+      "exemplars": [
+        "Airtable",
+        "Stripe payments table",
+        "Retool grids"
+      ],
+      "description": "Volume is the truth: toolbar with search + filter chips + saved views, a genuinely dense table with tabular numerals and status chips, footer aggregates. No charts allowed.",
+      "signature": "Restraint is the design; Stripe-grade table typography is the whole aesthetic.",
+      "fit": {
+        "archetypes": [
+          "register",
+          "operations"
+        ],
+        "emphases": [
+          "data",
+          "operational"
+        ],
+        "densities": [
+          "compact"
+        ],
+        "keywords": {
+          "register": 8,
+          "records": 6,
+          "ledger": 9,
+          "transactions": 9,
+          "master": 5,
+          "catalog": 4,
+          "log": 5
+        }
+      },
+      "grid": {
+        "columns": "1fr",
+        "areas": [
+          [
+            "toolbar"
+          ],
+          [
+            "grid"
+          ],
+          [
+            "aggregate"
+          ]
+        ],
+        "gap": 3,
+        "mobile": [
+          "toolbar",
+          "grid (horizontal scroll)",
+          "aggregate"
+        ]
+      },
+      "slots": [
+        {
+          "id": "toolbar",
+          "area": "toolbar",
+          "accepts": [
+            "callout"
+          ],
+          "min": 0,
+          "max": 1,
+          "note": "search + filter chips are layout chrome, not sections",
+          "style": {
+            "chip": "muted radiusNested text-sm",
+            "activeChip": "accent"
+          }
+        },
+        {
+          "id": "grid",
+          "area": "grid",
+          "accepts": [
+            "table"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "columns": {
+              "min": 5,
+              "max": 8
+            },
+            "statusColumn": true,
+            "minSeedRows": 12
+          },
+          "style": {
+            "rowHeight": "compact",
+            "numeric": "font-mono-var tabular",
+            "statusChip": "success|warning|destructive|info",
+            "headerRow": "text-xs tracking-wider muted"
+          }
+        },
+        {
+          "id": "aggregate",
+          "area": "aggregate",
+          "accepts": [
+            "progress:segments"
+          ],
+          "min": 0,
+          "max": 1,
+          "style": {
+            "strip": "muted radiusNested font-mono-var text-sm"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 2,
+        "placement": "toolbar-right",
+        "style": {
+          "value": "font-mono-var text-base"
+        }
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart",
+        "form"
+      ],
+      "maxPerApp": 2
+    },
+    {
+      "id": "approval-desk",
+      "name": "Approval Desk",
+      "family": "working",
+      "status": "ready",
+      "exemplars": [
+        "Emburse/Concur approvals",
+        "PeopleSoft next-transaction",
+        "DocuSign review"
+      ],
+      "description": "One item on stage: evidence card with submitted fields and amounts, policy-check panel, decision bar pinned below, queue progress in the header. Renders a moment, not a collection.",
+      "signature": "The one screen where a single record fills the page and the buttons are the hero; advances to the next item on decide.",
+      "fit": {
+        "archetypes": [
+          "queue",
+          "intake"
+        ],
+        "emphases": [
+          "operational",
+          "balanced"
+        ],
+        "densities": [
+          "comfortable"
+        ],
+        "keywords": {
+          "approval": 10,
+          "approve": 9,
+          "review": 6,
+          "sign-off": 9,
+          "expense": 7,
+          "authorization": 8
+        }
+      },
+      "grid": {
+        "columns": "3fr 2fr",
+        "areas": [
+          [
+            "evidence",
+            "checks"
+          ],
+          [
+            "decide",
+            "decide"
+          ]
+        ],
+        "gap": 4,
+        "sticky": {
+          "decide": "bottom"
+        },
+        "mobile": [
+          "evidence",
+          "checks",
+          "decide (sticky)"
+        ]
+      },
+      "slots": [
+        {
+          "id": "evidence",
+          "area": "evidence",
+          "accepts": [
+            "decision",
+            "queue:list"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "processFlow": {
+              "approvalStep": true
+            },
+            "itemFields": 4
+          },
+          "style": {
+            "amount": "text-kpi font-mono-var",
+            "panel": "surface shadow-sm radius"
+          }
+        },
+        {
+          "id": "checks",
+          "area": "checks",
+          "accepts": [
+            "decision",
+            "progress:list",
+            "timeline:list"
+          ],
+          "min": 0,
+          "max": 2,
+          "style": {
+            "pass": "success",
+            "fail": "destructive",
+            "pending": "warning"
+          }
+        },
+        {
+          "id": "decide",
+          "area": "decide",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "decision bar is layout chrome bound to the flow's approve/reject actions",
+          "style": {
+            "approve": "primary foreground-inverse radius",
+            "reject": "surface destructive border-width-medium"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 0,
+        "placement": "none",
+        "note": "Queue position belongs in approval chrome, not in a page-level KPI card."
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart",
+        "table"
+      ],
+      "maxPerApp": 1
+    },
+    {
+      "id": "record-hub",
+      "name": "Record Hub",
+      "family": "records",
+      "status": "ready",
+      "exemplars": [
+        "Attio record page",
+        "Salesforce Lightning",
+        "Folk"
+      ],
+      "description": "360-degree entity page: identity band with status and actions, left field panel, center tabbed timeline + related items, right context rail of linked records.",
+      "signature": "The only three-column page, anchored by an identity band no list page has. Express currently has no record detail at all - biggest gap in the set.",
+      "fit": {
+        "archetypes": [
+          "register",
+          "overview"
+        ],
+        "emphases": [
+          "balanced",
+          "data"
+        ],
+        "densities": [
+          "comfortable"
+        ],
+        "keywords": {
+          "360": 10,
+          "profile": 8,
+          "record": 5,
+          "vendor": 6,
+          "customer": 6,
+          "asset": 6,
+          "property": 6,
+          "employee": 5
+        }
+      },
+      "grid": {
+        "columns": "1fr 2fr 1fr",
+        "areas": [
+          [
+            "identity",
+            "identity",
+            "identity"
+          ],
+          [
+            "fields",
+            "activity",
+            "context"
+          ]
+        ],
+        "gap": 4,
+        "identityHeight": 24,
+        "mobile": [
+          "identity",
+          "activity",
+          "fields",
+          "context"
+        ]
+      },
+      "slots": [
+        {
+          "id": "identity",
+          "area": "identity",
+          "accepts": [
+            "record-detail"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "entityFields": 8,
+            "statusField": true
+          },
+          "style": {
+            "name": "text-2xl font-weight-bold tracking-tight",
+            "statusChip": "accent",
+            "band": "surface shadow-xs"
+          }
+        },
+        {
+          "id": "fields",
+          "area": "fields",
+          "accepts": [
+            "record-detail"
+          ],
+          "min": 1,
+          "max": 1,
+          "style": {
+            "label": "text-xs tracking-wide muted",
+            "value": "text-sm"
+          }
+        },
+        {
+          "id": "activity",
+          "area": "activity",
+          "accepts": [
+            "timeline:activity",
+            "table"
+          ],
+          "min": 1,
+          "max": 2,
+          "dataNeeds": {
+            "referenceRelation": true
+          },
+          "style": {
+            "tabs": "text-sm font-weight-medium",
+            "activeTab": "primary"
+          }
+        },
+        {
+          "id": "context",
+          "area": "context",
+          "accepts": [
+            "progress:list",
+            "callout",
+            "table"
+          ],
+          "min": 0,
+          "max": 2,
+          "style": {
+            "panel": "muted radiusNested"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 2,
+        "placement": "identity-right",
+        "style": {
+          "value": "text-kpi"
+        }
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart"
+      ],
+      "maxPerApp": 2
+    },
+    {
+      "id": "card-gallery",
+      "name": "Card Gallery",
+      "family": "records",
+      "status": "ready",
+      "exemplars": [
+        "Notion gallery",
+        "Airbnb listings",
+        "vendor/asset catalogs"
+      ],
+      "description": "Responsive card grid for records recognized visually: image or monogram, two key facts, status chip; filter chips above. Never force spreadsheets into cards.",
+      "signature": "Uniform tiles read as a catalog, not an app screen. Rejected when records have no identity-forward field.",
+      "fit": {
+        "archetypes": [
+          "register",
+          "overview"
+        ],
+        "emphases": [
+          "editorial",
+          "balanced"
+        ],
+        "densities": [
+          "comfortable",
+          "airy"
+        ],
+        "keywords": {
+          "catalog": 9,
+          "directory": 9,
+          "gallery": 10,
+          "properties": 6,
+          "listings": 8,
+          "vendors": 5,
+          "people": 4,
+          "products": 6
+        }
+      },
+      "grid": {
+        "columns": "repeat(auto-fill, minmax(240px, 1fr))",
+        "areas": [
+          [
+            "filters"
+          ],
+          [
+            "cards"
+          ]
+        ],
+        "gap": 4,
+        "cardMedia": "4:3",
+        "mobile": [
+          "filters",
+          "cards (single column)"
+        ]
+      },
+      "slots": [
+        {
+          "id": "filters",
+          "area": "filters",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "category filter chips are layout chrome derived from an enum field",
+          "style": {
+            "chip": "muted radiusNested",
+            "activeChip": "primary foreground-inverse"
+          }
+        },
+        {
+          "id": "cards",
+          "area": "cards",
+          "accepts": [
+            "table:gallery"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "identityField": true,
+            "displayFields": 2,
+            "minSeedRows": 8
+          },
+          "style": {
+            "card": "surface radius shadow-xs",
+            "monogram": "accent text-xl font-weight-bold",
+            "fact": "text-sm",
+            "statusChip": "success|warning|info"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 1,
+        "placement": "header-right"
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart",
+        "form"
+      ],
+      "maxPerApp": 1
+    },
+    {
+      "id": "calendar-board",
+      "name": "Schedule Board",
+      "family": "records",
+      "status": "ready",
+      "exemplars": [
+        "Google Calendar",
+        "Motion",
+        "Calendly dashboards",
+        "crew rosters"
+      ],
+      "description": "Dates drive the work: month/week grid as the primary surface, agenda rail of the next seven days, density dots on busy days, today emphasized.",
+      "signature": "A 7-column date matrix resembles nothing else in the set; instantly signals a time-driven role.",
+      "fit": {
+        "archetypes": [
+          "operations",
+          "overview"
+        ],
+        "emphases": [
+          "balanced",
+          "operational"
+        ],
+        "densities": [
+          "comfortable"
+        ],
+        "keywords": {
+          "schedule": 10,
+          "calendar": 10,
+          "inspections": 8,
+          "sessions": 7,
+          "shifts": 9,
+          "roster": 9,
+          "expiry": 6,
+          "maintenance": 5
+        }
+      },
+      "grid": {
+        "columns": "3fr 1fr",
+        "areas": [
+          [
+            "calendar",
+            "agenda"
+          ]
+        ],
+        "gap": 4,
+        "cellMin": 84,
+        "mobile": [
+          "agenda",
+          "calendar (week view)"
+        ]
+      },
+      "slots": [
+        {
+          "id": "calendar",
+          "area": "calendar",
+          "accepts": [
+            "timeline:calendar"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "dateField": true,
+            "minSeedRows": 5
+          },
+          "style": {
+            "today": "primary ring-width",
+            "eventPill": "accent radiusNested text-xs",
+            "densityDot": "chart-1"
+          }
+        },
+        {
+          "id": "agenda",
+          "area": "agenda",
+          "accepts": [
+            "timeline:list",
+            "queue:list"
+          ],
+          "min": 1,
+          "max": 1,
+          "style": {
+            "dayHeader": "text-xs tracking-wider font-weight-semibold",
+            "overdue": "destructive"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 2,
+        "placement": "header-right"
+      },
+      "forbids": [
+        "donut-chart",
+        "bar-chart"
+      ],
+      "maxPerApp": 1
+    },
+    {
+      "id": "form-focus",
+      "name": "Intake Desk",
+      "family": "intake",
+      "status": "ready",
+      "exemplars": [
+        "Gusto forms",
+        "Stripe onboarding panels",
+        "Linear new-issue"
+      ],
+      "description": "Sectioned form with sticky section nav beside a live context rail: guidelines, duplicate warnings, history, SLA note. Submit bar pinned. Creation with reference material at hand.",
+      "signature": "The context rail turns 'a form' into 'a desk' - the difference between bare intake and a considered one.",
+      "fit": {
+        "archetypes": [
+          "intake"
+        ],
+        "emphases": [
+          "balanced",
+          "editorial"
+        ],
+        "densities": [
+          "comfortable",
+          "airy"
+        ],
+        "keywords": {
+          "request": 6,
+          "submit": 7,
+          "application": 7,
+          "intake": 9,
+          "new": 3,
+          "onboarding": 5
+        }
+      },
+      "grid": {
+        "columns": "48px 3fr 2fr",
+        "areas": [
+          [
+            "nav",
+            "form",
+            "context"
+          ],
+          [
+            "submit",
+            "submit",
+            "submit"
+          ],
+          [
+            "history",
+            "history",
+            "history"
+          ]
+        ],
+        "gap": 4,
+        "formMaxWidth": 640,
+        "sticky": {
+          "nav": "top",
+          "submit": "bottom"
+        },
+        "mobile": [
+          "form",
+          "context",
+          "submit (sticky)",
+          "history"
+        ]
+      },
+      "slots": [
+        {
+          "id": "nav",
+          "area": "nav",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "section dots derived from the form's section list",
+          "style": {
+            "dot": "muted",
+            "activeDot": "primary"
+          }
+        },
+        {
+          "id": "form",
+          "area": "form",
+          "accepts": [
+            "form"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "minFields": 6,
+            "sections": {
+              "min": 2
+            },
+            "submitAction": true
+          },
+          "style": {
+            "sectionTitle": "text-lg font-weight-semibold",
+            "label": "text-sm font-weight-medium",
+            "input": "surface radiusNested border-width-medium sidebar-border",
+            "focus": "ring ring-width"
+          }
+        },
+        {
+          "id": "context",
+          "area": "context",
+          "accepts": [
+            "callout",
+            "timeline:list",
+            "progress:list"
+          ],
+          "min": 0,
+          "max": 3,
+          "note": "Optional authored guidance/history. When omitted, the renderer derives a neutral field checklist and recent-record context from the bound model; it never invents policy.",
+          "style": {
+            "panel": "muted radiusNested",
+            "warning": "warning"
+          }
+        },
+        {
+          "id": "submit",
+          "area": "submit",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "submit bar is layout chrome bound to the form's create action",
+          "style": {
+            "primaryBtn": "primary foreground-inverse radius"
+          }
+        },
+        {
+          "id": "history",
+          "area": "history",
+          "accepts": [
+            "table"
+          ],
+          "min": 0,
+          "max": 1,
+          "note": "Optional full-width submission history below the intake desk."
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 0,
+        "placement": "none"
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart",
+        "queue"
+      ],
+      "maxPerApp": 2
+    },
+    {
+      "id": "wizard",
+      "name": "Guided Wizard",
+      "family": "intake",
+      "status": "ready",
+      "exemplars": [
+        "Typeform",
+        "Gusto onboarding",
+        "Stripe Connect setup"
+      ],
+      "description": "Long or consequential intake: stepper header, one section per step, running summary rail, validated transitions, review-before-submit. The compiler splits form sections into steps deterministically.",
+      "signature": "Sequential, not spatial - the page changes over time. Only layout whose primary surface is one narrow centered column.",
+      "fit": {
+        "archetypes": [
+          "intake"
+        ],
+        "emphases": [
+          "editorial",
+          "balanced"
+        ],
+        "densities": [
+          "airy",
+          "comfortable"
+        ],
+        "keywords": {
+          "onboarding": 9,
+          "enrollment": 9,
+          "application": 6,
+          "setup": 7,
+          "registration": 8,
+          "wizard": 10
+        }
+      },
+      "grid": {
+        "columns": "1fr minmax(auto, 560px) 1fr",
+        "areas": [
+          [
+            "stepper",
+            "stepper",
+            "stepper"
+          ],
+          [
+            ".",
+            "step",
+            "summary"
+          ],
+          [
+            "navbar",
+            "navbar",
+            "navbar"
+          ]
+        ],
+        "gap": 4,
+        "sticky": {
+          "stepper": "top",
+          "navbar": "bottom"
+        },
+        "mobile": [
+          "stepper (compact)",
+          "step",
+          "navbar (sticky)"
+        ]
+      },
+      "slots": [
+        {
+          "id": "stepper",
+          "area": "stepper",
+          "accepts": [
+            "progress:steps"
+          ],
+          "min": 0,
+          "max": 1,
+          "note": "the stepper is layout chrome derived from the compiler's field partition; an explicit progress:steps section may replace it",
+          "style": {
+            "doneDot": "primary",
+            "activeDot": "primary ring-width",
+            "todoDot": "muted",
+            "connector": "sidebar-border"
+          }
+        },
+        {
+          "id": "step",
+          "area": "step",
+          "accepts": [
+            "form"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "minFields": 12,
+            "sections": {
+              "min": 3
+            }
+          },
+          "style": {
+            "stepTitle": "text-xl font-weight-bold tracking-tight",
+            "help": "text-sm muted"
+          }
+        },
+        {
+          "id": "summary",
+          "area": "summary",
+          "accepts": [
+            "progress:list"
+          ],
+          "min": 0,
+          "max": 1,
+          "style": {
+            "panel": "muted radiusNested text-sm"
+          }
+        },
+        {
+          "id": "navbar",
+          "area": "navbar",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "back/next/submit chrome with per-step validation gate",
+          "style": {
+            "next": "primary foreground-inverse radius",
+            "back": "surface border-width-medium"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 0,
+        "placement": "none"
+      },
+      "forbids": [
+        "bar-chart",
+        "donut-chart",
+        "trend-chart",
+        "table",
+        "queue",
+        "timeline"
+      ],
+      "maxPerApp": 1
+    },
+    {
+      "id": "analytics-explorer",
+      "name": "Analytics Explorer",
+      "family": "analysis",
+      "status": "ready",
+      "exemplars": [
+        "Metabase dashboards",
+        "Amplitude",
+        "Looker explores"
+      ],
+      "description": "Analysis, not monitoring: dimension/period control bar, one primary comparison chart, a row of small multiples splitting the same metric by dimension, and a drill table.",
+      "signature": "Small multiples - repeated same-shape charts - are a deliberate rhythm no other template allows. The ONLY template where 3+ charts is correct.",
+      "fit": {
+        "archetypes": [
+          "analytics"
+        ],
+        "emphases": [
+          "data"
+        ],
+        "densities": [
+          "compact",
+          "comfortable"
+        ],
+        "keywords": {
+          "analytics": 9,
+          "report": 7,
+          "trends": 8,
+          "breakdown": 8,
+          "comparison": 8,
+          "insights": 7
+        }
+      },
+      "grid": {
+        "columns": "3fr 1fr",
+        "areas": [
+          [
+            "controls",
+            "controls"
+          ],
+          [
+            "primary",
+            "composition"
+          ],
+          [
+            "multiples",
+            "multiples"
+          ],
+          [
+            "drill",
+            "drill"
+          ]
+        ],
+        "gap": 4,
+        "controlsHeight": 12,
+        "mobile": [
+          "controls",
+          "primary",
+          "composition",
+          "multiples (stack)",
+          "drill"
+        ]
+      },
+      "slots": [
+        {
+          "id": "controls",
+          "area": "controls",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "period + dimension selectors are layout chrome",
+          "style": {
+            "select": "surface radiusNested border-width-medium sidebar-border text-sm"
+          }
+        },
+        {
+          "id": "primary",
+          "area": "primary",
+          "accepts": [
+            "trend-chart:line",
+            "bar-chart"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "comparator": true
+          },
+          "style": {
+            "current": "chart-1",
+            "previous": "chart-6",
+            "grid": "sidebar-border"
+          }
+        },
+        {
+          "id": "composition",
+          "area": "composition",
+          "accepts": [
+            "donut-chart"
+          ],
+          "min": 0,
+          "max": 1,
+          "style": {
+            "series": "chart-1..chart-8 in order"
+          }
+        },
+        {
+          "id": "multiples",
+          "area": "multiples",
+          "accepts": [
+            "bar-chart",
+            "trend-chart:line",
+            "trend-chart:heatmap"
+          ],
+          "min": 2,
+          "max": 3,
+          "dataNeeds": {
+            "sameMetricSplitByDimension": true
+          },
+          "style": {
+            "title": "text-xs tracking-wider",
+            "equalWidth": true
+          }
+        },
+        {
+          "id": "drill",
+          "area": "drill",
+          "accepts": [
+            "table"
+          ],
+          "min": 1,
+          "max": 1,
+          "style": {
+            "numeric": "font-mono-var tabular"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 4,
+        "placement": "controls-right",
+        "style": {
+          "value": "text-kpi font-mono-var"
+        }
+      },
+      "forbids": [
+        "form",
+        "queue"
+      ],
+      "maxPerApp": 1
+    },
+    {
+      "id": "timeline-stream",
+      "name": "Activity Stream",
+      "family": "analysis",
+      "status": "ready",
+      "exemplars": [
+        "Intercom conversation view",
+        "GitHub activity",
+        "Attio activity tab"
+      ],
+      "description": "Answers 'what happened': day-grouped feed on a visible spine, event-type filters, embedded action cards for events needing response, compact stats rail.",
+      "signature": "Chronology is the layout - a narrow vertical reading experience against everything else's spatial grids.",
+      "fit": {
+        "archetypes": [
+          "operations",
+          "analytics"
+        ],
+        "emphases": [
+          "balanced",
+          "editorial"
+        ],
+        "densities": [
+          "comfortable"
+        ],
+        "keywords": {
+          "activity": 9,
+          "audit": 9,
+          "history": 8,
+          "log": 6,
+          "communications": 7,
+          "notifications": 6
+        }
+      },
+      "grid": {
+        "columns": "minmax(auto, 720px) 1fr",
+        "areas": [
+          [
+            "filters",
+            "filters"
+          ],
+          [
+            "feed",
+            "rail"
+          ]
+        ],
+        "gap": 4,
+        "sticky": {
+          "dayHeaders": true
+        },
+        "mobile": [
+          "filters",
+          "feed",
+          "rail"
+        ]
+      },
+      "slots": [
+        {
+          "id": "filters",
+          "area": "filters",
+          "accepts": [],
+          "min": 0,
+          "max": 0,
+          "note": "event-type chips derived from the event source's type field",
+          "style": {
+            "chip": "muted radiusNested text-sm",
+            "activeChip": "accent"
+          }
+        },
+        {
+          "id": "feed",
+          "area": "feed",
+          "accepts": [
+            "timeline:activity"
+          ],
+          "min": 1,
+          "max": 1,
+          "dataNeeds": {
+            "timestamped": true,
+            "minSeedRows": 10,
+            "eventTypes": {
+              "min": 2
+            }
+          },
+          "style": {
+            "spine": "sidebar-border",
+            "eventDot": "chart-1..chart-8 by type",
+            "dayHeader": "text-xs tracking-wider font-weight-semibold",
+            "actionCard": "surface shadow-xs radiusNested"
+          }
+        },
+        {
+          "id": "rail",
+          "area": "rail",
+          "accepts": [
+            "bar-chart",
+            "progress:list"
+          ],
+          "min": 0,
+          "max": 2,
+          "style": {
+            "panel": "muted radiusNested"
+          }
+        }
+      ],
+      "metrics": {
+        "min": 0,
+        "max": 3,
+        "placement": "rail-top"
+      },
+      "forbids": [
+        "form",
+        "donut-chart",
+        "table"
+      ],
+      "maxPerApp": 1
+    }
+  ]
+}

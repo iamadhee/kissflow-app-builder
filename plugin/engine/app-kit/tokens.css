@@ -1,0 +1,1486 @@
+/* GENERATED from starter/src/tokens.css (sha256:28caa9c7d035ada1). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite. */
+/* CURRENT CONTRACT — Vela is the base and every sibling theme comes from the live catalog.
+ * The whole-colour/color-mix contract is the final :root block in this file; theme-variants.css
+ * supplies the 48 preset-varying inputs. The older block below remains temporarily as the
+ * compatibility vocabulary for components that have not yet moved to the new kit.
+ */
+
+/* ============================================================================
+ * LEGACY COMPATIBILITY HISTORY — this block originally described the Beacon-only starter.
+ *
+ * READING THE OLD NOTES. This file used to carry Beacon plus ten earlier legacy languages, and
+ * Nimbus before that. Nimbus was retired first, on 2026-08-12; the ten non-Beacon languages were
+ * retired later the same day, when the app settled on Beacon alone and the multi-language
+ * selection machinery (the catalog, the `--language` flag and per-language generation) was
+ * retired with them. Nothing was archived
+ * in-repo — the ten retired blocks, `engine/proto-kit/languages.json` and `gen-language-blocks.mjs`
+ * are recoverable from git history if a language is ever needed again (app-ui branch, commits
+ * dated 2026-08-12).
+ *
+ * SOURCE MOVED 2026-08-13. Beacon's design source is now Claude Design project "Mobile app style
+ * guide sheet" (2b8a920b-a786-4430-bd63-b0bc0dbe6229) — this file transcribes it PAGE BY PAGE,
+ * starting with `Foundations.dc.html`. It previously transcribed project "AI Plugin Themes"
+ * (4ca89dd3-3bd0-4b08-bce9-17111bea1e46), file `Beacon Design Language.dc.html` v2.1; that
+ * source is superseded, not merged — every token below is Foundations', none of v2.1's.
+ *
+ * SCOPE OF THIS PASS. Foundations names 49 tokens: 17 colours, 11 tone values, 3 interaction
+ * states, one type token, one spacing unit, five radii, six shadow roles, two gradients, one
+ * easing curve. It says nothing about buttons, chips, fields, tabs, KPI figures, avatars,
+ * overlays, a chart ramp, or an elevation ladder past the six shadow roles — the OLD v2.1 block
+ * named all of those, and they are GONE here, not carried forward. They will return as their own
+ * pages are transcribed (`Buttons.dc.html`, `Chips.dc.html`, `Fields.dc.html`, `Cards.dc.html`,
+ * `TabStrip.dc.html`, `Avatar.dc.html`, `Overlay.dc.html`, `DataCharts.dc.html`, …) — until then,
+ * a component reading a removed token gets whatever fallback its own `@utility` rule already
+ * carries (the block below this one is UNCHANGED and every entry in it has always defaulted to a
+ * literal, so most component geometry keeps rendering at its old numbers even with no token
+ * behind it), or, for the few `@theme` entries with no such fallback (the chart ramp,
+ * `*-foreground` pairs), resolves to nothing until its page lands. The three `--font-*` faces
+ * were in that "resolves to nothing" set too, until 2026-08-13 — restored under §Type below,
+ * see that section's own comment for why and the real bug it was silently causing.
+ *
+ * WIRED. Reached via a single `@import "./tokens.css"` at the end of src/shadcn.css — from
+ * there and not from main.jsx, because Tailwind only processes @theme / @utility inside its
+ * own CSS graph; a JS-side import leaves both at-rules unhandled. Last import wins, so this
+ * file is the authority for every token it names.
+ *
+ * This is now the SOLE definition of every canonical token. The retired src/app-theme.css
+ * `--kf-*` alias layer has been deleted; src/design-languages.css is no longer imported either.
+ * Current components read the canonical --brand-*, --ctl-*, --field-* and --layer-* families.
+ *
+ * NO MORE BARE-NAME LAYER. Runtime values use the canonical --brand-*, --ctl-*, --field-*,
+ * --layer-*, and semantic families below. Tailwind's utility namespaces are integration bridges
+ * and therefore live once in shadcn.css, not in this theme source.
+ *
+ * PROVENANCE — every token is marked, and this is the point of the file
+ *   [SOURCE]  verbatim (or mechanically derived) from Foundations.dc.html or Cards.dc.html.
+ *   [OURS]    our decision — Foundations does not state it, or states the role but not a number.
+ * If a token is [OURS], nobody should later "correct" it to match a doc that never said it.
+ * ============================================================================ */
+
+/* Runtime Tailwind extensions. A regular @theme block keeps these utilities
+   connected to their custom properties at runtime, so theme and Display-option
+   overrides continue to work instead of being embedded at build time. */
+@theme {
+  --color-black: oklch(0 0 0);
+  --color-white: oklch(1 0 0);
+  --radius-sm: max(0px, calc(var(--radius) - 4px));
+  --radius-md: max(0px, calc(var(--radius) - 2px));
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 16px);
+  --radius-4xl: calc(var(--radius) + 24px);
+  --text-2xs: calc(0.625rem * var(--font-scale));
+  --text-xs-plus: calc(0.8125rem * var(--font-scale));
+  --text-xs-plus--line-height: calc(1.125rem * var(--font-scale));
+  --text-data: calc(0.6875rem * var(--font-scale));
+  /* Tailwind owns the `shadow-*` utility namespace, while the elevation
+     recipes remain runtime CSS variables. Pointing the utilities at a
+     differently named recipe prevents Tailwind's static default shadows from
+     being compiled into components and keeps theme tint/strength overrides
+     live. */
+  --shadow-none: var(--elevation-none);
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+  --shadow-xl: var(--elevation-xl);
+  /* Override inherited library color literals too: every shadow token exposed
+     by the theme inspector uses OKLCH in Light, Dark and System modes. */
+  --shadow-2xs: 0 1px oklch(0 0 0 / 0.05);
+  --shadow-xs: 0 1px 2px 0 oklch(0 0 0 / 0.05);
+  --shadow-2xl: 0 25px 50px -12px oklch(0 0 0 / 0.25);
+  --inset-shadow-2xs: inset 0 1px oklch(0 0 0 / 0.05);
+  --inset-shadow-xs: inset 0 1px 1px oklch(0 0 0 / 0.05);
+  --inset-shadow-sm: inset 0 2px 4px oklch(0 0 0 / 0.05);
+  --drop-shadow-xs: 0 1px 1px oklch(0 0 0 / 0.05);
+  --drop-shadow-sm: 0 1px 2px oklch(0 0 0 / 0.15);
+  --drop-shadow-md: 0 3px 3px oklch(0 0 0 / 0.12);
+  --drop-shadow-lg: 0 4px 4px oklch(0 0 0 / 0.15);
+  --drop-shadow-xl: 0 9px 7px oklch(0 0 0 / 0.1);
+  --drop-shadow-2xl: 0 25px 25px oklch(0 0 0 / 0.15);
+  --text-shadow-2xs: 0px 1px 0px oklch(0 0 0 / 0.15);
+  --text-shadow-xs: 0px 1px 1px oklch(0 0 0 / 0.2);
+  --text-shadow-sm: 0px 1px 0px oklch(0 0 0 / 0.075), 0px 1px 1px oklch(0 0 0 / 0.075), 0px 2px 2px oklch(0 0 0 / 0.075);
+  --text-shadow-md: 0px 1px 1px oklch(0 0 0 / 0.1), 0px 1px 2px oklch(0 0 0 / 0.1), 0px 2px 4px oklch(0 0 0 / 0.1);
+  --text-shadow-lg: 0px 1px 2px oklch(0 0 0 / 0.1), 0px 3px 2px oklch(0 0 0 / 0.1), 0px 4px 8px oklch(0 0 0 / 0.1);
+  --shadow: 0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1);
+  --shadow-inner: inset 0 2px 4px 0 oklch(0 0 0 / 0.05);
+  --drop-shadow: 0 1px 2px oklch(0 0 0 / 0.1), 0 1px 1px oklch(0 0 0 / 0.06);
+  /* Brand-action emphasis. Keeping this in @theme both defines the runtime
+     token and registers Tailwind's shadow-primary utility. The glow follows
+     the active theme's brand ring; the inset highlight follows its on-brand
+     foreground instead of baking a white RGB literal into the utility bridge. */
+  --shadow-primary: 0 0.5rem 1.25rem -0.5rem var(--brand-ring), inset 0 0.0625rem 0 oklch(from var(--brand-fg) l c h / 0.28);
+}
+
+/* ==========================================================================
+ * New component-system contract
+ *
+ * Vela is the base. Sibling presets override only the 48 direct inputs
+ * in theme-variants.css; every value below remains derived and live. Tailwind utility aliases
+ * are deliberately outside this contract in shadcn.css.
+ * Source: the shared design token sheet
+ * ========================================================================== */
+:root {
+  --brand-100: color-mix(in oklab, var(--brand-600) 12%, var(--ctl-surface));
+  --brand-600: oklch(0.5461 0.2152 262.88);
+  --brand-700: color-mix(in oklab, var(--brand-600) 85%, oklch(0 0 0));
+  --brand-800: color-mix(in oklab, var(--brand-600) 70%, oklch(0 0 0));
+  --brand-text: color-mix(in oklab, var(--brand-600) 85%, oklch(0 0 0));
+  --brand-fg: oklch(1 0 0);
+  --brand-ring: color-mix(in oklab, var(--brand-600) 40%, transparent);
+
+  /* SEVERITY IS ORDERED. danger/warning/success/info are four CATEGORIES — nothing in them says
+     which is worse, which is why one generated dashboard drew a single measure in seven categorical
+     hues. Measured against the Northfield rebuild, the fix is not "lower chroma": the rebuild keeps
+     our hues almost exactly (163/78/20 against our 163/70/17) and fixes the ORDER two other ways.
+
+       lightness   rebuild 0.514-0.578 (spread 0.064)   ours 0.586-0.769 (spread 0.183, 2.9x)
+       chroma      rebuild 0.108 0.112 0.152 0.186 — monotonic with severity
+
+     Our warning sits at L 0.769 against success 0.596 and danger 0.586, so in a column of three the
+     MIDDLE step reads as the lightest and least urgent. Holding lightness and letting chroma rise
+     is what makes four colours a scale instead of four colours.
+
+     Each step keeps its own theme's hue and takes the shared L and C, so sixteen identities gain one
+     order without losing their palette. Step 3 has no semantic of its own and is mixed from the two
+     it sits between — the rebuild's 47.7 against a warning/danger midpoint of 49.5. */
+  --severity-l-1: 0.514;
+  --severity-l-2: 0.554;
+  --severity-l-3: 0.578;
+  --severity-l-4: 0.516;
+  --severity-c-1: 0.108;
+  --severity-c-2: 0.112;
+  --severity-c-3: 0.152;
+  --severity-c-4: 0.186;
+  --severity-1: oklch(from var(--success-600) var(--severity-l-1) var(--severity-c-1) h);
+  --severity-2: oklch(from var(--warning-600) var(--severity-l-2) var(--severity-c-2) h);
+  --severity-3: oklch(from color-mix(in oklch shorter hue, var(--warning-600), var(--danger-600)) var(--severity-l-3) var(--severity-c-3) h);
+  --severity-4: oklch(from var(--danger-600) var(--severity-l-4) var(--severity-c-4) h);
+  /* the wash the rebuild pairs each step with lands at L~0.97 carrying 8-18% of the step's chroma;
+     mixing into the surface rather than a fixed white keeps it correct on a tinted theme. */
+  --severity-1-wash: color-mix(in oklab, var(--severity-1) 11%, var(--ctl-surface));
+  --severity-2-wash: color-mix(in oklab, var(--severity-2) 14%, var(--ctl-surface));
+  --severity-3-wash: color-mix(in oklab, var(--severity-3) 11%, var(--ctl-surface));
+  --severity-4-wash: color-mix(in oklab, var(--severity-4) 9%, var(--ctl-surface));
+  --severity-1-line: color-mix(in oklab, var(--severity-1) 30%, var(--ctl-surface));
+  --severity-2-line: color-mix(in oklab, var(--severity-2) 32%, var(--ctl-surface));
+  --severity-3-line: color-mix(in oklab, var(--severity-3) 30%, var(--ctl-surface));
+  --severity-4-line: color-mix(in oklab, var(--severity-4) 28%, var(--ctl-surface));
+
+  --danger-100: color-mix(in oklab, var(--danger-600) 12%, var(--ctl-surface));
+  --danger-600: oklch(0.5858 0.222 17.58);
+  --danger-700: color-mix(in oklab, var(--danger-600) 85%, oklch(0 0 0));
+  --danger-800: color-mix(in oklab, var(--danger-600) 70%, oklch(0 0 0));
+  --danger-text: color-mix(in oklab, var(--danger-600) 77%, oklch(0 0 0));
+  --danger-fg: oklch(1 0 0);
+  --danger-ring: color-mix(in oklab, var(--danger-600) 40%, transparent);
+
+  --success-100: color-mix(in oklab, var(--success-600) 12%, var(--ctl-surface));
+  --success-600: oklch(0.596 0.1274 163.23);
+  --success-700: color-mix(in oklab, var(--success-600) 82%, oklch(0 0 0));
+  --success-800: color-mix(in oklab, var(--success-600) 70%, oklch(0 0 0));
+  /* Semantic text mixes retain the lightest shared amount of each theme seed
+     that clears 4.5:1 on its matching wash across every live theme. */
+  --success-text: color-mix(in oklab, var(--success-600) 72%, oklch(0 0 0));
+  --success-fg: oklch(1 0 0);
+  --success-ring: color-mix(in oklab, var(--success-600) 40%, transparent);
+
+  --warning-100: color-mix(in oklab, var(--warning-600) 14%, var(--ctl-surface));
+  --warning-600: oklch(0.7686 0.1647 70.08);
+  /* The palette seed remains stable for charts and broad fills. Small warning
+     marks and edges use this darker derivative to clear the 3:1 UI floor. */
+  --warning-700: color-mix(in oklab, var(--warning-600) 75%, oklch(0 0 0));
+  --warning-800: color-mix(in oklab, var(--warning-600) 70%, oklch(0 0 0));
+  --warning-text: color-mix(in oklab, var(--warning-600) 65%, oklch(0 0 0));
+  --warning-fg: oklch(0.2113 0.0391 282.53);
+  --warning-ring: color-mix(in oklab, var(--warning-600) 40%, transparent);
+
+  --info-100: color-mix(in oklab, var(--info-600) 12%, var(--ctl-surface));
+  --info-600: oklch(0.6056 0.2189 292.72);
+  --info-700: color-mix(in oklab, var(--info-600) 82%, oklch(0 0 0));
+  --info-800: color-mix(in oklab, var(--info-600) 70%, oklch(0 0 0));
+  --info-text: color-mix(in oklab, var(--info-600) 75%, oklch(0 0 0));
+  --info-fg: oklch(1 0 0);
+  --info-ring: color-mix(in oklab, var(--info-600) 40%, transparent);
+
+  /* Semantic data fills are flat by default. A theme may override these
+     documented derived roles with gradients without changing component code
+     or forcing gradients onto badges, buttons, and other semantic surfaces. */
+  --data-success-fill: var(--success-600);
+  --data-warning-fill: var(--warning-600);
+  --data-danger-fill: var(--danger-600);
+  --data-info-fill: var(--info-600);
+  /* Optional artwork layers for semantic surfaces. They are transparent by
+     default, so ordinary themes keep their flat fills. A theme can supply a
+     glazed, striped, or textured treatment without teaching StatTile (or a
+     future semantic surface) about that theme by name. */
+  --brand-surface-image: none;
+  --success-surface-image: none;
+  --warning-surface-image: none;
+  --danger-surface-image: none;
+  --info-surface-image: none;
+  --neutral-surface-image: none;
+  --ctl-surface: oklch(1 0 0);
+  --ctl-raise: oklch(1 0 0);
+  --ctl-track: oklch(0.9523 0.0103 247.93);
+  /* Hairlines are deliberately quiet separators, not the sole state cue. They
+     sit below 3:1 by design; functional focus/error/selection edges use the
+     stronger brand or tone tokens instead. */
+  --ctl-border: oklch(0.9288 0.0126 255.51);
+  --ctl-border-strong: oklch(0.7107 0.0351 256.79);
+  /* Table headers need an independently themeable band. The shared fallback
+     preserves the existing raised-surface treatment; themes with translucent
+     panels may strengthen only this role without retinting every raised tile. */
+  --table-header-surface: var(--ctl-raise);
+  --table-header-border: transparent;
+  --table-row-border: color-mix(in oklab, var(--ctl-border) 55%, var(--ctl-surface));
+  --ctl-offset: oklch(0.9683 0.0069 247.9); /* deepened for figure-ground: cards must visibly float on the page */
+  /* Optional decorative layer for the application canvas. Keep this separate
+     from --ctl-offset: the latter is a colour token and is also consumed by
+     borders, focus treatments, and component surfaces. Size, position and
+     repeat are separate so tiled textures remain a theme concern rather than
+     being flattened into a one-off canvas-size image. */
+  --page-bg-image: none;
+  --page-bg-size: auto;
+  --page-bg-position: 0 0;
+  --page-bg-repeat: no-repeat;
+  --ctl-fg: oklch(0.2449 0.0388 264.35);
+  --ctl-fg-muted: oklch(0.5332 0.0364 255.68);
+  --ctl-fg-soft: color-mix(in oklab, var(--ctl-fg) 82%, var(--ctl-surface));
+  --ctl-fg-subtle: var(--ctl-border-strong);
+
+  --field-surface: oklch(1 0 0);
+  --field-border: var(--ctl-border);
+  --field-border-hover: var(--ctl-border-strong);
+  --field-placeholder: oklch(0.7107 0.0351 256.79);
+  --field-disabled: oklch(0.9842 0.0034 247.86);
+  --field-selected: color-mix(in oklab, var(--brand-600) 12%, var(--ctl-surface));
+
+  --layer-surface: var(--ctl-surface);
+  --layer-border: var(--ctl-border);
+  --overlay-scrim: oklch(from var(--shadow-tint) l c h / 0.42);
+  --tooltip-surface: var(--ctl-fg);
+  --tooltip-fg: var(--ctl-offset);
+  --skeleton-base: var(--ctl-track);
+  --skeleton-sheen: color-mix(in oklab, var(--ctl-surface) 72%, transparent);
+
+  --cal-selected: var(--brand-600);
+  --cal-selected-fg: var(--brand-fg);
+  --cal-range: color-mix(in oklab, var(--brand-600) 13%, var(--ctl-surface));
+  --cal-today: color-mix(in oklab, var(--brand-600) 45%, transparent);
+  --cal-outside: var(--field-placeholder);
+
+  --chrome-base-surface: var(--ctl-surface);
+  --chrome-base-border: var(--ctl-border);
+  --chrome-base-fg: var(--ctl-fg);
+  --chrome-base-muted: var(--ctl-fg-muted);
+  --chrome-base-backdrop-filter: none;
+  /* Base chrome sits on --ctl-surface. Some themes intentionally make --ctl-raise
+     identical to that surface, which erases navigation hover feedback. Offset is
+     the next visible neutral step and keeps sidebar and topbar hover identical. */
+  --chrome-base-hover: var(--ctl-offset);
+  --chrome-base-active-bg: var(--brand-600);
+  --chrome-base-active-image: none;
+  --chrome-base-active-fg: var(--brand-fg);
+  --chrome-base-active-icon: var(--brand-fg);
+  --chrome-base-active-shadow: var(--shadow-none);
+  --chrome-base-item-radius: var(--radius);
+  --chrome-base-idle-font-weight: 400;
+  --chrome-base-active-font-weight: 400;
+  --chrome-accent-surface: var(--brand-800);
+  --chrome-accent-border: color-mix(in oklab, oklch(1 0 0) 14%, var(--brand-800));
+  --chrome-accent-fg: oklch(1 0 0);
+  --chrome-accent-muted: color-mix(in oklab, oklch(1 0 0) 72%, var(--brand-800));
+  --chrome-accent-backdrop-filter: none;
+  --chrome-accent-hover: color-mix(in oklab, oklch(1 0 0) 12%, var(--brand-800));
+  --chrome-accent-active-bg: var(--brand-600);
+  --chrome-accent-active-image: none;
+  --chrome-accent-active-fg: var(--brand-fg);
+  --chrome-accent-active-icon: var(--brand-fg);
+  --chrome-accent-active-shadow: var(--shadow-none);
+  --chrome-accent-item-radius: var(--radius);
+  --chrome-accent-idle-font-weight: 400;
+  --chrome-accent-active-font-weight: 400;
+  --chrome-backdrop-filter: var(--chrome-base-backdrop-filter);
+
+  --material-panel-surface: var(--ctl-surface);
+  --material-panel-border: var(--ctl-border);
+  --material-panel-image: none;
+  --material-panel-backdrop-filter: none;
+  --material-flat-surface: var(--ctl-raise);
+  --material-flat-border: var(--ctl-border);
+  --material-flat-image: none;
+  --material-flat-backdrop-filter: none;
+  /* Bare is a shared workspace, not the absence of paint. Keeping its surface
+     opaque prevents decorative page artwork from showing between widgets. The
+     separators are derived here so every theme gets a visible but quiet rule
+     without adding another authored theme input. */
+  --material-bare-surface: var(--ctl-surface);
+  --material-bare-border: transparent;
+  --material-bare-image: none;
+  --material-bare-backdrop-filter: none;
+  --material-bare-rule: color-mix(in oklab, var(--ctl-border-strong) 42%, var(--ctl-surface));
+  --material-bare-cell-padding-inline: calc(var(--spacing) * 6);
+  --material-bare-cell-padding-block: calc(var(--spacing) * 5);
+  /* Spacing uses one clean white workspace in light appearance. Ordinary
+     layout gaps still provide the separation, without an edge or elevation. */
+  --material-spacing-surface: oklch(1 0 0);
+  --material-spacing-border: transparent;
+  --material-spacing-image: none;
+  --material-spacing-backdrop-filter: none;
+  /* Floating geometry intentionally removes resting elevation, so its shell
+     frame cannot depend on a transparent or near-white Panel edge alone. Blend
+     the authored edge with the theme's stronger control border to retain a
+     quiet but visible frame in every family and color mode. */
+  --material-floating-border: color-mix(in oklab, var(--material-panel-border) 65%, var(--ctl-border-strong) 35%);
+  --material-surface: var(--material-panel-surface);
+  --material-border: var(--material-panel-border);
+  --material-rule: var(--material-panel-border);
+  --material-image: var(--material-panel-image);
+  --material-backdrop-filter: var(--material-panel-backdrop-filter);
+
+  /* ── MATERIAL SPACING ────────────────────────────────────────────────
+     [OURS] Foundations names one spacing unit and no insets, so the rhythm of a
+     surface is our decision — but it is a decision a MATERIAL makes once, not a
+     number thirty components each type out. Four roles say everything a surface
+     needs to say about space:
+
+       inset-inline / inset-block   the surface's own padding
+       stack-gap                    between stacked children of the surface
+       inline-gap                   between items sitting on one line
+
+     Every value is an integer multiple of --spacing. A half step is not a
+     smaller decision, it is a second rhythm: it lands off the scale everything
+     else is on, and two surfaces that meant to agree stop agreeing by two
+     pixels. A component derives its own role from the material's (see the
+     component recipes below) and never writes a literal. */
+  --material-panel-inset-inline: calc(var(--spacing) * 5);
+  --material-panel-inset-block: calc(var(--spacing) * 4);
+  --material-panel-stack-gap: calc(var(--spacing) * 4);
+  --material-panel-inline-gap: calc(var(--spacing) * 3);
+  --material-flat-inset-inline: calc(var(--spacing) * 5);
+  --material-flat-inset-block: calc(var(--spacing) * 4);
+  --material-flat-stack-gap: calc(var(--spacing) * 4);
+  --material-flat-inline-gap: calc(var(--spacing) * 3);
+  /* Floating detaches its surfaces, so it can afford the air a framed panel
+     cannot: one more step inside, one more between. */
+  --material-floating-inset-inline: calc(var(--spacing) * 6);
+  --material-floating-inset-block: calc(var(--spacing) * 5);
+  --material-floating-stack-gap: calc(var(--spacing) * 5);
+  --material-floating-inline-gap: calc(var(--spacing) * 3);
+  /* Bare already decided its cell padding; the roles name the same numbers so a
+     component reads one vocabulary in every material. Its stack gap is zero
+     because bare separates with a rule, not with space. */
+  --material-bare-inset-inline: var(--material-bare-cell-padding-inline);
+  --material-bare-inset-block: var(--material-bare-cell-padding-block);
+  --material-bare-stack-gap: 0px;
+  --material-bare-inline-gap: calc(var(--spacing) * 3);
+  --material-spacing-inset-inline: calc(var(--spacing) * 5);
+  --material-spacing-inset-block: calc(var(--spacing) * 4);
+  --material-spacing-stack-gap: calc(var(--spacing) * 4);
+  --material-spacing-inline-gap: calc(var(--spacing) * 3);
+  /* The active material's roles, for anything outside a surface's own scope.
+     Inside one, Surface.js republishes these from the material it selected. */
+  --material-inset-inline: var(--material-panel-inset-inline);
+  --material-inset-block: var(--material-panel-inset-block);
+  --material-stack-gap: var(--material-panel-stack-gap);
+  --material-inline-gap: var(--material-panel-inline-gap);
+
+  --shadow-tint: oklch(0.2077 0.0398 265.75);
+  --shadow-edge-tint: var(--shadow-tint);
+  --shadow-depth-tint: var(--shadow-tint);
+  --shadow-strength: 1;
+  /* An optional inset light-catching edge composes with every elevation rung.
+     Keeping it as one layer preserves the shared depth stack and lets the
+     shadow-strength control suppress it when the authored value uses that
+     input in its alpha. */
+  --surface-highlight-shadow: 0 0 oklch(0 0 0 / 0);
+  --elevation-none: 0 0 oklch(0 0 0 / 0);
+  --elevation-sm: 0 1px 2px oklch(from var(--shadow-edge-tint) l c h / calc(0.04 * var(--shadow-strength))), 0 8px 20px -16px oklch(from var(--shadow-depth-tint) l c h / calc(0.16 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  --elevation-md: 0 1px 2px oklch(from var(--shadow-edge-tint) l c h / calc(0.04 * var(--shadow-strength))), 0 18px 44px -18px oklch(from var(--shadow-depth-tint) l c h / calc(0.20 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  --elevation-lg: 0 2px 5px oklch(from var(--shadow-edge-tint) l c h / calc(0.06 * var(--shadow-strength))), 0 22px 52px -20px oklch(from var(--shadow-depth-tint) l c h / calc(0.28 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  --elevation-xl: 0 0.1875rem 0.5rem oklch(from var(--shadow-edge-tint) l c h / calc(0.07 * var(--shadow-strength))), 0 2rem 4.5rem -1.5rem oklch(from var(--shadow-depth-tint) l c h / calc(0.36 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  /* Buttons keep the shared defaults unless a theme documents a distinct
+     control shape or elevation recipe. These are derived component roles,
+     not additional direct inputs in the theme-extraction contract. */
+  --button-radius: var(--radius);
+  --button-font-weight: 600;
+  --button-primary-shadow: var(--elevation-sm);
+  --button-secondary-shadow: var(--elevation-sm);
+  --button-secondary-border: var(--ctl-border);
+  --button-secondary-border-hover: var(--ctl-border-strong);
+  /* Components use Tailwind's shadow-none/sm/md/lg tiers directly. */
+  --shadow-flat: var(--elevation-none);
+  --shadow-focus: 0 0 0 var(--ring-ctl) var(--brand-ring);
+  --default-transition-duration: 160ms;
+  --default-transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  --ease-standard: cubic-bezier(.4, 0, .2, 1);
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --interactive-hover-lift: 0rem;
+  --icon-stroke-width: 2;
+  --ring-ctl: 3px;
+  --ring-offset-ctl: 0;
+  /* Tailwind's native spacing namespace reads this public runtime value
+     directly for p-/m-/gap-/space-/w-/h- utilities. */
+  --spacing: 0.25rem;
+  --sidebar-width: 17.5rem;
+  --chart-gap: 0.75rem;
+  --chart-label-gap: 0.625rem;
+
+  /* Semantic density knobs complement the global theme spacing scale for
+     component-specific geometry that does not map to a Tailwind utility. */
+  --font-scale: 1;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  /* Semantic family roles let a theme decide whether compact chrome labels and
+     emphasized figures use its sans, display or mono face without changing
+     component markup or repurposing the underlying family tokens. */
+  --font-chrome-label: var(--font-mono);
+  --font-data-emphasis: var(--font-sans);
+  --text-xs: calc(0.75rem * var(--font-scale));
+  --text-sm: calc(0.875rem * var(--font-scale));
+  --text-base: calc(1rem * var(--font-scale));
+  --text-lg: calc(1.125rem * var(--font-scale));
+  --text-xl: calc(1.25rem * var(--font-scale));
+  --text-2xl: calc(1.5rem * var(--font-scale));
+  --text-3xl: calc(1.875rem * var(--font-scale));
+
+  /* ── BLOCK ROLES ───────────────────────────────────────────────────────────
+     A page composes its own blocks — a summary band, a group of related facts,
+     a figure that leads — and until now had only colour tokens to shape them
+     with, so eleven generated pages drew the same left accent bar. A composed
+     element marks WHAT IT IS (`data-kf-block="emphasis|group|figure|meta|rail"`)
+     and the theme decides what that looks like: the values below are the
+     pre-theme defaults, and every theme block in theme-variants.css replaces
+     them with its own emphasis, group and display-scale decisions.
+     The builder marks meaning; the theme paints form. */
+  --block-form-emphasis: weight;
+  --block-form-group: card;
+  --block-form-scale: balanced;
+  --block-emphasis-bg: transparent;
+  --block-emphasis-border: transparent;
+  --block-emphasis-border-width: 0;
+  --block-emphasis-border-side: 0;
+  --block-emphasis-radius: 0;
+  --block-emphasis-padding: 0;
+  --block-emphasis-weight: 600;
+  --block-emphasis-tracking: -0.011em;
+  --block-emphasis-shadow: none;
+  --block-group-bg: var(--material-surface);
+  --block-group-border: var(--material-border);
+  --block-group-border-width: 1px;
+  --block-group-radius: var(--radius);
+  --block-group-padding: calc(var(--spacing) * 5);
+  --block-group-gap: calc(var(--spacing) * 4);
+  --block-group-divider: transparent;
+  --block-figure-size: calc(1.728rem * var(--font-scale));
+  --block-figure-weight: 650;
+  --block-figure-tracking: -0.015em;
+  --block-meta-size: var(--text-xs);
+  --block-meta-color: var(--ctl-fg-muted);
+  --block-meta-tracking: normal;
+  --block-label-family: var(--font-sans);
+  --block-label-size: 0.75rem;
+  --block-label-weight: 600;
+  --block-label-tracking: 0.02em;
+  --block-label-transform: none;
+  --block-label-color: var(--ctl-fg-muted);
+  --block-badge-radius: 999px;
+  /* The FORM decides the chip's shape, SEVERITY decides its hue. A form reaches for the tone
+     trio; an unranked badge resolves it to the neutral it always painted. */
+  --block-badge-tone: var(--ctl-fg-muted);
+  --block-badge-tone-wash: var(--ctl-track);
+  --block-badge-tone-line: var(--ctl-border);
+  --block-badge-bg: var(--ctl-track);
+  --block-badge-border: transparent;
+  --block-badge-border-width: 0;
+  --block-badge-padding: calc(var(--spacing) * 1) calc(var(--spacing) * 3);
+  --block-badge-weight: 600;
+  --block-badge-transform: none;
+  /* Pre-theme default only. The real value comes from the active theme block in
+     theme-variants.css; this just keeps the first paint from having no radius at
+     all before ThemeProvider stamps data-theme. */
+  --radius: 0.75rem;
+  /* The @theme bridge above derives every component radius utility from this
+     live base. Components use rounded-sm…4xl, rounded-full or rounded-none. */
+
+  --chart-1: oklch(0.5461 0.2152 262.88);
+  --chart-2: oklch(0.7137 0.1434 254.62);
+  --chart-3: oklch(0.6959 0.1491 162.48);
+  --chart-4: oklch(0.6056 0.2189 292.72);
+  --chart-5: oklch(0.7686 0.1647 70.08);
+  --chart-6: oklch(0.5332 0.0364 255.68);
+  --chart-7: oklch(0.5858 0.222 17.58);
+  --chart-8: oklch(0.4244 0.1809 265.64);
+  /* Text placed on a series wash uses a measured ink rather than the fill.
+     The weights are the lightest shared values that clear the 4.8:1 contract
+     across every retained theme's 18% series wash. */
+  --chart-1-ink: color-mix(in oklab, var(--chart-1) 69%, oklch(0 0 0));
+  --chart-2-ink: color-mix(in oklab, var(--chart-2) 63%, oklch(0 0 0));
+  --chart-3-ink: color-mix(in oklab, var(--chart-3) 62%, oklch(0 0 0));
+  --chart-4-ink: color-mix(in oklab, var(--chart-4) 65%, oklch(0 0 0));
+  --chart-5-ink: color-mix(in oklab, var(--chart-5) 63%, oklch(0 0 0));
+  --chart-6-ink: color-mix(in oklab, var(--chart-6) 65%, oklch(0 0 0));
+  --chart-7-ink: color-mix(in oklab, var(--chart-7) 65%, oklch(0 0 0));
+  --chart-8-ink: color-mix(in oklab, var(--chart-8) 62%, oklch(0 0 0));
+  /* Solid chart fills need a different foreground role than the chart-ink
+     tokens above, which are measured against pale series washes. Theme
+     generation replaces these Vela-safe fallbacks for every catalog ramp. */
+  --chart-1-fill-ink: oklch(1 0 0);
+  --chart-2-fill-ink: oklch(0 0 0);
+  --chart-3-fill-ink: oklch(0 0 0);
+  --chart-4-fill-ink: oklch(1 0 0);
+  --chart-5-fill-ink: oklch(0 0 0);
+  --chart-6-fill-ink: oklch(1 0 0);
+  --chart-7-fill-ink: oklch(1 0 0);
+  --chart-8-fill-ink: oklch(1 0 0);
+
+  /* Vela identity colors are a dedicated eight-color set so people remain
+     distinct without inheriting the chart ramp's pale or neutral slots. */
+  --avatar-1: oklch(0.5461 0.2152 262.88);
+  --avatar-2: oklch(0.5876 0.1389 241.97);
+  --avatar-3: oklch(0.596 0.1274 163.23);
+  --avatar-4: oklch(0.5858 0.222 17.58);
+  --avatar-5: oklch(0.5553 0.1455 49);
+  --avatar-6: oklch(0.5413 0.2466 293.01);
+  --avatar-7: oklch(0.5916 0.218 0.58);
+  --avatar-8: oklch(0.6002 0.1038 184.7);
+
+  --gradient-primary: linear-gradient(180deg, var(--brand-600), var(--brand-600));
+  /* State images default to none to preserve the established solid hover and
+     pressed colours. Glossy themes can retain or retune their highlight per
+     state without hard-coding a theme branch in Button. */
+  --gradient-primary-hover: none;
+  --gradient-primary-active: none;
+  --gradient-data: linear-gradient(90deg, var(--brand-600), var(--chart-2));
+}
+
+/* Compatibility aliases for the create-app scaffold shell, which reads the
+   sidebar-* names directly while the shared kit uses the canonical chrome,
+   brand, field and control tokens above. The doubled attribute specificity
+   prevents older scaffold defaults from overriding the selected live theme.
+   Three more aliases stood here — --sidebar-primary, --sidebar-primary-foreground
+   and --sidebar-accent-foreground — with no reader in any kit, shell or
+   generator (npm run census:legacy); they are deleted, not commented out. */
+:root,
+:root[data-theme][data-theme] {
+  --sidebar-foreground: var(--ctl-fg);
+  --sidebar-accent: var(--field-selected);
+  --sidebar-muted: var(--ctl-fg-muted);
+}
+
+/* ── COMPONENT SPACING RECIPES ───────────────────────────────────────────────
+   A component names its ROLE; the material decides the number. Every role here
+   is derived from a --material-* role, so the whole kit moves together when a
+   material changes its rhythm, and no component carries a literal that can
+   drift from its neighbours. Derivations subtract whole spacing units only —
+   a row is one step tighter than the surface that holds it, never half of one.
+
+   Read this list as the kit's spacing contract: if a component needs an inset
+   that is not here, the answer is a new role, not a utility class. */
+
+/* A card's content sits at the material's inset; its footer keeps the material's
+   rhythm above and below the rule it hangs from. */
+[data-kf-component="card"] > [data-card-slot="content"] {
+  padding-inline: var(--material-inset-inline);
+  padding-block: var(--material-inset-block);
+}
+[data-card-slot="footer"] {
+  gap: var(--material-inline-gap);
+}
+[data-card-slot="footer"].kf-card-footer-divided {
+  margin-top: var(--material-stack-gap);
+  padding-top: var(--material-stack-gap);
+}
+.kf-stack-gap {
+  gap: var(--material-stack-gap);
+}
+.kf-inline-gap {
+  gap: var(--material-inline-gap);
+}
+
+/* Rows. A row is the kit's densest surface: it keeps the material's horizontal
+   inset so its columns line up with everything else on the page, and takes one
+   step off the vertical so a list of them reads as a list. */
+[data-kf-component="table"] {
+  --row-inset-inline: var(--material-inset-inline);
+  --row-inset-block: calc(var(--material-inset-block) - var(--spacing));
+}
+[data-kf-component="table"][data-density="compact"] {
+  --row-inset-inline: calc(var(--spacing) * 2);
+}
+[data-kf-component="table"] :where(th, td)[data-table-cell] {
+  padding-inline: var(--row-inset-inline);
+  padding-block: var(--row-inset-block);
+}
+/* An accordion's header and panel are rows of the surface holding them. */
+[data-kf-component="accordion"] [data-accordion-trigger] {
+  padding-inline: var(--material-inset-inline);
+  padding-block: var(--material-inset-block);
+  gap: var(--material-inline-gap);
+}
+[data-kf-component="accordion"] [data-accordion-panel] {
+  padding-inline: var(--material-inset-inline);
+  padding-bottom: calc(var(--material-inset-block) + var(--spacing) * 2);
+}
+
+/* ── BLOCK ROLE RECIPES ──────────────────────────────────────────────────────
+   One place decides what each role IS; sixteen theme blocks decide what it looks
+   like. A role paints nothing a theme has not asked for: a `weight` theme's
+   emphasis has no fill, no border and no radius, so the same page source reads as
+   typographic emphasis there and as a tinted band under a `fill` theme.
+   Layout stays the page's: these rules set no width, no grid and no position. */
+[data-kf-block="emphasis"] {
+  background: var(--block-emphasis-bg);
+  border-style: solid;
+  border-color: var(--block-emphasis-border);
+  border-width: var(--block-emphasis-border-width);
+  border-left-width: var(--block-emphasis-border-side);
+  border-radius: var(--block-emphasis-radius);
+  padding: var(--block-emphasis-padding);
+  box-shadow: var(--block-emphasis-shadow);
+  font-weight: var(--block-emphasis-weight);
+  letter-spacing: var(--block-emphasis-tracking);
+}
+/* no `display`, no `flex-direction`: a group is a SURFACE, not a layout — the same rule `label` states
+   below. Owning the direction here turned every builder's row of status chips into a centred column
+   inside a tall card (clinic-trials: three pages, and the "Approve safety report" cards). The author's
+   own utilities (`flex flex-wrap items-center`, `space-y-*`, `grid`) decide how the members lie; the
+   theme decides what the group is made of. `gap` still applies wherever the author chose flex or grid. */
+[data-kf-block="group"] {
+  gap: var(--block-group-gap);
+  background: var(--block-group-bg);
+  border: var(--block-group-border-width) solid var(--block-group-border);
+  border-radius: var(--block-group-radius);
+  padding: var(--block-group-padding);
+}
+/* a `rule` theme separates the members of a group instead of boxing them */
+[data-kf-block="group"] > * + * {
+  border-top: 1px solid var(--block-group-divider);
+  padding-top: var(--block-group-divider-gap, 0);
+}
+[data-kf-block="figure"] {
+  font-family: var(--font-data-emphasis);
+  font-size: var(--block-figure-size);
+  font-weight: var(--block-figure-weight);
+  letter-spacing: var(--block-figure-tracking);
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+  color: var(--ctl-fg);
+}
+/* the small-label voice: a kicker over a title, a column head, a field caption. The loudest signal
+   of care in an interface and the thing every generated page was hand-rolling. */
+[data-kf-block="label"] {
+  /* no `display`: a label is a voice, not a layout. Forcing block here turned every <th> that wore
+     it into a stacked row. The caller decides where it sits; the theme decides how it speaks. */
+  font-family: var(--block-label-family);
+  font-size: calc(var(--block-label-size) * var(--font-scale));
+  font-weight: var(--block-label-weight);
+  letter-spacing: var(--block-label-tracking);
+  text-transform: var(--block-label-transform);
+  color: var(--block-label-color);
+  line-height: 1.4;
+}
+[data-kf-block="badge"] {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--spacing) * 1.5);
+  position: relative;
+  font-family: var(--block-label-family);
+  font-size: calc(0.6875rem * var(--font-scale));
+  font-weight: var(--block-badge-weight);
+  text-transform: var(--block-badge-transform);
+  border-radius: var(--block-badge-radius);
+  background: var(--block-badge-bg);
+  border: var(--block-badge-border-width) solid var(--block-badge-border);
+  padding: var(--block-badge-padding);
+  color: var(--block-badge-tone);
+  white-space: nowrap;
+}
+/* An ORDERED step, for the one thing categorical tones cannot say: which of these is worse.
+   Set on the block, so the theme's chosen form paints it — a `dot` theme colours the mark and the
+   word, a `dot-pill` theme fills and outlines the chip, and neither has to know about the other. */
+[data-kf-block="badge"][data-kf-severity="1"] { --block-badge-tone: var(--severity-1); --block-badge-tone-wash: var(--severity-1-wash); --block-badge-tone-line: var(--severity-1-line); }
+[data-kf-block="badge"][data-kf-severity="2"] { --block-badge-tone: var(--severity-2); --block-badge-tone-wash: var(--severity-2-wash); --block-badge-tone-line: var(--severity-2-line); }
+[data-kf-block="badge"][data-kf-severity="3"] { --block-badge-tone: var(--severity-3); --block-badge-tone-wash: var(--severity-3-wash); --block-badge-tone-line: var(--severity-3-line); }
+[data-kf-block="badge"][data-kf-severity="4"] { --block-badge-tone: var(--severity-4); --block-badge-tone-wash: var(--severity-4-wash); --block-badge-tone-line: var(--severity-4-line); }
+/* a `dot` theme states the badge as a coloured mark beside the word, not a chip around it */
+[data-kf-block="badge"]::before {
+  content: "";
+  display: var(--block-badge-dot-display, none);
+  position: var(--block-badge-dot-position, absolute);
+  left: 0;
+  width: calc(var(--spacing) * 1.5);
+  height: calc(var(--spacing) * 1.5);
+  border-radius: 999px;
+  background: currentColor;
+}
+/* THE CALENDAR TAKES THE THEME'S FORM, not a vocabulary of its own.
+   A scheduling calendar shipped as a bare 1px grid — `border border-solid border-layer-border p-1`
+   per day — on a page where every other surface was a themed card, and the owner's reading was the
+   right one: the calendar had no style applied. It was not that the theme said nothing; it was that
+   the calendar asked nothing. The catalogue's `calendarView` variants are DISPLAY SWITCHES (which of
+   five layouts to show) and carry no colour, shape or density at all.
+
+   So the day cell is a GROUP — whatever this theme does to bound a group, card or tint or rule, it
+   does here — the day names are a LABEL, and an event is a BADGE. Three roles the theme already
+   decides, reused, so a mono-caps theme gets mono-caps day names and a tint theme gets tinted cells
+   without anyone writing a calendar rule. */
+[data-kf-component="calendar"] [data-calendar-day] {
+  background: var(--block-group-bg);
+  border: var(--block-group-border-width) solid var(--block-group-border);
+  border-radius: var(--block-group-radius);
+  padding: calc(var(--spacing) * 1);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--spacing) * 1);
+  min-height: calc(var(--spacing) * 16);
+}
+/* today is the one cell a reader looks for first; it takes the theme's raised surface, not a colour
+   of its own, so a theme that separates by tint and one that separates by rule both stay themselves */
+[data-kf-component="calendar"] [data-calendar-today] {
+  background: var(--ctl-raise);
+}
+[data-kf-component="calendar"] [data-calendar-event] {
+  width: 100%;
+  cursor: pointer;
+}
+
+[data-kf-block="meta"] {
+  font-size: var(--block-meta-size);
+  color: var(--block-meta-color);
+  letter-spacing: var(--block-meta-tracking);
+}
+/* a narrow supporting column, separated the way this theme separates things */
+[data-kf-block="rail"] {
+  background: var(--block-group-bg);
+  border: var(--block-group-border-width) solid var(--block-group-border);
+  border-radius: var(--block-group-radius);
+  padding: var(--block-group-padding);
+}
+
+/* The UI body is the 14px step. Declaring it here closes the browser's silent
+   16px inheritance floor for unclassed children inside generic components. */
+body {
+  font-size: var(--text-sm);
+}
+
+/* Theme presets are applied with :root[data-theme], which is more specific
+   than a lone .dark class. Keep the plain selector for standalone and scoped
+   dark regions, and add the themed-root selector so the complete dark token
+   graph wins in the app. Derived aliases are restated here because inherited
+   custom-property values otherwise retain the context where they were resolved. */
+.dark,
+:root.dark[data-theme] {
+  /* The severity ramp lifts off a dark ground and keeps its order. Held at L 0.514-0.578 a chip's
+     ink runs about 4:1 on a dark surface, which is under the bar for a small bold word; the rebuild's
+     own dark ramp sits at 0.676-0.778 and its chroma still rises with severity, so only the two
+     numbers move and the structure does not. */
+  --severity-l-1: 0.740;
+  --severity-l-2: 0.778;
+  --severity-l-3: 0.712;
+  --severity-l-4: 0.676;
+  --severity-c-1: 0.105;
+  --severity-c-2: 0.129;
+  --severity-c-3: 0.129;
+  --severity-c-4: 0.140;
+  /* Restated, for the reason the block comment above gives: --severity-1..4 are resolved where they
+     are DECLARED, so overriding only their L and C inputs here leaves the light ramp inherited intact.
+     Measured before this line existed — all sixteen themes resolved identically in dark. */
+  --severity-1: oklch(from var(--success-600) var(--severity-l-1) var(--severity-c-1) h);
+  --severity-2: oklch(from var(--warning-600) var(--severity-l-2) var(--severity-c-2) h);
+  --severity-3: oklch(from color-mix(in oklch shorter hue, var(--warning-600), var(--danger-600)) var(--severity-l-3) var(--severity-c-3) h);
+  --severity-4: oklch(from var(--danger-600) var(--severity-l-4) var(--severity-c-4) h);
+  --severity-1-wash: color-mix(in oklab, var(--severity-1) 18%, var(--ctl-surface));
+  --severity-2-wash: color-mix(in oklab, var(--severity-2) 20%, var(--ctl-surface));
+  --severity-3-wash: color-mix(in oklab, var(--severity-3) 18%, var(--ctl-surface));
+  --severity-4-wash: color-mix(in oklab, var(--severity-4) 16%, var(--ctl-surface));
+  --severity-1-line: color-mix(in oklab, var(--severity-1) 38%, var(--ctl-surface));
+  --severity-2-line: color-mix(in oklab, var(--severity-2) 40%, var(--ctl-surface));
+  --severity-3-line: color-mix(in oklab, var(--severity-3) 38%, var(--ctl-surface));
+  --severity-4-line: color-mix(in oklab, var(--severity-4) 36%, var(--ctl-surface));
+  --brand-100: color-mix(in oklab, var(--brand-600) 20%, var(--ctl-surface));
+  --brand-text: color-mix(in oklab, var(--brand-600) 42%, oklch(1 0 0));
+  --danger-text: color-mix(in oklab, var(--danger-600) 42%, oklch(1 0 0));
+  --danger-100: color-mix(in oklab, var(--danger-600) 20%, var(--ctl-surface));
+  /* Dark elevation combines a quiet light edge with a dark depth layer. This
+     keeps raised surfaces legible without turning every panel into a bright
+     bordered rectangle. Theme/runtime strength remains the shared alpha knob. */
+  --ctl-surface: color-mix(in oklab, var(--brand-600) 9%, oklch(0.255 0.0131 285.44));
+  --ctl-raise: color-mix(in oklab, var(--brand-600) 9%, oklch(0.255 0.0131 285.44));
+  --ctl-track: color-mix(in oklab, var(--brand-600) 10%, oklch(0.272 0.0147 285.38));
+  --ctl-border: color-mix(in oklab, var(--brand-600) 14%, oklch(0.3867 0.0168 285.59));
+  --ctl-border-strong: color-mix(in oklab, var(--brand-600) 18%, oklch(0.4644 0.0177 285.69));
+  --ctl-offset: color-mix(in oklab, var(--brand-600) 7%, oklch(0.1749 0.0082 285.52));
+  --shadow-tint: oklch(0 0 0);
+  --shadow-edge-tint: oklch(1 0 0);
+  --shadow-depth-tint: oklch(0 0 0);
+  --ctl-fg: color-mix(in oklab, var(--brand-600) 6%, oklch(0.9677 0.0027 286.35));
+  --ctl-fg-muted: color-mix(in oklab, var(--brand-600) 10%, oklch(0.838 0.0096 286.19));
+  --field-surface: color-mix(in oklab, var(--brand-600) 10%, oklch(0.2064 0.0079 285.69));
+  --field-placeholder: color-mix(in oklab, var(--brand-600) 10%, oklch(0.62 0.0149 285.96));
+  --field-disabled: color-mix(in oklab, var(--brand-600) 10%, oklch(0.2282 0.0077 285.78));
+  --overlay-scrim: oklch(0 0 0 / 0.62);
+  --skeleton-sheen: color-mix(in oklab, var(--ctl-raise) 85%, transparent);
+  --cal-range: color-mix(in oklab, var(--brand-600) 24%, var(--ctl-surface));
+  --success-100: color-mix(in oklab, var(--success-600) 20%, var(--ctl-surface));
+  --warning-100: color-mix(in oklab, var(--warning-600) 20%, var(--ctl-surface));
+  --info-100: color-mix(in oklab, var(--info-600) 20%, var(--ctl-surface));
+  --success-text: color-mix(in oklab, var(--success-600) 60%, oklch(1 0 0));
+  --warning-text: color-mix(in oklab, var(--warning-600) 65%, oklch(1 0 0));
+  --warning-700: color-mix(in oklab, var(--warning-600) 65%, oklch(1 0 0));
+  --info-text: color-mix(in oklab, var(--info-600) 60%, oklch(1 0 0));
+  --brand-surface-image: none;
+  --success-surface-image: none;
+  --warning-surface-image: none;
+  --danger-surface-image: none;
+  --info-surface-image: none;
+  --neutral-surface-image: none;
+  --chart-1: oklch(0.678 0.1777 285.01);
+  --chart-2: oklch(0.8368 0.0877 290.92);
+  --chart-3: oklch(0.7546 0.1409 164.49);
+  --chart-4: oklch(0.7463 0.1073 244.43);
+  --chart-5: oklch(0.826 0.1026 64.18);
+  --chart-6: oklch(0.7521 0.028 271.76);
+  --chart-7: oklch(0.7674 0.1187 208.27);
+  --chart-8: oklch(0.6046 0.1617 276.83);
+  --chart-1-ink: color-mix(in oklab, var(--chart-1) 84%, oklch(1 0 0));
+  --chart-2-ink: var(--chart-2);
+  --chart-3-ink: var(--chart-3);
+  --chart-4-ink: var(--chart-4);
+  --chart-5-ink: var(--chart-5);
+  --chart-6-ink: var(--chart-6);
+  --chart-7-ink: var(--chart-7);
+  --chart-8-ink: color-mix(in oklab, var(--chart-8) 73%, oklch(1 0 0));
+
+  --field-border: var(--ctl-border);
+  --field-border-hover: var(--ctl-border-strong);
+  --field-selected: color-mix(in oklab, var(--brand-600) 12%, var(--ctl-surface));
+  --layer-surface: var(--ctl-surface);
+  --layer-border: var(--ctl-border);
+  --tooltip-surface: var(--ctl-fg);
+  --tooltip-fg: var(--ctl-offset);
+  --skeleton-base: var(--ctl-track);
+  --cal-outside: var(--field-placeholder);
+
+  --chrome-base-surface: var(--ctl-surface);
+  --chrome-base-border: var(--ctl-border);
+  --chrome-base-fg: var(--ctl-fg);
+  --chrome-base-muted: var(--ctl-fg-muted);
+  --chrome-base-backdrop-filter: none;
+  --chrome-base-hover: color-mix(in oklab, var(--brand-600) 6%, var(--ctl-surface));
+  --chrome-base-active-fg: var(--brand-fg);
+  --chrome-accent-backdrop-filter: none;
+  --chrome-backdrop-filter: var(--chrome-base-backdrop-filter);
+
+  --surface-highlight-shadow: 0 0 oklch(0 0 0 / 0);
+  --elevation-sm: 0 0 0 1px oklch(from var(--shadow-edge-tint) l c h / calc(0.08 * var(--shadow-strength))), 0 8px 20px -14px oklch(from var(--shadow-depth-tint) l c h / calc(0.42 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  --elevation-md: 0 0 0 1px oklch(from var(--shadow-edge-tint) l c h / calc(0.10 * var(--shadow-strength))), 0 14px 34px -16px oklch(from var(--shadow-depth-tint) l c h / calc(0.56 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  --elevation-lg: 0 0 0 1px oklch(from var(--shadow-edge-tint) l c h / calc(0.12 * var(--shadow-strength))), 0 28px 64px -20px oklch(from var(--shadow-depth-tint) l c h / calc(0.68 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  --elevation-xl: 0 0 0 0.0625rem oklch(from var(--shadow-edge-tint) l c h / calc(0.14 * var(--shadow-strength))), 0 2.5rem 5.5rem -1.5rem oklch(from var(--shadow-depth-tint) l c h / calc(0.80 * var(--shadow-strength))), var(--surface-highlight-shadow);
+  --inset-shadow-2xs: inset 0 1px oklch(from var(--shadow-tint) l c h / calc(0.05 * var(--shadow-strength)));
+  --inset-shadow-xs: inset 0 1px 1px oklch(from var(--shadow-tint) l c h / calc(0.05 * var(--shadow-strength)));
+  --inset-shadow-sm: inset 0 2px 4px oklch(from var(--shadow-tint) l c h / calc(0.05 * var(--shadow-strength)));
+  --drop-shadow-xs: 0 1px 1px oklch(from var(--shadow-tint) l c h / calc(0.05 * var(--shadow-strength)));
+  --drop-shadow-sm: 0 1px 2px oklch(from var(--shadow-tint) l c h / calc(0.15 * var(--shadow-strength)));
+  --drop-shadow-md: 0 3px 3px oklch(from var(--shadow-tint) l c h / calc(0.12 * var(--shadow-strength)));
+  --drop-shadow-lg: 0 4px 4px oklch(from var(--shadow-tint) l c h / calc(0.15 * var(--shadow-strength)));
+  --drop-shadow-xl: 0 9px 7px oklch(from var(--shadow-tint) l c h / calc(0.10 * var(--shadow-strength)));
+  --text-shadow-2xs: 0 1px 0 oklch(from var(--shadow-tint) l c h / calc(0.15 * var(--shadow-strength)));
+  --text-shadow-xs: 0 1px 1px oklch(from var(--shadow-tint) l c h / calc(0.20 * var(--shadow-strength)));
+  --text-shadow-sm: 0 1px 2px oklch(from var(--shadow-tint) l c h / calc(0.20 * var(--shadow-strength)));
+  --material-panel-surface: var(--ctl-surface);
+  --material-panel-image: none;
+  --material-panel-backdrop-filter: none;
+  --material-flat-surface: var(--ctl-raise);
+  --material-flat-border: var(--ctl-border);
+  --material-flat-image: none;
+  --material-flat-backdrop-filter: none;
+  --material-bare-surface: var(--ctl-surface);
+  --material-bare-border: transparent;
+  --material-bare-image: none;
+  --material-bare-rule: color-mix(in oklab, var(--ctl-border-strong) 42%, var(--ctl-surface));
+  --material-bare-cell-padding-inline: calc(var(--spacing) * 6);
+  --material-bare-cell-padding-block: calc(var(--spacing) * 5);
+  --material-bare-backdrop-filter: none;
+  --material-spacing-surface: var(--ctl-surface);
+  --material-spacing-border: transparent;
+  --material-spacing-image: none;
+  --material-spacing-backdrop-filter: none;
+  --material-floating-border: color-mix(in oklab, var(--material-panel-border) 65%, var(--ctl-border-strong) 35%);
+  --material-surface: var(--material-panel-surface);
+  --material-border: var(--material-panel-border);
+  --material-rule: var(--material-panel-border);
+  --material-image: var(--material-panel-image);
+  --material-backdrop-filter: var(--material-panel-backdrop-filter);
+
+  --shadow-flat: var(--shadow-none);
+}
+
+/* PageHeader keeps one semantic slot structure while the theme catalog chooses
+   its composition. Standard is the Vela/first-paint fallback. */
+:where([data-kf-component="page-header"][data-page-header-variant="theme"]) {
+  --page-header-layout-columns: minmax(0, 1fr) auto auto;
+  --page-header-layout-areas: "identity meta actions" "description description actions";
+  --page-header-layout-align: end;
+  --page-header-layout-column-gap: 1rem;
+  --page-header-layout-row-gap: 0.5rem;
+  --page-header-identity-direction: column;
+  --page-header-identity-align: flex-start;
+  --page-header-identity-gap: 0.5rem;
+  --page-header-title-size: 1.875rem;
+  --page-header-title-line-height: 1.15;
+  --page-header-title-weight: 600;
+  --page-header-title-tracking: -0.02em;
+  --page-header-description-max-width: none;
+  --page-header-description-size: 0.875rem;
+  --page-header-description-line-height: 1.5;
+  --page-header-description-white-space: normal;
+  --page-header-description-overflow: visible;
+  --page-header-description-text-overflow: clip;
+  --page-header-description-border-width: 0px;
+  --page-header-description-padding-inline: 0px;
+  --page-header-title-family: var(--font-display);
+  --page-header-title-transform: none;
+  --page-header-eyebrow-size: 0.75rem;
+  --page-header-eyebrow-weight: 600;
+  --page-header-eyebrow-family: var(--font-sans);
+  --page-header-eyebrow-transform: uppercase;
+  --page-header-eyebrow-tracking: 0.06em;
+  --page-header-eyebrow-color: var(--brand-text);
+  --page-header-eyebrow-gap: 0.5rem;
+  --page-header-eyebrow-bg: transparent;
+  --page-header-eyebrow-radius: 0px;
+  --page-header-eyebrow-padding: 0px;
+  --page-header-eyebrow-mark-display: inline-block;
+  --page-header-eyebrow-mark-width: 0.375rem;
+  --page-header-eyebrow-mark-height: 0.375rem;
+  --page-header-eyebrow-mark-radius: 999px;
+  --page-header-eyebrow-mark-color: var(--brand-600);
+  --page-header-meta-align: end;
+  --page-header-meta-justify: start;
+  --page-header-actions-align: end;
+}
+
+:where([data-kf-component="page-header"]) {
+  container: page-header / inline-size;
+}
+
+@container page-header (max-width: 48rem) {
+  [data-page-header-layout] {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    grid-template-areas: "identity actions" "description description" "meta meta" !important;
+    align-items: end !important;
+    row-gap: 0.625rem !important;
+  }
+
+  [data-page-header-identity] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+
+  [data-page-header-description] {
+    max-width: none !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    border-inline-start-width: 0 !important;
+    padding-inline-start: 0 !important;
+  }
+
+  [data-page-header-meta] {
+    justify-self: start !important;
+  }
+}
+
+/* FunnelChart renders one ordered dataset through four bounded anatomies.
+   Silhouette preserves the original chart and is the Vela/first-paint fallback. */
+:where([data-kf-component="funnel-chart"][data-funnel-variant="theme"]) {
+  --funnel-silhouette-display: grid;
+  --funnel-centered-display: none;
+  --funnel-conversion-display: none;
+  --funnel-capacity-display: none;
+  --funnel-two-column: 9rem minmax(0, 1fr);
+  --funnel-three-column: 9rem minmax(0, 1fr) 8rem;
+}
+
+:where([data-kf-component="funnel-chart"]) {
+  container: funnel-chart / inline-size;
+}
+
+@container funnel-chart (max-width: 42rem) {
+  [data-funnel-view="silhouette"],
+  [data-funnel-view="centered-bars"] {
+    --funnel-two-column: 7rem minmax(0, 1fr) !important;
+  }
+
+  [data-funnel-view="conversion-steps"],
+  [data-funnel-view="nested-capacity"] {
+    --funnel-three-column: 7rem minmax(0, 1fr) !important;
+  }
+
+  [data-funnel-rate] {
+    display: none !important;
+  }
+}
+
+/* ApprovalQueue is one semantic worklist with five bounded, theme-owned
+   anatomies. Status-row is the Vela/first-paint fallback; generated theme
+   selectors and explicit component overrides replace these roles without any
+   component-side theme-name branching. */
+:where([data-kf-component="approval-queue"][data-approval-queue-variant="theme"]),
+:where([data-kf-component="approval-row"][data-approval-queue-variant="theme"]) {
+  --approval-queue-summary-display: none;
+  --approval-queue-columns-display: none;
+  --approval-queue-row-columns: 1.25rem minmax(0, 1fr) auto auto;
+  --approval-queue-row-areas: "marker main chip actions";
+  --approval-queue-row-align: center;
+  --approval-queue-row-padding: 1.25rem 0;
+  --approval-queue-row-gap: 1rem;
+  --approval-queue-marker-display: flex;
+  --approval-queue-marker-width: 0.75rem;
+  --approval-queue-marker-height: 0.75rem;
+  --approval-queue-marker-radius: 999px;
+  --approval-queue-marker-shadow: 0 0 0 0.375rem var(--approval-queue-tone-bg);
+  --approval-queue-age-display: none;
+  --approval-queue-age-label-display: block;
+  --approval-queue-inline-severity-display: none;
+  --approval-queue-meta-severity-display: none;
+  --approval-queue-inline-state-display: inline;
+  --approval-queue-inline-age-display: inline;
+  --approval-queue-description-display: none;
+  --approval-queue-chip-display: inline-flex;
+  --approval-queue-state-display: none;
+  --approval-queue-arrow-display: inline-flex;
+}
+
+:where([data-kf-component="approval-queue"]) {
+  container: approval-queue / inline-size;
+}
+
+/* A queue can live in a narrow dashboard column even on a wide viewport. Its
+   responsive collapse therefore follows its own inline size, not the window. */
+@container approval-queue (max-width: 36rem) {
+  [data-approval-queue-columns] {
+    display: none !important;
+  }
+
+  [data-approval-queue-row] {
+    grid-template-columns: 1.25rem minmax(0, 1fr) auto !important;
+    grid-template-areas: "marker main actions" !important;
+    align-items: center !important;
+    column-gap: 0.875rem !important;
+  }
+
+  [data-approval-queue-marker] {
+    display: flex !important;
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+    border-radius: 999px !important;
+    box-shadow: 0 0 0 0.375rem var(--approval-queue-tone-bg) !important;
+  }
+
+  [data-approval-queue-age],
+  [data-approval-queue-state],
+  [data-approval-queue-chip],
+  [data-approval-queue-inline-severity],
+  [data-approval-queue-description],
+  [data-approval-queue-meta-severity] {
+    display: none !important;
+  }
+
+  [data-approval-queue-inline-state],
+  [data-approval-queue-inline-age] {
+    display: inline !important;
+  }
+}
+
+/* StatTile alarm variants are selected by the live theme catalog. This low-
+   specificity outline recipe is the safe fallback when no data-theme has been
+   stamped yet; generated theme selectors replace it without component-side
+   theme-name checks. Tone roles are supplied locally by each alarm tile. */
+:where([data-kf-component="stat-tile"][data-alarm-variant="theme"]) {
+  --stat-tile-alarm-surface: var(--material-surface);
+  --stat-tile-alarm-image: var(--material-image);
+  --stat-tile-alarm-outline: var(--material-border);
+  --stat-tile-alarm-border: color-mix(in oklab, var(--stat-tile-alarm-tone-base) 60%, var(--material-surface));
+  --stat-tile-alarm-side-rule-width: 0.1875rem;
+  --stat-tile-alarm-label: var(--ctl-fg-muted);
+  --stat-tile-alarm-value: var(--stat-tile-alarm-tone-base);
+  --stat-tile-alarm-unit: var(--ctl-fg-muted);
+  --stat-tile-alarm-unit-weight: 400;
+  --stat-tile-alarm-icon-bg: var(--stat-tile-alarm-icon-tone-bg);
+  --stat-tile-alarm-icon-fg: var(--stat-tile-alarm-icon-tone-text);
+  --stat-tile-alarm-spark: var(--stat-tile-alarm-tone-base);
+  --stat-tile-alarm-pill-bg: var(--stat-tile-alarm-tone-bg);
+  --stat-tile-alarm-pill-fg: var(--stat-tile-alarm-tone-text);
+}
+
+/* Compact and icon metric states use the same catalog-owned model as alarm.
+   These Vela recipes cover first paint before data-theme is stamped; explicit
+   overrides and theme selections are generated into theme-variants.css. */
+:where([data-kf-component="stat-tile"][data-content="label-value"][data-compact-variant="theme"]) {
+  --stat-tile-compact-surface: var(--material-surface);
+  --stat-tile-compact-image: var(--material-image);
+  --stat-tile-compact-outline: var(--material-border);
+  --stat-tile-compact-columns: auto minmax(0, 1fr);
+  --stat-tile-compact-rows: minmax(3.5rem, auto);
+  --stat-tile-compact-column-gap: 1rem;
+  --stat-tile-compact-row-gap: 0;
+  --stat-tile-compact-align-content: center;
+  --stat-tile-compact-min-height: 0px;
+  --stat-tile-compact-value-column: 1;
+  --stat-tile-compact-value-row: 1;
+  --stat-tile-compact-value-justify: start;
+  --stat-tile-compact-value-align: center;
+  --stat-tile-compact-value-bg: var(--stat-tile-compact-tone-solid);
+  --stat-tile-compact-value-color: var(--stat-tile-compact-tone-fg);
+  --stat-tile-compact-value-radius: 0px;
+  --stat-tile-compact-value-padding: 1.25rem;
+  --stat-tile-compact-value-margin: -1.25rem 0 -1.25rem -1.25rem;
+  --stat-tile-compact-value-width: max-content;
+  --stat-tile-compact-value-min-width: 5rem;
+  --stat-tile-compact-value-height: calc(100% + 2.5rem);
+  --stat-tile-compact-value-size: 2.25rem;
+  --stat-tile-compact-value-weight: 500;
+  --stat-tile-compact-label-column: 2;
+  --stat-tile-compact-label-row: 1;
+  --stat-tile-compact-label-align: center;
+  --stat-tile-compact-label-bg: transparent;
+  --stat-tile-compact-label-color: var(--ctl-fg);
+  --stat-tile-compact-label-padding: 0;
+  --stat-tile-compact-label-margin: 0;
+  --stat-tile-compact-label-transform: none;
+  --stat-tile-compact-label-weight: 400;
+  --stat-tile-compact-label-tracking: normal;
+  --stat-tile-compact-label-size: 0.875rem;
+  --stat-tile-compact-label-line-height: 1.25rem;
+  --stat-tile-compact-supporting-column: 2;
+  --stat-tile-compact-supporting-row: 2;
+  --stat-tile-compact-supporting-align: center;
+  --stat-tile-compact-supporting-color: var(--ctl-fg-muted);
+  --stat-tile-compact-supporting-margin: 0.5rem 0 0;
+  --stat-tile-compact-supporting-size: 0.75rem;
+  --stat-tile-compact-supporting-line-height: 1.125rem;
+  --stat-tile-compact-decoration-display: none;
+  --stat-tile-compact-decoration-bg: var(--stat-tile-compact-tone-fg);
+  --stat-tile-compact-decoration-opacity: 0.08;
+  --stat-tile-compact-decoration-size: 8rem;
+  --stat-tile-compact-decoration-top: -3rem;
+  --stat-tile-compact-decoration-right: -2rem;
+}
+
+:where([data-kf-component="stat-tile"][data-content="icon-label-value"][data-icon-variant="theme"]) {
+  --stat-tile-icon-columns: minmax(0, 1fr) auto;
+  --stat-tile-icon-rows: auto auto;
+  --stat-tile-icon-column-gap: 1rem;
+  --stat-tile-icon-row-gap: 0.625rem;
+  --stat-tile-icon-label-column: 1;
+  --stat-tile-icon-label-row: 1;
+  --stat-tile-icon-value-column: 1;
+  --stat-tile-icon-value-row: 2;
+  --stat-tile-icon-value-margin: 0;
+  --stat-tile-icon-chip-column: 2;
+  --stat-tile-icon-chip-row: 1 / span 2;
+  --stat-tile-icon-chip-size: 3rem;
+  --stat-tile-icon-chip-radius: 0.75rem;
+  --stat-tile-icon-chip-bg: var(--stat-tile-icon-tone-bg);
+  --stat-tile-icon-chip-fg: var(--stat-tile-icon-tone-text);
+}
+
+/* Vela's sparkline recipe covers first paint before ThemeProvider stamps the
+   catalog id. Theme and explicit recipe selectors in theme-variants.css replace
+   only these layout roles; StatTile continues to receive one numeric series. */
+:where([data-kf-component="stat-tile"][data-content="full"][data-sparkline-variant="theme"]) {
+  --stat-tile-spark-columns: auto minmax(0, 1fr) auto;
+  --stat-tile-spark-rows: 7rem auto;
+  --stat-tile-spark-column-gap: 1rem;
+  --stat-tile-spark-row-gap: 0.75rem;
+  --stat-tile-spark-label-column: 2;
+  --stat-tile-spark-label-row: 2;
+  --stat-tile-spark-label-justify: start;
+  --stat-tile-spark-label-align: center;
+  --stat-tile-spark-label-bg: transparent;
+  --stat-tile-spark-label-color: var(--ctl-fg);
+  --stat-tile-spark-label-padding: 0;
+  --stat-tile-spark-label-margin: 0;
+  --stat-tile-spark-delta-column: 3;
+  --stat-tile-spark-delta-row: 2;
+  --stat-tile-spark-delta-justify: end;
+  --stat-tile-spark-delta-align: center;
+  --stat-tile-spark-delta-bg: transparent;
+  --stat-tile-spark-delta-color: var(--stat-tile-spark-delta-tone-text);
+  --stat-tile-spark-delta-padding: 0;
+  --stat-tile-spark-value-column: 1;
+  --stat-tile-spark-value-row: 2;
+  --stat-tile-spark-value-justify: start;
+  --stat-tile-spark-value-align: center;
+  --stat-tile-spark-value-bg: transparent;
+  --stat-tile-spark-value-color: var(--ctl-fg);
+  --stat-tile-spark-value-padding: 0;
+  --stat-tile-spark-value-margin: 0;
+  --stat-tile-spark-chart-column: 1 / span 3;
+  --stat-tile-spark-chart-row: 1;
+  --stat-tile-spark-chart-justify: stretch;
+  --stat-tile-spark-chart-align: end;
+  --stat-tile-spark-chart-height: 7rem;
+  --stat-tile-spark-chart-width: auto;
+  --stat-tile-spark-chart-margin: -1.25rem -1.25rem 0;
+  --stat-tile-spark-chart-opacity: 1;
+  --stat-tile-spark-chart-z: 1;
+  --stat-tile-spark-line-display: block;
+  --stat-tile-spark-line-fill-opacity: 0;
+  --stat-tile-spark-line-transform: none;
+  --stat-tile-spark-dot-display: block;
+  --stat-tile-spark-bars-display: none;
+  --stat-tile-spark-bars-gap: 0.5rem;
+  --stat-tile-spark-bar-height: var(--spark-point-height);
+  --stat-tile-spark-bar-opacity: 1;
+  --stat-tile-spark-bar-radius: 0.25rem 0.25rem 0 0;
+  --stat-tile-spark-bar-soft: color-mix(in oklab, var(--stat-tile-spark-tone-base) 28%, var(--material-surface));
+  --stat-tile-spark-bar-strong: var(--stat-tile-spark-tone-base);
+}
+
+[data-stat-tile-spark-bar] {
+  flex: 1 1 0;
+  min-width: 0;
+  /* Point values exist on each bar, not on the ancestor defining the recipe. */
+  height: var(--stat-tile-spark-bar-height, var(--spark-point-height));
+  border-radius: var(--stat-tile-spark-bar-radius);
+  background: var(--stat-tile-spark-bar-soft);
+  opacity: var(--stat-tile-spark-bar-opacity, var(--spark-point-opacity));
+}
+
+[data-stat-tile-spark-bar][data-last="true"] {
+  background: var(--stat-tile-spark-bar-strong);
+  opacity: 1;
+}
+
+/* Recipe radii live in the stylesheet so StatTile continues to use the kit's
+   shared radius contract instead of setting component geometry inline. */
+[data-stat-tile-compact-value] {
+  border-radius: var(--stat-tile-compact-value-radius);
+}
+
+[data-stat-tile-icon-chip] {
+  border-radius: var(--stat-tile-icon-chip-radius);
+}
+
+/* Generated dashboards may place many KPIs in one row. Below 10rem there is
+   not enough inline room for a readable label plus an icon chip, so the shared
+   anatomy falls back to the supplied icon-free label/value treatment. The icon
+   remains present in the accessibility tree through the metric's text; no
+   information is encoded by the decorative glyph alone. */
+:where([data-kf-component="stat-tile"][data-content="icon-label-value"]) {
+  container-type: inline-size;
+}
+
+:where([data-kf-component="stat-tile"][data-sparkline-variant]) {
+  container-type: inline-size;
+}
+
+/* Bare is a ruled data workspace, so every decorative split or wash collapses
+   to one transparent stack while retaining the selected tone and series. */
+:where([data-kf-component="stat-tile"][data-material="bare"][data-sparkline-variant]) [data-stat-tile-spark-layout] {
+  --stat-tile-spark-columns: minmax(0, 1fr) auto;
+  --stat-tile-spark-rows: auto auto 3rem;
+  --stat-tile-spark-column-gap: 0.75rem;
+  --stat-tile-spark-row-gap: 0.5rem;
+  --stat-tile-spark-label-column: 1;
+  --stat-tile-spark-label-row: 1;
+  --stat-tile-spark-label-bg: transparent;
+  --stat-tile-spark-label-color: var(--ctl-fg-muted);
+  --stat-tile-spark-label-padding: 0;
+  --stat-tile-spark-label-margin: 0;
+  --stat-tile-spark-delta-column: 2;
+  --stat-tile-spark-delta-row: 1;
+  --stat-tile-spark-delta-bg: transparent;
+  --stat-tile-spark-delta-padding: 0;
+  --stat-tile-spark-value-column: 1 / span 2;
+  --stat-tile-spark-value-row: 2;
+  --stat-tile-spark-value-bg: transparent;
+  --stat-tile-spark-value-color: var(--ctl-fg);
+  --stat-tile-spark-value-padding: 0;
+  --stat-tile-spark-value-margin: 0;
+  --stat-tile-spark-chart-column: 1 / span 2;
+  --stat-tile-spark-chart-row: 3;
+  --stat-tile-spark-chart-height: 3rem;
+  --stat-tile-spark-chart-width: 100%;
+  --stat-tile-spark-chart-margin: 0;
+  --stat-tile-spark-chart-opacity: 1;
+  --stat-tile-spark-chart-z: 1;
+  --stat-tile-spark-line-display: block;
+  --stat-tile-spark-dot-display: none;
+  --stat-tile-spark-bars-display: none;
+}
+
+@container (max-width: 10rem) {
+  [data-stat-tile-icon-layout] {
+    --stat-tile-icon-columns: minmax(0, 1fr);
+    --stat-tile-icon-rows: auto auto;
+    --stat-tile-icon-column-gap: 0;
+    --stat-tile-icon-row-gap: 0.5rem;
+    --stat-tile-icon-label-column: 1;
+    --stat-tile-icon-label-row: 1;
+    --stat-tile-icon-value-column: 1;
+    --stat-tile-icon-value-row: 2;
+    --stat-tile-icon-value-margin: 0;
+  }
+
+  [data-stat-tile-icon-label] {
+    overflow: visible;
+    white-space: normal;
+  }
+
+  [data-stat-tile-icon-chip] {
+    display: none;
+  }
+}
+
+/* Split and trailing recipes need enough inline space for two meaningful
+   regions. Narrow generated KPI columns converge on the same readable stack. */
+@container (max-width: 16rem) {
+  [data-stat-tile-spark-layout] {
+    --stat-tile-spark-columns: minmax(0, 1fr) auto;
+    --stat-tile-spark-rows: auto auto 3rem;
+    --stat-tile-spark-column-gap: 0.75rem;
+    --stat-tile-spark-row-gap: 0.5rem;
+    --stat-tile-spark-label-column: 1;
+    --stat-tile-spark-label-row: 1;
+    --stat-tile-spark-label-bg: transparent;
+    --stat-tile-spark-label-color: var(--ctl-fg-muted);
+    --stat-tile-spark-label-padding: 0;
+    --stat-tile-spark-label-margin: 0;
+    --stat-tile-spark-delta-column: 2;
+    --stat-tile-spark-delta-row: 1;
+    --stat-tile-spark-delta-bg: transparent;
+    --stat-tile-spark-delta-padding: 0;
+    --stat-tile-spark-value-column: 1 / span 2;
+    --stat-tile-spark-value-row: 2;
+    --stat-tile-spark-value-bg: transparent;
+    --stat-tile-spark-value-color: var(--ctl-fg);
+    --stat-tile-spark-value-padding: 0;
+    --stat-tile-spark-value-margin: 0;
+    --stat-tile-spark-chart-column: 1 / span 2;
+    --stat-tile-spark-chart-row: 3;
+    --stat-tile-spark-chart-height: 3rem;
+    --stat-tile-spark-chart-width: 100%;
+    --stat-tile-spark-chart-margin: 0;
+    --stat-tile-spark-chart-opacity: 1;
+    --stat-tile-spark-chart-z: 1;
+    --stat-tile-spark-line-display: block;
+    --stat-tile-spark-dot-display: none;
+    --stat-tile-spark-bars-display: none;
+  }
+}
+
+/* With preflight disabled, form controls still need to inherit the app font by
+   default. Keep this reset in the base layer so an explicit typography utility
+   such as text-sm or font-medium can override it. An unlayered `font: inherit`
+   wins over every layered Tailwind utility and silently resets menu buttons to
+   their parent's 16px/400 typography. */
+@layer base {
+  input, button, select, textarea { font: inherit; color: inherit; }
+
+  /* Lucide ships round caps/joins already. Only its stroke weight varies by
+     visual language, so one inherited theme input can tune every library icon
+     without rewriting component props. Custom illustrations remain untouched. */
+  :where(svg.lucide, svg[data-lucide]) { stroke-width: var(--icon-stroke-width); }
+
+  /* With preflight disabled, interactive controls otherwise keep the browser's
+     arrow cursor. Keep this low-specificity fallback for native and ARIA controls;
+     component cursor utilities still win from Tailwind's later utilities layer.
+     Both native disabled and aria-disabled states are excluded. Labels are not
+     global interactions: Checkbox and Toggle own their label cursor explicitly. */
+  :where(
+    button,
+    [role="button"],
+    [role="tab"],
+    [role="option"],
+    [role="menuitem"],
+    [role="switch"],
+    [role="checkbox"],
+    summary,
+    select
+  ):not(:disabled):not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+/* Compatibility for pages generated before PageBody/SurfaceGroup existed.
+   Their route body is `page-gutter px-8 ...` and responsive rows are raw
+   `.grid` wrappers. Limit this adapter to Bare so Panel and Flat remain visual
+   matches; regenerated pages use the semantic primitives. */
+[data-material="bare"] .page-gutter {
+  padding: 0 !important;
+  gap: 1px !important;
+  background-color: var(--material-bare-rule);
+}
+
+[data-material="bare"] .page-gutter > * {
+  min-width: 0;
+  background-color: var(--material-bare-surface);
+}
+
+[data-material="bare"] .page-gutter > .grid {
+  gap: 1px !important;
+  background-color: var(--material-bare-rule);
+}
+
+[data-material="bare"] .page-gutter > .grid > * {
+  min-width: 0;
+  background-color: var(--material-bare-surface);
+}
+
+/* Older bespoke widgets sometimes render a responsive grid of raw action
+   tiles instead of composing Card/SurfaceGroup. Two common variants are the
+   compact status tile and a theme-specific, fixed-height visual tile. Both
+   expose the generator's stable custom-capability and action markers, which
+   lets Bare recover the same rule-grid semantics without touching ordinary
+   toolbar/form buttons or changing Panel and Flat. Regenerated pages use
+   SurfaceGroup/SurfaceCell and never need this adapter. */
+[data-material="bare"] .page-gutter > [data-kf-capability*=":custom:"]:not(:has(> [data-kf-component="card"])) {
+  padding-block: var(--material-bare-cell-padding-block);
+  padding-inline: var(--material-bare-cell-padding-inline);
+}
+
+[data-material="bare"] .page-gutter [data-kf-capability*=":custom:"] :where(.grid):has(> button[data-kf-action]),
+[data-material="bare"] .page-gutter :where(.grid[data-kf-capability*="custom"]):has(> button[data-kf-action]) {
+  gap: 1px !important;
+  background-color: var(--material-bare-rule);
+}
+
+[data-material="bare"] .page-gutter [data-kf-capability*=":custom:"] :where(.grid):has(> button[data-kf-action]) > button[data-kf-action],
+[data-material="bare"] .page-gutter :where(.grid[data-kf-capability*="custom"]):has(> button[data-kf-action]) > button[data-kf-action] {
+  min-height: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--material-bare-surface) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+[data-material="bare"] .page-gutter [data-kf-capability*=":custom:"] :where(.grid):has(> button[data-kf-action]) > button[data-kf-action]:hover,
+[data-material="bare"] .page-gutter :where(.grid[data-kf-capability*="custom"]):has(> button[data-kf-action]) > button[data-kf-action]:hover {
+  background: var(--ctl-raise) !important;
+}
+
+/* Theme-specific capacity cards paint an absolute percentage-height wash over
+   most of the tile. Bare keeps status in text/badges and removes that decorative
+   panel fill; direct-child targeting leaves normal icons and progress bars
+   inside custom widgets alone. */
+[data-material="bare"] .page-gutter [data-kf-capability*=":custom:"] :where(.grid):has(> button[data-kf-action]) > button[data-kf-action] > [aria-hidden="true"].absolute,
+[data-material="bare"] .page-gutter :where(.grid[data-kf-capability*="custom"]):has(> button[data-kf-action]) > button[data-kf-action] > [aria-hidden="true"].absolute {
+  display: none !important;
+}
+
+@keyframes layer-in { from { opacity: 0; transform: translateY(-4px) scale(0.985); } }
+@keyframes modal-in { from { opacity: 0; transform: translateY(8px) scale(0.98); } }
+@keyframes scrim-in { from { opacity: 0; } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(10px); } }
+@keyframes drawer-in-right { from { transform: translateX(100%); } }
+@keyframes drawer-in-left { from { transform: translateX(-100%); } }
+@keyframes skeleton-sweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }

@@ -1,0 +1,29 @@
+{
+  "id": "core",
+  "version": 1,
+  "description": "Built-in deterministic Express compositions backed by the shared React kit.",
+  "capabilities": [
+    { "component": "StatTile", "kinds": ["metrics"], "archetypes": ["overview", "analytics", "operations"], "signals": ["metrics"], "jobs": ["summarize", "monitor"] },
+    { "component": "Alert", "kinds": ["callout"], "archetypes": ["overview", "operations", "intake"], "jobs": ["explain", "alert"] },
+    { "component": "FormCard", "kinds": ["form"], "archetypes": ["intake"], "requires": ["create"], "jobs": ["capture"] },
+    { "component": "ApprovalQueue", "kinds": ["queue"], "archetypes": ["queue", "operations"], "requires": ["workflow"], "jobs": ["decide", "prioritize"] },
+    { "component": "KanbanBoard", "kinds": ["queue"], "archetypes": ["queue", "operations"], "requires": ["workflow", "mover"], "jobs": ["move", "prioritize"] },
+    { "component": "WipStrip", "kinds": ["queue", "progress"], "archetypes": ["operations", "overview"], "requires": ["workflow"], "jobs": ["monitor", "sequence"] },
+    { "component": "Table", "kinds": ["table"], "archetypes": ["register", "queue", "analytics", "operations"], "jobs": ["inspect", "compare"] },
+    { "component": "HBars", "kinds": ["bar-chart"], "archetypes": ["overview", "analytics", "operations"], "requires": ["categorical"], "jobs": ["rank", "compare"] },
+    { "component": "BarChart", "kinds": ["bar-chart"], "archetypes": ["overview", "analytics"], "requires": ["categorical"], "jobs": ["compare"] },
+    { "component": "FunnelChart", "kinds": ["bar-chart"], "archetypes": ["overview", "analytics", "operations"], "requires": ["workflow"], "jobs": ["sequence", "analyze"] },
+    { "component": "StackedBar", "kinds": ["bar-chart"], "archetypes": ["analytics", "operations"], "requires": ["categorical", "workflow"], "jobs": ["compare", "analyze"] },
+    { "component": "Donut", "kinds": ["donut-chart"], "archetypes": ["overview", "analytics"], "requires": ["categorical"], "jobs": ["distribute", "summarize"] },
+    { "component": "SegmentBar", "kinds": ["donut-chart", "progress"], "archetypes": ["overview", "analytics"], "requires": ["categorical"], "jobs": ["distribute", "monitor"] },
+    { "component": "LineChart", "kinds": ["trend-chart"], "archetypes": ["overview", "analytics"], "requires": ["date"], "jobs": ["trend", "forecast"] },
+    { "component": "Heatmap", "kinds": ["trend-chart"], "archetypes": ["analytics", "operations"], "requires": ["date"], "jobs": ["trend", "detect-pattern"] },
+    { "component": "ProgressList", "kinds": ["progress"], "archetypes": ["overview", "operations"], "requires": ["numeric"], "jobs": ["monitor"] },
+    { "component": "GaugeRing", "kinds": ["progress"], "archetypes": ["overview", "analytics", "operations"], "requires": ["numeric"], "jobs": ["monitor", "summarize"] },
+    { "component": "Timeline", "kinds": ["timeline"], "archetypes": ["overview", "register", "intake", "operations", "queue"], "requires": ["date"], "jobs": ["sequence", "schedule", "audit"] },
+    { "component": "GanttChart", "kinds": ["timeline"], "archetypes": ["register", "analytics", "operations"], "requires": ["dateRange"], "jobs": ["schedule", "compare-overlap", "review-approval-risk"] },
+    { "component": "Calendar", "kinds": ["timeline"], "archetypes": ["intake", "operations"], "requires": ["date"], "jobs": ["schedule"] },
+    { "component": "Stepper", "kinds": ["timeline", "progress"], "archetypes": ["intake", "operations"], "requires": ["workflow"], "jobs": ["sequence", "guide"] },
+    { "component": "Accordion", "kinds": ["table"], "archetypes": ["register", "intake"], "requires": ["categorical"], "jobs": ["inspect", "organize"] }
+  ]
+}
