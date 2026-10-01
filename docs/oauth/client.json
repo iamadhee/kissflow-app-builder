@@ -1,0 +1,13 @@
+{
+  "client_id": "https://iamadhee.github.io/kissflow-app-builder/oauth/client.json",
+  "client_name": "Kissflow App Builder",
+  "client_uri": "https://github.com/iamadhee/kissflow-app-builder",
+  "redirect_uris": [
+    "http://127.0.0.1/callback",
+    "http://localhost/callback"
+  ],
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none",
+  "scope": "mcp:read mcp:write"
+}
