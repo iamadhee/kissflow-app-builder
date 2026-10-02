@@ -86,7 +86,9 @@ A page opens in the browser listing the apps in this account the user can **edit
 whether **custom UI** is enabled on each. They pick one (builds go into that app) or **Start a new
 app** (the next build creates one). Show the printed link in case the browser didn't open; it waits
 up to 15 minutes. The choice lands in `.kf-env` as `KF_APP_ID`, `KF_APP_NAME`, `KF_APP_CUSTOM_UI`.
-They can switch apps any time with `/switch-app`.
+They can switch apps any time with `/switch-app`. If custom UI is off for the chosen app and they
+want a custom React UI, connect prints the app's settings link: ask them to turn custom UI on there,
+then re-run `connect --app`.
 
 ## 4. Seed the agent memory
 ```bash

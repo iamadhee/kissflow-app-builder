@@ -15,7 +15,9 @@ Switch the app this folder builds in.
    custom-UI status. They pick one, or **Start a new app**. Show the printed link in case the
    browser didn't open.
 3. Confirm with `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" connect --status` and tell the user which app
-   they're building in (`$KF_APP_NAME`) and whether custom UI is on (`$KF_APP_CUSTOM_UI` = 1).
+   they're building in (`$KF_APP_NAME`) and whether custom UI is on (`$KF_APP_CUSTOM_UI` = 1). If it
+   is off and they want a custom React UI, give them the app-settings link connect printed and ask
+   them to turn custom UI on there, then run `/switch-app` again so the plugin picks up the change.
 4. If connect warns that `runs/current` belongs to the previous app, start a new run with
    `/author-brief` before building — never apply an old run to a different app.
 
