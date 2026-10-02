@@ -6,10 +6,10 @@ argument-hint: "[<run-slug> to switch to it | blank to list]"
 Manage the runs under `runs/` — each is one BRD's authoring session, versioned independently.
 
 ## Do
-- **No argument** → `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs list` (shows every run, `*` = current,
+- **No argument** → `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs list` (shows every run, `*` = current,
   version count each).
-- **A run slug given** in `$ARGUMENTS` → `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs use <slug>` to
-  make it the current run, then `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs status` to show what you
+- **A run slug given** in `$ARGUMENTS` → `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs use <slug>` to
+  make it the current run, then `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs status` to show what you
   switched to.
 
 ## Output

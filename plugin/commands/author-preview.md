@@ -10,9 +10,9 @@ REST** — you can't change or delete them afterwards — so this stage exists t
 Pre-req: a current run with a verified `runs/current/app-spec.json`.
 
 ## Do
-1. **Validate hard** — `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" verify runs/current/app-spec.json`.
+1. **Validate hard** — `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" verify runs/current/app-spec.json`.
    Any error stops here.
-2. **Dry-run the build** — `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" build runs/current/app-spec.json --out runs/current/preview`
+2. **Dry-run the build** — `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" build runs/current/app-spec.json --out runs/current/preview`
    compiles the spec into metadata WITHOUT calling Kissflow (writes the plan to `preview/`). Read it
    and print the **build manifest**: N apps, flows (by type), forms, fields (with formulas/aggregates/
    lookups), workflow steps, permission grants, pages/nav.

@@ -21,16 +21,16 @@ The thinner the input, the more you LEAN ON open-questions + assumptions — a o
 surface everything you had to infer so the user can correct it before `/author-plan`.
 
 ## Do
-1. **Create the run.** For a file: `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs new <short-slug> <brd-path>`.
-   For pasted/one-line text: `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs new <short-slug>` (slug
+1. **Create the run.** For a file: `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs new <short-slug> <brd-path>`.
+   For pasted/one-line text: `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs new <short-slug>` (slug
    derived from the ask, e.g. `leave-request`), then write the text to `runs/current/brd.md`. This
    makes `runs/<slug>/` the **current** run; all subsequent stages operate on `runs/current/`.
 2. **Read the requirement** (the file, for PDFs/large docs in full; or the pasted/one-line text).
-3. **Extract the domain** — require `KF_IR_GRAPH_URL` + `KF_API_TOKEN` (from `.kf-env`), then spawn
+3. **Extract the domain** — spawn
    `kf-ba`: personas, journeys (outcomes), entities (+ key attributes + relationships), business
    rules. It commits only the `domain` slice through
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" ir-graph-cli commit-slice domain <file> --base-revision <n>`;
-   nobody share-writes `app-spec.json`. If the graph is unavailable, stop before authoring.
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" ir-graph-cli commit-slice domain <file> --base-revision <n>`;
+   nobody share-writes `app-spec.json`. The graph is created on first use; if a graph command fails, say so and stop before authoring.
 4. **Surface uncertainty** — write `runs/current/open-questions.md`: every ASSUMPTION and AMBIGUITY as
    a one-line question.
 5. **Seed the decision log** — `runs/current/decisions.md` with the ingest summary. Set stage=brief.

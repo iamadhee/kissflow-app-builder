@@ -11,14 +11,14 @@ NAMES the agent and says what it's crafting — no jargon — so the user watche
 (e.g. *"🔁 kf-workflow-designer is building the approval steps…"*, *"🔐 kf-security-designer is
 setting who can see and do what…"*). See the message list in `author-app.md` (USER PROGRESS).
 
-Pre-req: `/author-brief` created a graph-backed `domain` slice. `KF_IR_GRAPH_URL` and `KF_API_TOKEN`
-are required (`source .kf-env`); if either or the slice is absent, say so + stop. Never fall back to
+Pre-req: `/author-brief` created a graph-backed `domain` slice (the graph lives in this workspace,
+under `runs/current/ir-graph/`). If the slice is absent, say so + stop. Never fall back to
 shared-file authoring.
 
 ## Do (dependency-ordered WAVES, each step `kf-verifier`-gated)
 Spawn the specialists by dependency, not one long serial chain. Each specialist reads a bounded
 graph/slice and commits only its owned slice with
-`node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" ir-graph-cli commit-slice <key> <file> --base-revision <read revision>`.
+`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" ir-graph-cli commit-slice <key> <file> --base-revision <read revision>`.
 Do not let agents edit `app-spec.json`. Independent slices run CONCURRENTLY (measured: data∥workflow
 cut the plan stage ~40% on the express profile).
 1. `kf-architect` — flow-type map (Form/Process/Case/List), ER map, child-table splits, roles,
@@ -33,18 +33,20 @@ cut the plan stage ~40% on the express profile).
    workflow steps → runs after the wave-2 barrier).
 4. `kf-experience-designer` — pages + nav + role landing (needs security's data scopes → after 3).
 At each barrier, materialize the graph once with
-`node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" ir-graph-cli materialize --out runs/current/app-spec.json`,
-then gate with `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" verify runs/current/app-spec.json`. Then run
+`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" ir-graph-cli materialize --out runs/current/app-spec.json`,
+then gate with `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" gate runs/current/app-spec.json` (structure + the app
+floor: a workflow, business logic, ≥2 automations) and `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" verify runs/current/app-spec.json`. Then run
 `kf-coherence-critic` and commit its `coherence` slice through the same graph path.
 (kf-integration-analyst, when the app has cross-flow stitches, joins the wave-2 barrier and can run
 ∥ kf-security-designer — same slice-file merge.)
 
 ## Record EVERY significant decision
-Append to `runs/current/decisions.md` — one entry per non-obvious choice: `### <topic> — <decision>` ·
+Append to `runs/current/decisions.md` — one entry per non-obvious choice, as a numbered heading
+`## D<n> · <topic> — <decision>` (D1, D2, … — the engine counts these; express needs at least two) ·
 **Why** (traces to a journey/rule) · **Alternatives** (rejected + why) · **Status:** `proposed`.
 
 ## Snapshot v1
-`node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "v1 — initial plan"` — freezes the spec +
+`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs snapshot "v1 — initial plan"` — freezes the spec +
 decisions as version v1.
 
 ## Output

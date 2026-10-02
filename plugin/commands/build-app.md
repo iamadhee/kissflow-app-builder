@@ -45,10 +45,10 @@ resume here at Step 2.)
 Apply the spec to the dev account, per the **UI mode chosen in Step 0**:
 
 - **Custom UI** → skip native pages:
-  `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" apply runs/current/app-spec.json --mode <express|comprehensive> --no-pages`
+  `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" apply runs/current/app-spec.json --mode <express|comprehensive> --no-pages`
 - **Native UI** → full apply:
-  `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" apply runs/current/app-spec.json --mode <express|comprehensive>`
-- `--dry-run` → `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" build runs/current/app-spec.json --out runs/current/preview`
+  `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" apply runs/current/app-spec.json --mode <express|comprehensive>`
+- `--dry-run` → `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" build runs/current/app-spec.json --out runs/current/preview`
   (nothing applied; show the plan).
 
 `apply` is **resumable** — it checkpoints to `runs/current/apply-state.json` and skips already-done
@@ -76,7 +76,7 @@ second experience spec, scaffold another app, or invoke page-generation agents. 
 written `id-map.json`, run:
 
 ```bash
-node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" deploy-react runs/current --mode <express|comprehensive> --open
+node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" deploy-react runs/current --mode <express|comprehensive> --open
 ```
 
 The command deterministically ports only generated ids, production-builds the exact pages and custom
@@ -91,8 +91,8 @@ advisory: `kf-ux-architect` owns structure, not theme selection, so `kf-design-d
 without it the slice is missing and the app ships with an unreviewed fallback, and the theme check
 fails the build:
 ```bash
-node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" language-catalog list
-node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" language-catalog design <selected-theme> --app-id <slug> --app-name "<name>" \
+node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" language-catalog list
+node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" language-catalog design <selected-theme> --app-id <slug> --app-name "<name>" \
   --rationale "<one line: why this complete theme fits THIS domain>" --record runs/current
 ```
 `--rationale` is required — the command refuses to print a slice without it. The selected catalog

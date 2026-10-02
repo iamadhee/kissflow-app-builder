@@ -56,7 +56,7 @@ dashboards…"* then the result. End with the plain summary of what was built.
 
 **Always end with the time taken.** The run is timeline-stamped, so close the report with the total
 wall-clock — e.g. *"⏱ Built in 1m57s."* — and, when the user wants detail, the per-stage breakdown
-from `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" timeline report runs/current` (agent-named, one line
+from `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" timeline report runs/current` (agent-named, one line
 each). Time-to-built is the headline for demos; show it prominently.
 
 ## Accept any input shape
@@ -72,9 +72,10 @@ stitching** — this covers the typical *"build me an expense / procurement / as
 one-liner, NOT just single-flow apps. Do NOT run the six-specialist chain for these. Run ONE pass:
 - **One planner agent, on a fast tier** — it ASSEMBLES the whole App-Spec (domain + architecture +
   data + workflow + security + automations + pages/nav) in a SINGLE `Write` of
-  `runs/current/app-spec.json`, then `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" gate runs/current/app-spec.json`
-  (deterministic structure, ~0.06s) + `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" verify runs/current/app-spec.json`
-  ONCE. Give it the App-Spec SHAPE inline from `reference/APP-MODEL-PRIMER.md` (the slot schema — NOT
+  `runs/current/app-spec.json`, then `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" gate runs/current/app-spec.json`
+  (deterministic structure, ~0.06s) + `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" verify runs/current/app-spec.json`
+  ONCE, and appends ≥2 numbered decisions (`## D<n> · <topic> — <decision>`, for the gaps it closed
+  without asking) to `runs/current/decisions.md`. Give it the App-Spec SHAPE inline from `reference/APP-MODEL-PRIMER.md` (the slot schema — NOT
   canned content) so it fills slots rather than re-deriving structure; forbid reading
   MEMORY/LESSONS/playbooks and forbid the incremental edit→verify loop. This is assembly, not code —
   the engine builds the app.
@@ -112,33 +113,37 @@ to escalate.
 
 ## Do (brief → plan → generate, back-to-back on one run) — MULTI-FLOW / non-trivial specs
 1. **Ingest** (= `/author-brief`) — create the run:
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs new <slug> <brd>` for a file, or
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs new <slug>` + write the pasted/one-line text to
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs new <slug> <brd>` for a file, or
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs new <slug>` + write the pasted/one-line text to
    `runs/current/brd.md`. Spawn `kf-ba` → domain (personas, journeys, entities, rules) as the `domain`
    graph slice; write `open-questions.md`. Metadata is sacrosanct — extract only what the requirement
    says or clearly implies.
 2. **Plan** (= `/author-plan`) — run the specialists in dependency WAVES (not one serial chain),
    each verifier-gated: `kf-architect` → **[`kf-data-architect` ∥ `kf-workflow-designer`]** (parallel,
-   each commits its own graph slice) → `kf-security-designer` → `kf-experience-designer`; then
+   each commits its own graph slice) → **[`kf-security-designer` ∥ `kf-integration-analyst`]** (the
+   automations slice — every app needs ≥2) → `kf-experience-designer`; then
    `kf-coherence-critic`. Materialize the graph once at each gate
-   (`node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" ir-graph-cli materialize --out runs/current/app-spec.json`);
+   (`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" ir-graph-cli materialize --out runs/current/app-spec.json`);
    specialists never share-write `app-spec.json`. The data∥workflow wave is the main express speed-up
-   (~40% of the plan stage). Log decisions;
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "v1 — express plan"`.
+   (~40% of the plan stage). Log decisions as `## D<n> · <topic> — <decision>` headings in
+   `runs/current/decisions.md` (≥2); run `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" gate runs/current/app-spec.json`
+   now, so a missing workflow / business logic / automation surfaces before design work, not at apply;
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs snapshot "v1 — express plan"`.
 3. **Show, briefly** — print the plan-at-a-glance + any high-risk decisions or unresolved questions.
    If a **blocking** ambiguity remains, STOP and ask rather than guess.
-4. **Generate** (= `/author-generate`) — `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" verify runs/current/app-spec.json`,
+4. **Generate** (= `/author-generate`) — `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" gate runs/current/app-spec.json` and
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" verify runs/current/app-spec.json`,
    print *"⚠ No review taken — applying to dev directly."*, then apply to dev with
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" apply runs/current/app-spec.json --mode express`. Honour
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" apply runs/current/app-spec.json --mode express`. Honour
    `--dry-run` (stop at the manifest from
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" build runs/current/app-spec.json --out runs/current/preview`)
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" build runs/current/app-spec.json --out runs/current/preview`)
    and `--yes` (skip the confirm; otherwise show a one-line build summary and confirm). Write
    `runs/current/generated/`, snapshot "generated → dev", run `kf-acceptance`, then
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish runs/current --label "<label>"`.
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" publish runs/current --label "<label>"`.
 
 ## [HARD] rules (same as the staged flow)
 - The revisioned design graph is the only channel between agents; the file is only its materialized
-  build input. Missing graph configuration is a hard stop. The dependency order
+  build input. A failing graph command is a hard stop. The dependency order
   (roles → {data ∥ flow} → permissions → nav/pages) is never VIOLATED — but independent slices with no
   dependency between them (data ∥ flow) MAY run concurrently via the slice-file merge; verifier-gated
   between waves.

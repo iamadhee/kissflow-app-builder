@@ -16,19 +16,19 @@ Pre-req: a current run with `runs/current/app-spec.json` (from `/author-plan`).
    flow-type/role/structure; data-architect for fields/formulas/refs; workflow-designer for steps;
    security-designer for permissions; experience-designer for pages/nav). Each commits its own graph
    slice; then materialize
-   (`node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" ir-graph-cli materialize --out runs/current/app-spec.json`).
+   (`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" ir-graph-cli materialize --out runs/current/app-spec.json`).
    Edit surgically — don't rebuild the whole plan.
-3. **Re-verify + re-cohere** — `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" verify runs/current/app-spec.json`,
+3. **Re-verify + re-cohere** — `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" verify runs/current/app-spec.json`,
    then `kf-coherence-critic`. Fix knock-on effects (e.g. Form→Process adds a workflow; a new role
    needs permissions + a landing).
 4. **Log it** — append to `runs/current/decisions.md`: the change, who asked, and the new decision
    (`Status: changed-by-user`).
 5. **Regenerate + snapshot** — re-render the review page
-   (`node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" review runs/current/app-spec.json runs/current/decisions.md runs/current/open-questions.md > runs/current/review.html`),
+   (`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" review runs/current/app-spec.json runs/current/decisions.md runs/current/open-questions.md > runs/current/review.html`),
    and rebuild only the prototype pages the change touched: `kf-prototype-builder` edits the affected
-   `prototype/pages/*.jsx`, then `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" proto-react runs/current`.
+   `prototype/pages/*.jsx`, then `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current`.
    A refine edits what moved; regenerating every role loses work the user has already accepted.
-   Finish with `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "<one-line summary of the changes>"`
+   Finish with `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs snapshot "<one-line summary of the changes>"`
    (new version vN+1).
 
 ## Output

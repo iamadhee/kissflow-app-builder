@@ -19,7 +19,7 @@ Steps:
 1. **Generated React run (`prototype/proto.json` + `prototype/pages/*.jsx`)** — use one command for
    both Express and Comprehensive. Pick the same mode that generated the run:
    ```bash
-   node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" deploy-react runs/current --mode <express|comprehensive> --open
+   node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" deploy-react runs/current --mode <express|comprehensive> --open
    ```
    This requires the successful apply's `id-map.json`; substitutes only those real ids in every approved
    page/widget; builds the exact route set in an isolated workspace; creates a durable source+zip release;
@@ -34,7 +34,7 @@ Steps:
 2. **Standalone scaffold (no generated React run)** — retain the low-level mechanism:
    ```bash
    npm run zip
-   node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" deploy-ui <path/to/ui.zip> --app <appId>
+   node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" deploy-ui <path/to/ui.zip> --app <appId>
    ```
    This is an escape hatch, not the generated-app pipeline. Manual upload remains a fallback when remote
    credentials or the upload API are unavailable.

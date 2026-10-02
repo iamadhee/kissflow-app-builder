@@ -8,16 +8,16 @@ coverage. Requires a generated app (`runs/current/generated/` apply log) and a c
 
 ## Do
 1. `mkdir -p runs/current/qa` and enumerate the coverage universe:
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" qa-universe runs/current/app-spec.json > runs/current/qa/universe.json`
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" qa-universe runs/current/app-spec.json > runs/current/qa/universe.json`
    Tell the user the item counts by class — this is what "100%" means for this app.
 2. Spawn **kf-runtime-qa**. It reads every artifact, writes `qa/test-plan.json` with each test
    claiming universe ids, and iterates until the coverage gate passes:
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" qa-universe runs/current/app-spec.json --check runs/current/qa/test-plan.json`
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" qa-universe runs/current/app-spec.json --check runs/current/qa/test-plan.json`
    (exit 1 = not done; the gate lists uncovered ids).
 3. The agent executes the plan against dev as each role (sandbox users; approve seeding them if
    missing), writing `qa/results.json`. Denial tests that PASS access are security findings.
-4. Snapshot: `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "runtime QA"`, then save the QA run:
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish-qa runs/current --label "<short label>" [--version <stamp>]`
+4. Snapshot: `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs snapshot "runtime QA"`, then save the QA run:
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" publish-qa runs/current --label "<short label>" [--version <stamp>]`
    — it keeps universe/plan/results/report under `runs/current/published/qa/` and adds the run to
    `runs/current/published/qa-runs.json`.
 5. Report in chat: the plain-English use-case verdicts FIRST (one line per user journey: works /

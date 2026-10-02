@@ -8,13 +8,13 @@ Switch the app this folder builds in.
 1. The folder must already be signed in (`.kf-env` exists). If it isn't, run `/author-setup` instead and stop.
 2. Run:
    ```bash
-   node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" connect --app
+   node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" connect --app
    source .kf-env
    ```
    A page opens listing the apps the user can edit in this account, with search and each app's
    custom-UI status. They pick one, or **Start a new app**. Show the printed link in case the
    browser didn't open.
-3. Confirm with `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" connect --status` and tell the user which app
+3. Confirm with `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" connect --status` and tell the user which app
    they're building in (`$KF_APP_NAME`) and whether custom UI is on (`$KF_APP_CUSTOM_UI` = 1). If it
    is off and they want a custom React UI, give them the app-settings link connect printed and ask
    them to turn custom UI on there, then run `/switch-app` again so the plugin picks up the change.

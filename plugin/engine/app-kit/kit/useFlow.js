@@ -29,6 +29,8 @@ import { useKf, useKfDev } from "@kissflow/app-ui";
 import appSchema from "../../../lib/kf-schema.json";
 import { effectiveRecordScope, fetchParticipatingRows } from "./record-scope.js";
 import { readAllPages, shareRead, invalidateReads } from './data-access.js';
+import { normaliseCaseRows, caseTarget } from './case-status.js';
+export { normaliseCaseRow, caseTarget } from './case-status.js';
 
 /** Normalise the two response shapes the surfaces return. */
 const normalise = (r) => ({ Data: r?.Data ?? r?.items ?? [], Columns: r?.Columns ?? [] });
@@ -51,6 +53,7 @@ async function fetchRowsUnshared(kf, flowType, flowId) {
     if (flowType !== "Process") throw new Error("RECORD_SCOPE_UNSUPPORTED: participation is process-only");
     return fetchParticipatingRows(handle);
   }
+  if (flowType === "Case") return normaliseCaseRows(await readAllPages(opts => handle.getItems(opts)));
   if (flowType !== "Process") return readAllPages(opts => handle.getItems(opts));
 
   // getAdminItems is the closest analogue to a dataform's getItems (every record), but it needs
@@ -71,6 +74,11 @@ async function fetchRowsUnshared(kf, flowType, flowId) {
   }
   if (empty) return empty;
   throw lastError ?? new Error(`No listing API on process ${flowId}`);
+}
+
+// A board's statuses as the UI schema carries them ({id, name, category, system}).
+export function boardStatusesFor(flowId) {
+  return (appSchema?.dataModels || []).find((m) => m.id === flowId)?.statuses || [];
 }
 
 function displayRecord(row) {
@@ -148,6 +156,25 @@ export function useFlow(flowType = "Form", flowId, deps = []) {
       return result;
     }
     if (hasData) await handle?.updateItem?.({ ...idArgs, data });
+    // A board has no approve/reject/sendback: an action is a STATUS MOVE —
+    // POST /case/2/{acc}/{board}/{item}/{current _status_id}/move {_status_id}. The SDK has no move
+    // method, so it goes through kf.api; failures are raised, never swallowed into a dead button.
+    if (flowType === "Case") {
+      const snapshot = visible.rows.find(r => r._id === _id) || row;
+      const statuses = boardStatusesFor(flowId);
+      const current = snapshot._status_id;
+      const target = caseTarget(statuses, current, kind);
+      if (!target) throw new Error(`act(): no status to move "${snapshot._current_step || _id}" to for "${kind}" on ${flowId}`);
+      if (!current) throw new Error(`act(): ${flowId} item ${_id} has no _status_id — reload the board`);
+      if (current === target.id) { reload(); return snapshot; }
+      if (typeof kf?.api !== "function" || !kf?.account?._id) throw new Error("act(): this Kissflow page cannot move board items (kf.api unavailable)");
+      const res = await kf.api(`/case/2/${kf.account._id}/${flowId}/${_id}/${current}/move`, {
+        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ _status_id: target.id }) });
+      if (!res || res.isError || res.errorMessage || res.error || (typeof res.ok === "boolean" && !res.ok))
+        throw new Error(`act(): moving to "${target.name}" failed${res?.message || res?.error ? ` — ${res.message || res.error}` : ""}`);
+      reload();
+      return res;
+    }
     // a Form/Dataset record has no workflow: acting on it IS the update (toggle active, set a flag).
     // Silence here was the "Deactivate does nothing" bug — say so instead.
     if (flowType === "Form" || flowType === "Dataset") {

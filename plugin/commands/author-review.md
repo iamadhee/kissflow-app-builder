@@ -10,7 +10,7 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
 
 ## Do
 1. **Render the interactive review page:**
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" review runs/current/app-spec.json runs/current/decisions.md runs/current/open-questions.md > runs/current/review.html`
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" review runs/current/app-spec.json runs/current/decisions.md runs/current/open-questions.md > runs/current/review.html`
    (the third arg is optional — `open-questions.md` is auto-detected next to `decisions.md`).
    It has every entity / field / workflow / permission / page / decision as an item with a stable
    `#id` and **✓ ok / ✎ change / ? ask** + a comment; a panel tallies flags and **Copy change-list**
@@ -23,9 +23,9 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
    Tell the user to open `runs/current/review.html` (share it with the team).
 2. **Catalog theme FIRST — `kf-design-director` runs on EVERY build, comprehensive included.**
    An app that skips this ships with an unreviewed default theme. Before either prototype agent
-   spawns, choose the best-fit id from `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" language-catalog list`:
+   spawns, choose the best-fit id from `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" language-catalog list`:
    ```bash
-   node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" language-catalog design <theme-id> --app-id <slug> --app-name "<name>" \
+   node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" language-catalog design <theme-id> --app-id <slug> --app-name "<name>" \
      --rationale "<one line: why this theme/archetype fits THIS domain>" \
      --record runs/current \
      [--archetype rail-left|rail-dark|top-bar|rail-right] [--density compact|comfortable|airy]
@@ -59,7 +59,7 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
      and may make one compiler-directed repair. Assembly waits for every receipt. The engine continues
      to own schema/SDK bindings, scopes, loading/error/empty states and allowed actions; builders own
      faithful custom React composition and interactions.
-   - Build/assemble: `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" proto-react runs/current` → stages the
+   - Build/assemble: `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current` → stages the
      pages into the React kit, builds, smoke-tests every role and route in a real browser, and writes
      `runs/current/prototype/index.html`. A failed build never replaces a working prototype; fix what
      the log names and re-run. Do not route comprehensive through the Express page compiler. A
@@ -68,7 +68,7 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
    This shows the intended UX per role and is the same React source that ports to the live UI.
 4. **Capture the REAL signature screens at desktop and tablet** (a comprehensive build is not visually
    verified without rendered evidence):
-   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" capture-screens runs/current/prototype/index.html --viewports desktop:1440x1000,tablet:1024x1200`
+   `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" capture-screens runs/current/prototype/index.html --viewports desktop:1440x1000,tablet:1024x1200`
    → `prototype/thumbs/*.png` + `manifest.json`. React prototypes discover roles from sibling
    `proto.json`. Re-run the review render from step 1 so the Pages & Nav step embeds real screens.
 5. **Run `kf-prototype-visual-qa` as a judgment gate.** It reads `page-designs.json` + every captured
@@ -76,16 +76,16 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
    actionability and research fidelity. It must prove that the selected candidate and every required
    anatomy marker survived into rendered pixels, then writes `prototype/qa/visual-verdict.json`.
    - On BLOCK, send only `repairBrief` to `kf-prototype-builder`, rebuild the failing pages
-     (`node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" proto-react runs/current`), recapture both viewports and
+     (`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current`), recapture both viewports and
      re-run visual QA.
    - Cap the loop at three repair rounds. More tokens in one monolithic pass are not a substitute for
      rendered feedback. If blockers remain after round three, report them and stop; never mark ready.
    - On PASS, run the atomic gate/ledger step:
-     `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" orchestrator gate runs/current visual-qa`. It validates
+     `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" orchestrator gate runs/current visual-qa`. It validates
      both the judgment artifact and deterministic source checks, then records the truthful PASS/BLOCK
      verdict.
-6. **Snapshot + save the version** — `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "review"`,
-   then `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish runs/current --label "review"`. It saves the
+6. **Snapshot + save the version** — `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs snapshot "review"`,
+   then `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" publish runs/current --label "review"`. It saves the
    review page + prototype under `runs/current/published/<stamp>/`. Report the saved file paths; the
    user opens them in a browser directly.
 7. **Narrate the highlights** in chat: what will be built, the key decisions (choice · why · rejected

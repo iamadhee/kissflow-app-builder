@@ -4,7 +4,7 @@ argument-hint: "[your Kissflow account address, e.g. acme.kissflow.com] (run onc
 ---
 
 Run this **once** in the folder you want to build from. The plugin ships its commands, its specialist
-agents, the reference playbooks and a small launcher (`$CLAUDE_PLUGIN_ROOT/bin/kf.mjs`); the build
+agents, the reference playbooks and a small launcher (`${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs`); the build
 engine itself is fetched once per version into your home folder. Nothing is copied into this
 workspace except `.kf-env` (which account this folder builds in) and `MEMORY.md` (the agents' memory).
 
@@ -40,7 +40,7 @@ should take seconds; anything beyond that is wasted user-visible time.
 Tell the user first: *"The first run downloads the build engine for this platform (~100 MB, once per
 version) into your home folder."* Then:
 ```bash
-node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" --version
+node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" --version
 ```
 It prints the engine version once the download (if any) finishes. On a re-run it's instant. A
 checksum failure says so — just re-run the command.
@@ -49,7 +49,7 @@ checksum failure says so — just re-run the command.
 Ask the user for their **Kissflow account address** if `$ARGUMENTS` doesn't already hold one (the
 address they open Kissflow at, e.g. `acme.kissflow.com`). Then:
 ```bash
-node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" connect <account-address>
+node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" connect <account-address>
 source .kf-env
 ```
 What happens: the browser opens the account's **own Kissflow sign-in** (SSO included). The user signs
@@ -74,12 +74,12 @@ is about — you already know.
 
 Everything else lives in this folder: the design graph under `runs/<app>/ir-graph/`, each build's
 saved versions under `runs/<app>/published/`, and the agents' memory in `MEMORY.md` + `MEMORY-LOCAL.md`.
-Agents write new lessons with `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" memory remember "<lesson>" --app <appId>`.
+Agents write new lessons with `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" memory remember "<lesson>" --app <appId>`.
 
 ## 3b. Choose the app to build in
 Right after signing in, open the app picker:
 ```bash
-node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" connect --app
+node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" connect --app
 source .kf-env
 ```
 A page opens in the browser listing the apps in this account the user can **edit**, with search and
@@ -92,7 +92,7 @@ then re-run `connect --app`.
 
 ## 4. Seed the agent memory
 ```bash
-[ -f MEMORY.md ] || cp "$CLAUDE_PLUGIN_ROOT/MEMORY.md" MEMORY.md
+[ -f MEMORY.md ] || cp "${CLAUDE_PLUGIN_ROOT}/MEMORY.md" MEMORY.md
 ```
 `MEMORY.md` is the agents' auto-evolving memory — yours to grow; an existing one is never replaced.
 
