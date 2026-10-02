@@ -8,8 +8,8 @@ generates it in your dev environment, then builds its UI. It unifies the two hal
 the **authoring** pipeline (data models, roles, workflows) and the **custom-UI** pipeline (a React
 app deployed as the app's `Application` component). The user picks the UI mode.
 
-Pre-req: the folder is connected (`.kf-env` exists → `source .kf-env`, which exports
-`KISSFLOW_SUBDOMAIN`, `KISSFLOW_ACCOUNT_ID`, `KISSFLOW_API_KEY`, `KISSFLOW_API_SECRET` pinned to dev).
+Pre-req: the folder is connected to a Kissflow account (`.kf-env` exists → `source .kf-env`, which
+exports `KISSFLOW_DOMAIN` and `KISSFLOW_ACCOUNT_ID`; the build acts as the signed-in person).
 If it's missing, tell the user to run `/author-setup` and stop.
 
 ## Step 0 — Set up the workspace + pick the UI mode (FIRST, before any build work)

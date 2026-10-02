@@ -16,9 +16,10 @@ coverage. Requires a generated app (`runs/current/generated/` apply log) and a c
    (exit 1 = not done; the gate lists uncovered ids).
 3. The agent executes the plan against dev as each role (sandbox users; approve seeding them if
    missing), writing `qa/results.json`. Denial tests that PASS access are security findings.
-4. Snapshot: `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "runtime QA"`, then publish the run
-   to the project: `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish-qa runs/current --label "<short label>" [--version <seq>]`
-   — it uploads universe/plan/results/report and registers the run in the project's Runtime QA history.
+4. Snapshot: `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "runtime QA"`, then save the QA run:
+   `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish-qa runs/current --label "<short label>" [--version <stamp>]`
+   — it keeps universe/plan/results/report under `runs/current/published/qa/` and adds the run to
+   `runs/current/published/qa-runs.json`.
 5. Report in chat: the plain-English use-case verdicts FIRST (one line per user journey: works /
    broken / not provable — a BA should understand the whole report from these), then coverage
    (must be 100%), pass/fail by class, security findings, weak-evidence items, and the `[QA-FAIL]`

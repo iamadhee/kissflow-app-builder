@@ -50,16 +50,14 @@ here directly.
    `--prepare-only` to validate/package without changing Kissflow.
 7. **Acceptance** — spawn `kf-acceptance` to smoke-check the built app against the journeys; report
    pass/fail per journey.
-8. **Publish the version — ALWAYS run this** (it's how the app + prototype + review reach the project):
+8. **Save the version — ALWAYS run this** (it keeps the app spec, prototype and review page of this build):
    ```bash
    node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish runs/current --label "<short build label>"
    ```
-   It pushes this run's artifacts (spec, prototype, review page) to the project and registers a
-   version in the app's **Versions** list. **If the project isn't linked yet, publish SELF-CONNECTS** —
-   it opens a one-time browser approval; surface that link to the user, they approve once, and it
-   pushes immediately (it won't ask again). No separate `/author-setup` step, no re-run. Only
-   `--no-connect` (or a genuine local-only build) skips it. Mention the registered version + the
-   project URL in the output.
+   It saves this run's artifacts (spec, prototype, review page, apply logs with the real Kissflow ids)
+   under `runs/current/published/<stamp>/` and lists the version in `runs/current/published/versions.json`.
+   Nothing leaves this machine. If it refuses because the prototype isn't publishable, fix that and
+   re-run; no version is saved until it passes.
 
 ## Output
 What was created (with real Kissflow ids), the acceptance result, and where the log lives

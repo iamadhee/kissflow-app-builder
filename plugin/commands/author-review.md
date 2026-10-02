@@ -84,12 +84,10 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
      `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" orchestrator gate runs/current visual-qa`. It validates
      both the judgment artifact and deterministic source checks, then records the truthful PASS/BLOCK
      verdict.
-6. **Snapshot + PUBLISH to the project** — `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "review"`,
-   then `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish runs/current --label "review"`. Publish pushes
-   the review page + prototype to the project and returns a **hosted link the team opens directly** —
-   no local server, no file-passing. If the project isn't linked yet, publish SELF-CONNECTS (one-time
-   browser approval — surface the link, they approve once, it pushes and won't ask again). Prefer the
-   hosted links over the local file paths when you report back.
+6. **Snapshot + save the version** — `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" runs snapshot "review"`,
+   then `node "$CLAUDE_PLUGIN_ROOT/bin/kf.mjs" publish runs/current --label "review"`. It saves the
+   review page + prototype under `runs/current/published/<stamp>/`. Report the saved file paths; the
+   user opens them in a browser directly.
 7. **Narrate the highlights** in chat: what will be built, the key decisions (choice · why · rejected
    alternative), and the **risks/gaps** worth scrutinising (thin entities, single-step processes,
    unresolved open questions, dashboards with weak data).
