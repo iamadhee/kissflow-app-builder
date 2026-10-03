@@ -1,0 +1,396 @@
+{
+  "app": {
+    "id": "Warranty_Claims_A00",
+    "name": "Warranty Claims",
+    "theme": "vela"
+  },
+  "roles": [
+    {
+      "id": "RoDvsZ_L2fTg",
+      "name": "Service Advisor",
+      "landing": "svc-home",
+      "access": [
+        "Claim_A01"
+      ]
+    },
+    {
+      "id": "RoDvsZ_zPgZU",
+      "name": "Claims Reviewer",
+      "landing": "rev-queue",
+      "access": [
+        "Claim_A01"
+      ]
+    },
+    {
+      "id": "RoDvsZaVjMCm",
+      "name": "Warranty Manager",
+      "landing": "mgr-dashboard",
+      "access": [
+        "Claim_A01",
+        "Service_Center_A00"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "svc-home",
+      "route": "index",
+      "title": "File a Claim",
+      "archetype": "intake",
+      "roles": [
+        "RoDvsZ_L2fTg"
+      ],
+      "nav": {
+        "label": "File a Claim",
+        "icon": "plus"
+      },
+      "widgets": [
+        {
+          "type": "form",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01"
+          },
+          "title": "File a Claim",
+          "props": {
+            "variant": "action",
+            "label": "File a Claim",
+            "action": "create"
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "fields": [
+              "Claim_Number",
+              "Product",
+              "Category",
+              "Priority"
+            ],
+            "view": "myitems"
+          },
+          "title": "Recently filed",
+          "props": {
+            "label": "Recently filed",
+            "columns": [
+              "Claim Number",
+              "Product",
+              "Category",
+              "Priority"
+            ],
+            "scope": "mine"
+          }
+        }
+      ]
+    },
+    {
+      "id": "svc-claims",
+      "route": "svc-claims",
+      "title": "My Claims",
+      "archetype": "master-detail",
+      "roles": [
+        "RoDvsZ_L2fTg"
+      ],
+      "nav": {
+        "label": "My Claims",
+        "icon": "inbox"
+      },
+      "widgets": [
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "fields": [
+              "Claim_Number",
+              "Customer_Name",
+              "Product",
+              "Category",
+              "Priority"
+            ],
+            "view": "myitems"
+          },
+          "title": "My Claims",
+          "props": {
+            "label": "My Claims",
+            "columns": [
+              "Claim Number",
+              "Customer Name",
+              "Product",
+              "Category",
+              "Priority"
+            ],
+            "scope": "mine"
+          }
+        },
+        {
+          "type": "panel",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01"
+          },
+          "title": "Claim Detail",
+          "props": {
+            "variant": "record",
+            "label": "Claim Detail"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rev-queue",
+      "route": "index",
+      "title": "Review Queue",
+      "archetype": "queue",
+      "roles": [
+        "RoDvsZ_zPgZU"
+      ],
+      "nav": {
+        "label": "Review Queue",
+        "icon": "check"
+      },
+      "widgets": [
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "fields": [
+              "Claim_Number",
+              "Customer_Name",
+              "Product",
+              "Category",
+              "Priority",
+              "Claim_Amount",
+              "SLA_Due_Date"
+            ],
+            "view": "mytasks"
+          },
+          "title": "Review Queue",
+          "props": {
+            "variant": "queue",
+            "label": "Review Queue",
+            "action": "transition",
+            "columns": [
+              "Claim Number",
+              "Customer Name",
+              "Product",
+              "Category",
+              "Priority",
+              "Claim Amount",
+              "SLA Due Date"
+            ],
+            "scope": "team"
+          }
+        }
+      ]
+    },
+    {
+      "id": "rev-insights",
+      "route": "rev-insights",
+      "title": "My Performance",
+      "archetype": "analytics",
+      "roles": [
+        "RoDvsZ_zPgZU"
+      ],
+      "nav": {
+        "label": "My Performance",
+        "icon": "chart"
+      },
+      "widgets": [
+        {
+          "type": "kpi",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "view": "mytasks"
+          },
+          "title": "Claims resolved",
+          "props": {
+            "label": "Claims resolved",
+            "agg": "count",
+            "scope": "team"
+          }
+        },
+        {
+          "type": "donut",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "groupField": "Category",
+            "view": "mytasks"
+          },
+          "title": "Claim mix by category",
+          "props": {
+            "chartKind": "donut",
+            "label": "Claim mix by category",
+            "agg": "count",
+            "dim": "Category",
+            "scope": "team"
+          }
+        },
+        {
+          "type": "barchart",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "groupField": "Priority",
+            "view": "mytasks"
+          },
+          "title": "Claims by priority",
+          "props": {
+            "chartKind": "bar",
+            "label": "Claims by priority",
+            "agg": "count",
+            "dim": "Priority",
+            "scope": "team"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mgr-dashboard",
+      "route": "index",
+      "title": "Command Center",
+      "archetype": "analytics",
+      "roles": [
+        "RoDvsZaVjMCm"
+      ],
+      "nav": {
+        "label": "Command Center",
+        "icon": "gauge"
+      },
+      "widgets": [
+        {
+          "type": "kpi",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "view": "allitems"
+          },
+          "title": "Total claims",
+          "props": {
+            "label": "Total claims",
+            "agg": "count",
+            "scope": "all"
+          }
+        },
+        {
+          "type": "kpi",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "field": "Claim_Amount",
+            "view": "allitems"
+          },
+          "title": "Total exposure",
+          "props": {
+            "label": "Total exposure",
+            "agg": "sum",
+            "fieldLabel": "Claim Amount",
+            "scope": "all"
+          }
+        },
+        {
+          "type": "barchart",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "groupField": "Category",
+            "view": "allitems"
+          },
+          "title": "Volume by category",
+          "props": {
+            "chartKind": "bar",
+            "label": "Volume by category",
+            "agg": "count",
+            "dim": "Category",
+            "scope": "all"
+          }
+        },
+        {
+          "type": "donut",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "groupField": "Priority",
+            "view": "allitems"
+          },
+          "title": "Volume by priority",
+          "props": {
+            "chartKind": "donut",
+            "label": "Volume by priority",
+            "agg": "count",
+            "dim": "Priority",
+            "scope": "all"
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Claim_A01",
+            "fields": [
+              "Claim_Number",
+              "Product",
+              "Priority",
+              "SLA_Due_Date"
+            ],
+            "view": "allitems"
+          },
+          "title": "SLA breach risk",
+          "props": {
+            "label": "SLA breach risk",
+            "columns": [
+              "Claim Number",
+              "Product",
+              "Priority",
+              "SLA Due Date"
+            ],
+            "scope": "all"
+          }
+        }
+      ]
+    },
+    {
+      "id": "mgr-dealers",
+      "route": "mgr-dealers",
+      "title": "Service Centers",
+      "archetype": "directory",
+      "roles": [
+        "RoDvsZaVjMCm"
+      ],
+      "nav": {
+        "label": "Service Centers",
+        "icon": "pin"
+      },
+      "widgets": [
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Service_Center_A00",
+            "fields": [
+              "Service_Center_Name",
+              "City",
+              "Rating"
+            ],
+            "view": "allitems"
+          },
+          "title": "Service Centers",
+          "props": {
+            "label": "Service Centers",
+            "columns": [
+              "Service Center Name",
+              "City",
+              "Rating"
+            ],
+            "scope": "all"
+          }
+        }
+      ]
+    }
+  ]
+}

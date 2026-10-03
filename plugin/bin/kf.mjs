@@ -44,7 +44,9 @@ try {
 }
 const r = spawnSync(bin, process.argv.slice(2), {
   stdio: "inherit",
-  env: { ...process.env, KF_ASSET_ROOT: PLUGIN_ROOT, KF_PLUGIN_ROOT: PLUGIN_ROOT, KF_LAUNCHER_VERSION: VERSION },
+  // KF_NODE: the real Node running this launcher. The engine runs JS tools (vite, npm scripts) with
+  // it, never with itself — the sealed engine binary is not a general-purpose node.
+  env: { ...process.env, KF_ASSET_ROOT: PLUGIN_ROOT, KF_PLUGIN_ROOT: PLUGIN_ROOT, KF_LAUNCHER_VERSION: VERSION, KF_NODE: process.execPath },
 });
 if (r.error) { process.stderr.write(`kf: cannot run engine: ${r.error.message}\n`); process.exit(1); }
 process.exit(r.status ?? 1);

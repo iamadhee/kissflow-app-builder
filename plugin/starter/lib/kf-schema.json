@@ -1,0 +1,195 @@
+{
+  "app": {
+    "id": "Warranty_Claims_A00",
+    "name": "Warranty Claims",
+    "domain": "dev-lcncdemo.kissflow.com",
+    "accountId": "AclohbCfcAX3m"
+  },
+  "generatedAt": "2026-08-01T15:06:33.925Z",
+  "dataModels": [
+    {
+      "id": "Service_Center_A00",
+      "name": "Service Center",
+      "description": "",
+      "type": "Form",
+      "fields": [
+        {
+          "id": "Service_Center_Name",
+          "name": "Service Center Name",
+          "type": "Text",
+          "required": true
+        },
+        {
+          "id": "City",
+          "name": "City",
+          "type": "Text",
+          "required": false
+        },
+        {
+          "id": "Rating",
+          "name": "Rating",
+          "type": "Number",
+          "required": false
+        }
+      ],
+      "systemFields": [],
+      "roleAccess": [
+        {
+          "id": "RoDvsZaVjMCm",
+          "name": "Warranty Manager",
+          "permission": [
+            "Delete"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Claim_A01",
+      "name": "Claim",
+      "description": "",
+      "type": "Process",
+      "fields": [
+        {
+          "id": "Claim_Number",
+          "name": "Claim Number",
+          "type": "SequenceNumber",
+          "required": false
+        },
+        {
+          "id": "Customer_Name",
+          "name": "Customer Name",
+          "type": "Text",
+          "required": true
+        },
+        {
+          "id": "Product",
+          "name": "Product",
+          "type": "Text",
+          "required": true
+        },
+        {
+          "id": "Serial_Model_Number",
+          "name": "Serial/Model Number",
+          "type": "Text",
+          "required": true
+        },
+        {
+          "id": "Purchase_Date",
+          "name": "Purchase Date",
+          "type": "Date",
+          "required": false
+        },
+        {
+          "id": "Category",
+          "name": "Category",
+          "type": "Select",
+          "required": false
+        },
+        {
+          "id": "Priority",
+          "name": "Priority",
+          "type": "Select",
+          "required": false
+        },
+        {
+          "id": "Issue_Description",
+          "name": "Issue Description",
+          "type": "Textarea",
+          "required": true
+        },
+        {
+          "id": "Claim_Amount",
+          "name": "Claim Amount",
+          "type": "Currency",
+          "required": false
+        },
+        {
+          "id": "Service_Center",
+          "name": "Service Center",
+          "type": "Reference",
+          "required": false
+        },
+        {
+          "id": "SLA_Due_Date",
+          "name": "SLA Due Date",
+          "type": "DateTime",
+          "required": false
+        }
+      ],
+      "systemFields": [
+        "_status",
+        "_current_step",
+        "_current_assigned_to",
+        "_submitted_at",
+        "_request_number",
+        "_progress",
+        "_counter"
+      ],
+      "roleAccess": [
+        {
+          "id": "RoDvsZaVjMCm",
+          "name": "Warranty Manager",
+          "permission": [
+            "View"
+          ]
+        },
+        {
+          "id": "RoDvsZ_zPgZU",
+          "name": "Claims Reviewer",
+          "permission": [
+            "InitiateItems"
+          ]
+        },
+        {
+          "id": "RoDvsZ_L2fTg",
+          "name": "Service Advisor",
+          "permission": [
+            "InitiateItems"
+          ]
+        }
+      ]
+    }
+  ],
+  "roles": [
+    {
+      "id": "RoDvsZZKwfhJ",
+      "name": "Admin",
+      "description": "Administrator role with full privileges for this application.",
+      "userCount": 1
+    },
+    {
+      "id": "RoDvsZ_zPgZU",
+      "name": "Claims Reviewer",
+      "description": "",
+      "userCount": 1
+    },
+    {
+      "id": "RoDvsZ_L2fTg",
+      "name": "Service Advisor",
+      "description": "",
+      "userCount": 1
+    },
+    {
+      "id": "RoDvsZZRcQD9",
+      "name": "User",
+      "description": "An end-user role with limited privileges.",
+      "userCount": 0
+    },
+    {
+      "id": "RoDvsZaVjMCm",
+      "name": "Warranty Manager",
+      "description": "",
+      "userCount": 1
+    }
+  ],
+  "pages": [
+    {
+      "id": "Home_Page_A146",
+      "name": "Home Page",
+      "type": "Page",
+      "inputParameters": []
+    }
+  ],
+  "nav": [],
+  "navPageIds": []
+}

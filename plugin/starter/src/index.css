@@ -1,0 +1,986 @@
+/* Leftovers from the original starter template. --border, --muted, --primary and --radius used to
+ * be declared here too, and that was a trap rather than a fallback: tokens.css loads AFTER this
+ * file (main.jsx imports index.css, then shadcn.css, which imports tokens.css) and redefines all
+ * four at the same :root specificity, so the hex values below never won — they only taught whoever
+ * read the top of the file that `color: var(--muted)` was the way to write muted text.
+ *
+ * It is not. In the token contract those four are raw HSL TRIPLETS ("222.9 33.3% 95.9%"), meaningless
+ * outside hsl(). `color: var(--muted)` is an invalid value, so the declaration is dropped and the
+ * text renders at full-strength foreground; `border: 1px solid var(--border)` is an invalid
+ * shorthand, and with preflight off the UA's `border-style: none` means NO border at all. Both
+ * fail silently. Twenty-two declarations in this file were doing exactly that.
+ *
+ * Colour goes through hsl(var(--token)) — muted TEXT is --muted-foreground, not --muted. What is
+ * left here is only what tokens.css does not define; it is un-themed by omission, not by design.
+ */
+:root {
+  /* main.jsx reads this before mounting React. It is deliberately defined only in the compiled
+   * application stylesheet (never in index.html's critical loader CSS), so a missing/failed CSS
+   * asset leaves the polished boot screen in place instead of exposing an unstyled application. */
+  --kf-app-css-ready: 1;
+  font-family: var(--font-sans);
+  color: var(--ctl-fg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Tailwind's preflight is OFF in this app (see the header above), so every element the kit does not
+   style keeps the user agent's own chrome. For most elements that is harmless. For the grouping
+   elements it is not: a <fieldset> — which is the correct, accessible markup for a set of related
+   checkboxes, and therefore the thing a page builder reaches for — renders a 2px GROOVE border with
+   square corners and a notched legend, inside an app whose every other control is a 10px-radius
+   token-driven surface. Measured on a generated contract form: `border: 2px groove rgb(239,239,239)`
+   on the one fieldset, and a 16px legend against 14px body text.
+
+   Reset to nothing, deliberately: a group that wants a visible boundary asks for one through the
+   `group` block role, which is the theme's decision to make. The UA's is not. */
+fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  padding: 0;
+  font: inherit;
+  color: inherit;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  /* --ctl-offset remains the solid canvas and fallback. A theme may opt into a
+     decorative image independently through --page-bg-image; the default stays
+     plain, so themes never inherit an unrequested wash. AppShell repeats these
+     two layers because its full-viewport root covers the body in React apps. */
+  background-color: var(--ctl-offset);
+  background-image: var(--page-bg-image, none);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+html.dark body {
+  background-image: none;
+}
+
+a {
+  color: var(--brand-600);
+  text-decoration: none;
+}
+
+/* ---- Shell layout ----
+ * PORTED 2026-08-13 to Layout.dc.html's "THE SHELL" (Claude Design project "Mobile app style
+ * guide sheet", 2b8a920b-a786-4430-bd63-b0bc0dbe6229). The component-system `AppShell.jsx` now
+ * owns the frame; these plain CSS adapter classes preserve the host integration and mobile controls.
+ * The retired `--kf-*` alias layer has been removed. This adapter reads the canonical whole-colour
+ * and radius contract directly, with no compatibility indirection or hsl() wrapper. */
+.shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  height: 100vh;
+  /* [SOURCE] "the sidebar is white and the content area is canvas — that contrast is what makes
+     the page read as objects on a surface rather than regions in a frame." Painted once at the
+     root: the sidebar's own opaque fill covers it, and the topbar/content stay transparent so
+     this shows through both — one declaration instead of repeating --ctl-offset per region. */
+  background-color: var(--ctl-offset);
+  background-image: var(--page-bg-image, none);
+  background-repeat: no-repeat;
+  /* THE RAIL AND THE CONTENT SCROLL INDEPENDENTLY, and this line is what makes it work.
+     A grid item's default `min-height: auto` refuses to shrink below its own content, so a nav
+     taller than the viewport pushed the whole page instead of scrolling inside its column — the
+     brand scrolled away with it and the content lost its own scrollbar. Exactly the trap flex
+     has, and it needs the same fix on both the container and the children below. */
+  min-height: 0;
+}
+
+.sidebar {
+  /* [SOURCE] "Fill = --ctl-surface". The shell owns this surface directly; no legacy alias layer
+     participates in its background or backdrop treatment. */
+  background: var(--ctl-surface);
+  /* Classic shell structure separates with a hairline, not content elevation. */
+  border-right: 1px solid var(--ctl-border);
+  box-shadow: none;
+  color: var(--ctl-fg-muted);
+  display: flex;
+  flex-direction: column;
+  /* [OURS, unchanged] Layout.dc.html names the nav item's own inset, not the rail's outer
+     padding — and this number is load-bearing beyond looks: .brand's sticky top: -18px cancels
+     it, and the mobile .brand padding-top: 56px rule below does arithmetic against it
+     ("62 − the 18px"). Changing it means updating both; left alone since nothing in the spec
+     calls for it to move. */
+  padding: 18px 14px;
+  min-height: 0;
+  overflow-y: auto;
+  /* Stop a flick at the end of the nav from scrolling the page behind it. */
+  overscroll-behavior: contain;
+  /* Reserve the scrollbar's width always, so nav items do not shift sideways by a few pixels
+     the moment the list grows past the viewport. */
+  scrollbar-gutter: stable;
+}
+
+/* A quiet scrollbar, on the theme's own tokens rather than the UA's grey. Scoped to the rail:
+   the content area keeps the browser default, which is what a document should have.
+   --ctl-border for the resting thumb (Beacon's own "container edges" role); --ctl-fg-subtle
+   for hover — its own tokens.css line names it for exactly this ("field hover edge"). */
+.sidebar::-webkit-scrollbar { width: 8px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--ctl-border);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.sidebar::-webkit-scrollbar-thumb:hover { background: var(--ctl-fg-subtle); background-clip: padding-box; }
+.sidebar { scrollbar-width: thin; scrollbar-color: var(--ctl-border) transparent; }
+
+.brand {
+  /* Pinned while the rail scrolls under it. The app's name disappearing on a long nav is the
+     one thing that made the shared scroll feel broken rather than merely long. Repeats the
+     rail's own background rather than `inherit`, so a theme that gives .sidebar a gradient does
+     not show through the pinned row. */
+  position: sticky;
+  top: -18px; /* cancels the rail's own top padding so nothing peeks above it */
+  z-index: 1;
+  background: var(--ctl-surface); /* repeats the rail's own fill, see .sidebar */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 22px;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--ctl-fg);
+}
+
+.brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  /* [OURS] --gradient-primary — tokens.css names it explicitly for this: "logo mark, primary
+     fills, switch tracks". This keeps the mark on the canonical brand gradient. */
+  background: var(--gradient-primary);
+  color: var(--ctl-surface);
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+}
+
+.nav-section {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ctl-fg-muted);
+  opacity: 0.85;
+  padding: 14px 10px 6px;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Semantic Lucide icons sit in a quiet 28px token-tinted tile: enough visual identity to scan a
+   long rail, while the label—not the decoration—remains the primary target. */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border-radius: var(--radius-lg);
+  color: var(--ctl-fg-muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.nav-item:hover {
+  background: var(--ctl-raise); /* [SOURCE] "filled rows, hover wash" — tokens.css's own role for this */
+  color: var(--ctl-fg);
+}
+
+/* [SOURCE] "Selected nav item: --brand-100 fill + --brand-text text, PLUS a 1px
+   inset ring at ~18% primary opacity layered on top of the tint — a subtle extra definition, not
+   just the flat fill." NEW: the old CSS had no ring, only the flat fill. color-mix rather than a
+   hardcoded rgba so this stays correct if --brand-600 is ever retuned. */
+.nav-item.active {
+  background: var(--brand-100);
+  color: var(--brand-text);
+  font-weight: 600;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand-600) 18%, transparent);
+}
+
+.nav-icon-frame {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, currentColor 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 8%, transparent);
+  transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.nav-item:hover .nav-icon-frame { transform: translateY(-1px); }
+
+.nav-item.active .nav-icon-frame {
+  background: color-mix(in srgb, var(--brand-600) 15%, var(--ctl-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--brand-600) 22%, transparent);
+  color: var(--brand-600);
+}
+
+.nav-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* StatTile's sparkline. Mirrors the prototype shell's own .kit-spark rules (design-language.mjs)
+ * byte for byte so the tile draws the same trend in a reviewed prototype and in the built app —
+ * the whole reason the two kits are held to the same anatomy. Without this the component still
+ * renders its <svg>, and an unstyled <path> takes the UA's default fill:black with no stroke, so a
+ * spark would appear as a solid black wedge rather than as nothing: the failure is loud in the app
+ * and invisible in review, which is the wrong way round.
+ *
+ * TONE IS THE CLAIM. With only the accent available, every spark on a dashboard says the same
+ * thing, and a rising overdue count is not the same news as a rising completion rate. These read
+ * the tone map, so they stay correct under all eleven languages and agree with the delta pill
+ * beside them, which reads the same --tone-*-fg. */
+.kit-spark path {
+  fill: none;
+  stroke: var(--brand-600);
+  stroke-width: 2;
+}
+.kit-spark .area {
+  fill: color-mix(in srgb, var(--brand-600) 12%, transparent);
+  stroke: none;
+}
+.kit-spark.success path { stroke: var(--success-fg); }
+.kit-spark.success .area { fill: var(--success-fg); opacity: 0.12; }
+.kit-spark.danger path { stroke: var(--danger-fg); }
+.kit-spark.danger .area { fill: var(--danger-fg); opacity: 0.12; }
+.kit-spark.warning path { stroke: var(--warning-fg); }
+.kit-spark.warning .area { fill: var(--warning-fg); opacity: 0.12; }
+
+.sidebar-foot {
+  margin-top: auto;
+  padding-top: 14px;
+}
+
+/* The preview role selector belongs to the navigation context, not the host's floating chrome.
+   Pin its portal slot to the bottom of a long rail so it remains reachable while the nav scrolls. */
+.role-switcher-slot {
+  position: sticky;
+  bottom: -18px;
+  z-index: 3;
+  margin-top: auto;
+  padding-bottom: 18px;
+  background: var(--ctl-surface);
+}
+.shell[data-shell="rail-dark"] .role-switcher-slot { background: var(--color-sidebar); }
+
+/* The preview role control is designed by the app shell, not by framework inline colours. It is a
+   compact identity control (roughly one nav row), never a promotional panel and never lower-right
+   floating furniture. The provider owns role state; these classes own only placement and treatment. */
+[data-kf-role-switcher-slot] .kf-role-switcher {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 6px;
+  color: var(--ctl-fg);
+  background: color-mix(in srgb, var(--ctl-surface) 88%, var(--brand-600) 12%);
+  border: 1px solid var(--ctl-border);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
+  font: 600 12px/1.2 var(--font-sans);
+}
+[data-kf-role-switcher-slot] .kf-role-switcher-identity { display: flex; align-items: center; gap: 7px; min-width: 0; }
+[data-kf-role-switcher-slot] .kf-role-switcher-icon {
+  display: grid; place-items: center; width: 28px; height: 28px; flex: 0 0 28px;
+  color: var(--brand-600); background: var(--field-selected); border-radius: calc(var(--radius-card) - 3px);
+}
+[data-kf-role-switcher-slot] .kf-role-switcher-copy { display: grid; gap: 1px; min-width: 0; }
+[data-kf-role-switcher-slot] .kf-role-switcher-eyebrow,
+[data-kf-role-switcher-slot] .kf-role-switcher-label { color: var(--ctl-fg-muted); font-size: 9px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+[data-kf-role-switcher-slot] .kf-role-switcher-heading { color: var(--ctl-fg); font-size: 12px; font-weight: 750; }
+[data-kf-role-switcher-slot] .kf-role-switcher-pick { display: grid; gap: 3px; min-width: 0; flex: 1; }
+[data-kf-role-switcher-slot] .kf-role-switcher-select-frame { position: relative; display: block; min-width: 0; }
+[data-kf-role-switcher-slot] .kf-role-switcher-select {
+  appearance: none; width: 100%; min-width: 0; height: 30px; padding: 0 28px 0 9px;
+  color: var(--ctl-fg); background: var(--ctl-surface); border: 1px solid var(--ctl-border);
+  border-radius: calc(var(--radius-card) - 3px); font: 650 12px/1 var(--font-sans); cursor: pointer; outline: none;
+}
+[data-kf-role-switcher-slot] .kf-role-switcher-select:focus-visible { border-color: var(--brand-ring); box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand-ring) 25%, transparent); }
+[data-kf-role-switcher-slot] .kf-role-switcher-chevron { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: var(--ctl-fg-muted); pointer-events: none; }
+[data-kf-role-switcher-slot] .kf-role-switcher[data-variant="compact"] .kf-role-switcher-identity,
+[data-kf-role-switcher-slot] .kf-role-switcher[data-variant="compact"] .kf-role-switcher-label { display: none; }
+[data-kf-role-switcher-slot] .kf-role-switcher[data-variant="profile"] .kf-role-switcher-copy,
+[data-kf-role-switcher-slot] .kf-role-switcher[data-variant="profile"] .kf-role-switcher-label { display: none; }
+
+.role-switcher-header {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 28px 0;
+  pointer-events: none;
+}
+.role-switcher-header > * { pointer-events: auto; }
+.role-switcher-header .kf-role-switcher { width: min(220px, 100%); box-shadow: var(--shadow-sm); }
+.role-switcher-header.profile-chip .kf-role-switcher { width: min(188px, 100%); border-radius: 999px; }
+.role-switcher-header.profile-chip .kf-role-switcher-select { border: 0; background: transparent; }
+.shell[data-shell="rail-dark"] [data-kf-role-switcher-slot] .kf-role-switcher {
+  color: var(--color-sidebar-foreground);
+  background: color-mix(in srgb, var(--color-sidebar) 84%, var(--color-sidebar-foreground) 16%);
+  border-color: color-mix(in srgb, var(--color-sidebar-foreground) 20%, transparent);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent;
+  /* Same reason as .sidebar — without it the topbar plus a tall page makes this column refuse
+     to shrink, and .content's own overflow-y never engages. */
+  min-height: 0;
+}
+
+/* [SOURCE] "Top bar: 68px tall, p-4 px-6. NO fill, NO border — it sits on the canvas," meaning it
+   reads as the SAME background as the content behind it rather than a separate strip. Painted by
+   letting .shell's own --ctl-offset show through (transparent here and on .main) instead of
+   repainting canvas a second time. Dead under this app's SHOW_TOPBAR = false, but kept correct —
+   flipping that flag back on should not also require re-deriving these values. */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  height: 68px;
+  padding: 16px 24px;
+  background: transparent;
+}
+
+.crumb {
+  font-size: 14px;
+  color: var(--ctl-fg-muted);
+  font-weight: 500;
+}
+.crumb b { color: var(--ctl-fg); font-weight: 600; }
+
+.topsearch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 320px;
+  max-width: 38vw;
+  padding: 9px 14px;
+  border: 1px solid var(--ctl-border);
+  border-radius: 11px;
+  background: var(--ctl-surface);
+  color: var(--ctl-fg-muted);
+  font-size: 13px;
+}
+.topsearch input { border: none; background: none; outline: none; font: inherit; color: var(--ctl-fg); flex: 1; }
+.topsearch input::placeholder { color: var(--ctl-fg-muted); }
+.topsearch kbd { font-size: 11px; background: var(--ctl-raise); border: 1px solid var(--ctl-border); border-radius: 6px; padding: 1px 6px; color: var(--ctl-fg-muted); }
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--ctl-fg-muted);
+}
+
+/* [SOURCE] "Content area: canvas background, px-6 pb-7 padding, gap-3.5 (14px) between every
+   panel/row — this is the app-wide panel-to-panel rhythm." No pt- utility in the doc's own
+   shorthand (its topbar's own bottom padding supplies that gap) — but SHOW_TOPBAR is false for
+   every route in this app (see app-shell.jsx), so with no topbar above it .content is the first
+   thing in .main and a literal pt-0 would put every page's first pixel at the viewport edge.
+   [OURS] kept a top inset, at the same 24px as the sides, rather than porting pt-0 verbatim — the
+   bare-chrome override two rules below already proves this file's own convention of giving
+   .content a top inset when nothing above it provides one. */
+.content {
+  background: var(--ctl-offset);
+  padding: 24px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px; /* gap-3.5 */
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+
+.user-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--brand-600);
+  color: var(--brand-fg);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* >>> kf-theme-bridge (generated by the build engine) */
+/* ── Tailwind v4 bridge — expose the additional semantic colour namespaces ───────────────────── */
+@theme inline {
+  --color-brand-accent: var(--brand-accent);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+  --color-category-1: var(--category-1);
+  --color-category-2: var(--category-2);
+  --color-category-3: var(--category-3);
+  --color-category-4: var(--category-4);
+  --color-category-5: var(--category-5);
+  --color-category-6: var(--category-6);
+  --color-category-7: var(--category-7);
+  --color-category-8: var(--category-8);
+}
+/* <<< kf-theme-bridge */
+
+/* "Viewing as" — scope the nav to one role without editing role membership. Deliberately quiet:
+   it is a view switch, not a permission switch, so it must not read as a security control. */
+.view-as { display: inline-flex; align-items: center; gap: 6px; margin-right: 14px; }
+.view-as-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ctl-fg-muted); }
+.view-as-select {
+  font: inherit; font-size: 12.5px; padding: 4px 8px; border-radius: 8px;
+  border: 1px solid var(--ctl-border); background: var(--ctl-surface); color: var(--ctl-fg); cursor: pointer;
+}
+.view-as-select:focus-visible { outline: 2px solid var(--brand-ring); outline-offset: 1px; }
+
+/* ---- Responsive: below 900px the rail becomes a drawer ----------------------------------------
+ * index.css had NO media queries at all, so the shell was 256px + 1fr at every width and a narrow
+ * window squeezed the content column instead of collapsing the rail.
+ *
+ * This block lives at the END of the shell section ON PURPOSE. A media query carries no extra
+ * specificity, so `@media { .topbar { padding-left: 62px } }` written ABOVE the base `.topbar`
+ * rule loses to it on source order and silently does nothing — which is exactly what happened to
+ * the first three overrides here. Anything added below must stay below the rule it overrides.
+ *
+ * The toggle is `position: fixed` and a direct child of .shell rather than living in the optional
+ * topbar, so navigation remains available when the topbar is disabled. Sidebar navigation also survives
+ * .content's independent scroll without needing its own sticky context.
+ */
+.nav-toggle,
+.nav-scrim {
+  display: none;
+}
+
+/* ── SHELL ARCHETYPES ─────────────────────────────────────────────────────────
+   The frame the app wears is a DESIGN decision, made once by kf-design-director and carried
+   prototype → live via design.shell.archetype → ui-spec.app.shell → app-shell.jsx's `data-shell`
+   (see the build engine resolveShell). Mirrors the five SHELL_ARCHETYPES in
+   the build engine. rail-left is the base — it has no rule here because it IS `.shell`
+   above; an absent/unknown archetype falls through to it. Layout-changing variants are desktop-
+   scoped (min-width: 901px) so they never fight the mobile drawer defined below. */
+
+/* rail-dark — dark brand rail (premium / finance / enterprise). Colour only, so it is safe on the
+   mobile drawer too. The identity emitter owns an explicit accessible sidebar pair; using the
+   generic foreground/surface pair here let a theme variant imported later turn the rail pale while
+   its kit content remained `text-sidebar-foreground` (white). Keep the shell and kit on one pair. */
+.shell[data-shell="rail-dark"] .sidebar,
+.shell[data-shell="rail-dark"] .brand {
+  background: var(--color-sidebar);
+  color: var(--color-sidebar-foreground);
+}
+.shell[data-shell="rail-dark"] .nav-item { color: color-mix(in oklab, var(--color-sidebar-foreground) 74%, transparent); }
+.shell[data-shell="rail-dark"] .nav-item:hover { background: color-mix(in oklab, var(--color-sidebar-foreground) 12%, transparent); color: var(--color-sidebar-foreground); }
+.shell[data-shell="rail-dark"] .nav-item.active { background: color-mix(in oklab, var(--color-sidebar-foreground) 16%, transparent); color: var(--color-sidebar-foreground); }
+.shell[data-shell="rail-dark"] .nav-section { color: color-mix(in oklab, var(--color-sidebar-foreground) 55%, transparent); }
+
+@media (min-width: 901px) {
+  /* rail-right — rail on the trailing edge (ops / clinical / review-heavy). */
+  .shell[data-shell="rail-right"] { grid-template-columns: 1fr var(--sidebar-width); }
+  .shell[data-shell="rail-right"] .sidebar { grid-column: 2; grid-row: 1; }
+  .shell[data-shell="rail-right"] .main { grid-column: 1; grid-row: 1; }
+
+  /* top-bar — no side rail; the nav is a horizontal strip across the top (consumer / lightweight
+     tools). The rail becomes a single row and its section labels fold away. */
+  .shell[data-shell="top-bar"] { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .shell[data-shell="top-bar"] .sidebar {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    padding: 0 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-bottom: 1px solid var(--ctl-border);
+    box-shadow: none;
+  }
+  .shell[data-shell="top-bar"] .brand { position: static; top: auto; padding: 0; margin-right: 8px; white-space: nowrap; }
+  .shell[data-shell="top-bar"] .nav { flex-direction: row; align-items: center; gap: 2px; }
+  .shell[data-shell="top-bar"] .nav-section { display: none; }
+  .shell[data-shell="top-bar"] .nav-item { white-space: nowrap; }
+  .shell[data-shell="top-bar"] .role-switcher-slot {
+    position: static;
+    min-width: 210px;
+    margin: 0 0 0 auto;
+    padding: 0;
+    background: transparent;
+  }
+}
+
+@media (max-width: 900px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(272px, 82vw);
+    z-index: 40;
+    transform: translateX(-100%);
+    /* A transform moves the rail off-screen; it does NOT take it out of the tab order or the
+       accessibility tree. Without this, a keyboard user at phone width tabs off the toggle into
+       32 invisible nav links, and a screen reader announces the whole nav as present while the
+       drawer is shut. `visibility` is what actually removes it — delayed by the slide duration so
+       the closing animation is still watchable. */
+    visibility: hidden;
+    transition:
+      transform 200ms var(--ease-standard),
+      visibility 0s linear 200ms;
+    /* The drawer is the one place in this app that genuinely floats over content, so it takes
+       the overlay rung rather than the card's. */
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Clearance for the toggle, which sits over this corner — on .brand, NOT on .sidebar.
+     A sticky element's pin point is the scrollport inset by the SCROLL CONTAINER'S PADDING, so
+     `padding-top: 62px` on the rail moves .brand's pin from y=0 to y=44 (62 − the 18px the
+     `top: -18px` was written to cancel) and the nav then scrolls up through the gap above it and
+     under the toggle. Putting the same space inside .brand keeps the pin at 0 and lets the row's
+     own opaque background cover the band the toggle floats over. */
+  .brand {
+    padding-top: 56px;
+  }
+
+  .shell[data-nav="open"] .sidebar {
+    transform: none;
+    visibility: visible;
+    /* Only the delay, never the `transition` shorthand: this selector outranks the
+       prefers-reduced-motion override below, so a shorthand here would hand the animation back to
+       the people who asked not to have one. */
+    transition-delay: 0s;
+  }
+
+  .nav-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 39;
+    border: 0;
+    padding: 0;
+    /* Reads the same --overlay-scrim the Modal does, so every dimmed-page surface in the app agrees. */
+    background: var(--overlay-scrim);
+  }
+
+  /* The mobile toggle is a raised control and uses the shared small tier. */
+  .nav-toggle {
+    display: inline-flex;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 41;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-lg);
+    background: var(--ctl-surface);
+    box-shadow: var(--shadow-sm);
+    color: var(--ctl-fg);
+    cursor: pointer;
+    font: inherit;
+  }
+  .nav-toggle:focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-sm), 0 0 0 2px var(--brand-ring);
+  }
+
+  /* The topbar has to survive 360px. Left padding clears the fixed toggle; the search box goes
+     (it is non-functional scaffolding, the first thing that should yield); and everything that
+     stays is allowed to shrink. Without the min-width: 0 pair, a flex item refuses to go below
+     its content width and the role switcher slides out under .main's overflow: hidden — present
+     in the DOM, unreachable on a phone. */
+  .topbar {
+    gap: 12px;
+    padding: 12px 18px 12px 62px;
+  }
+  .topsearch {
+    display: none;
+  }
+  .crumb {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .user {
+    min-width: 0;
+    gap: 8px;
+  }
+  /* The signed-in name goes; the avatar beside it already carries identity. */
+  .user-name,
+  .user-email {
+    display: none;
+  }
+  .view-as {
+    min-width: 0;
+    margin-right: 0;
+  }
+  /* Hidden, not removed: .view-as is a <label> WRAPPING this text, so display: none would strip
+     the select's accessible name and leave a screen reader with an unlabelled combobox. The
+     visible affordance is the default option, which reads "Everything I can see". */
+  .view-as-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .view-as-select {
+    min-width: 0;
+    max-width: 36vw;
+  }
+
+  .content {
+    padding: 22px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+}
+
+/* ── Component-system shell adapter ──────────────────────────────────────────
+ * app-shell.jsx keeps Kissflow's role, route and preview responsibilities and
+ * delegates the frame itself to kit/AppShell. These few rules cover the
+ * app-specific slot furniture plus the existing mobile drawer contract; shell
+ * colour, geometry and material remain owned by the new component system. */
+.kf-shell-host,
+.kf-component-shell,
+.kf-shell-theme-provider {
+  width: 100%;
+  /* Keep the shell aligned to the visible viewport when embedded browser chrome
+     changes height. `vh` remains as the compatibility fallback. */
+  height: 100vh;
+  height: 100dvh;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.kf-shell-theme-provider {
+  transition:
+    width var(--default-transition-duration) var(--default-transition-timing-function),
+    height var(--default-transition-duration) var(--default-transition-timing-function),
+    margin var(--default-transition-duration) var(--default-transition-timing-function);
+}
+
+.kf-shell-host[data-display-options-resizing] .kf-shell-theme-provider {
+  transition: none;
+}
+
+.kf-shell-host[data-material="panel"] {
+  --material-surface: var(--material-panel-surface);
+  --material-border: var(--material-panel-border);
+  --material-rule: var(--material-panel-border);
+  --material-backdrop-filter: var(--material-panel-backdrop-filter);
+}
+
+.kf-shell-host[data-material="flat"] {
+  --material-surface: var(--material-flat-surface);
+  --material-border: transparent;
+  --material-rule: var(--material-flat-border);
+  --material-backdrop-filter: var(--material-flat-backdrop-filter);
+}
+
+.kf-shell-host[data-material="bare"] {
+  --material-surface: var(--material-bare-surface);
+  --material-border: var(--material-bare-border);
+  --material-rule: var(--material-bare-rule);
+  --material-backdrop-filter: var(--material-bare-backdrop-filter);
+}
+
+.kf-shell-host[data-material="spacing"] {
+  --material-surface: var(--material-spacing-surface);
+  --material-border: var(--material-spacing-border);
+  --material-rule: var(--material-spacing-border);
+  --material-backdrop-filter: var(--material-spacing-backdrop-filter);
+}
+
+.kf-shell-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+  color: var(--chrome-fg, var(--ctl-fg));
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.kf-shell-brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: calc(var(--radius, 12px) * 0.55);
+  color: var(--brand-fg);
+  background: var(--brand-600);
+  font-size: 15px;
+}
+
+.kf-shell-brand-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kf-shell-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-width: 0;
+}
+
+.kf-shell-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: var(--ctl-fg-muted, var(--ctl-fg-muted));
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.kf-shell-title strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ctl-fg);
+  font-weight: 650;
+  text-overflow: ellipsis;
+}
+
+.kf-shell-account {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+  color: var(--ctl-fg-muted, var(--ctl-fg-muted));
+  font-size: 13px;
+}
+
+.kf-shell-sidebar-account {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 4px;
+}
+
+.kf-shell-sidebar-account .view-as {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+}
+
+.kf-shell-sidebar-account .view-as-label {
+  color: var(--chrome-muted, var(--ctl-fg-muted));
+}
+
+.kf-shell-sidebar-account .view-as-select {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  border-color: var(--chrome-border, var(--ctl-border));
+  color: var(--chrome-fg, var(--ctl-fg));
+  background: var(--chrome-hover, var(--ctl-raise));
+}
+
+.kf-shell-user {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 0;
+  padding: 4px 6px;
+  color: var(--chrome-muted, var(--ctl-fg-muted));
+  font-size: 13px;
+}
+
+.kf-shell-user .user-identity {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.kf-shell-user .user-name {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--chrome-fg, var(--ctl-fg));
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Secondary to the name, and it inherits .kf-shell-user's muted chrome colour. */
+.kf-shell-user .user-email {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  font-size: 11.5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kf-shell-role-switcher {
+  width: min(220px, 32vw);
+  min-width: 0;
+}
+
+.kf-shell-theme-toggle {
+  flex: 0 0 auto;
+}
+
+.kf-shell-content {
+  min-height: 100%;
+  overflow: visible;
+  /* The viewport owns scrolling and paint, not page gutters. PageHeader can now
+     span edge to edge; ExpressPage applies the responsive gutter to its body. */
+  padding: 0;
+  gap: 0;
+  /* No fill of its own. AppShell already paints the correct ground for each
+     design — the shell root carries --ctl-offset in classic, and in float the
+     content pane is its own --ctl-surface card floating on that ground. Filling
+     this wrapper with --ctl-surface painted white over both, so classic lost its
+     grey ground entirely and float only looked right by coincidence. Transparent
+     rather than removed: `.content` earlier in this file sets --ctl-offset, and
+     this rule has to out-cascade it. */
+  background: transparent;
+}
+
+/* The dock resizes the shell once; headers use that available width without
+   reserving a second, fixed-width inspector gutter. */
+@media (min-width: 1101px) {
+  /* Display options behaves like a browser inspector: the selected edge owns
+     real viewport space, so the prototype reflows instead of hiding beneath an
+     overlay. At narrower widths the panel intentionally falls back to an
+     overlay, preserving a usable minimum application viewport. */
+  .kf-shell-host[data-display-options="open"][data-display-options-dock="right"] .kf-shell-theme-provider,
+  .kf-shell-host[data-display-options="open"][data-display-options-dock="left"] .kf-shell-theme-provider {
+    width: calc(100% - var(--kf-display-options-side-size, 400px));
+  }
+
+  .kf-shell-host[data-display-options="open"][data-display-options-dock="left"] .kf-shell-theme-provider {
+    margin-left: var(--kf-display-options-side-size, 400px);
+  }
+
+  .kf-shell-host[data-display-options="open"][data-display-options-dock="bottom"] .kf-shell-theme-provider {
+    height: calc(100dvh - var(--kf-display-options-bottom-size, min(420px, 50dvh)));
+  }
+
+  .kf-shell-host[data-shell-tweaks="open"] .view-as {
+    margin-right: 0;
+  }
+
+  .kf-shell-host[data-shell-tweaks="open"] .view-as-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .kf-shell-host[data-shell-tweaks="open"] .user-name,
+  .kf-shell-host[data-shell-tweaks="open"] .user-email {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .kf-shell-host:not([data-shell-variant="top"]) .kf-component-app-shell > aside {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 40;
+    width: min(272px, 82vw);
+    max-width: min(272px, 82vw);
+    border-radius: 0;
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform 200ms var(--ease-ctl, ease),
+      visibility 0s linear 200ms;
+  }
+
+  .kf-shell-host[data-nav="open"] .kf-component-app-shell > aside {
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .kf-shell-host:not([data-shell-variant="top"]) .kf-shell-title {
+    padding-left: 44px;
+  }
+
+  .user-name,
+  .user-email {
+    display: none;
+  }
+
+  .kf-shell-sidebar-account .user-name,
+  .kf-shell-sidebar-account .user-email {
+    display: block;
+  }
+
+  .kf-component-app-shell > aside .kf-shell-role-switcher {
+    display: block;
+    width: 100%;
+  }
+
+  .kf-shell-account .view-as-select {
+    max-width: 34vw;
+  }
+
+  .nav-toggle {
+    border: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kf-shell-host .kf-component-app-shell > aside {
+    transition: none;
+  }
+}

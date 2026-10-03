@@ -1,0 +1,573 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How a Kissflow App is Generated · from BRD to rich UI</title>
+<style>
+  :root{
+    --ink:#16161f; --ink2:#42424f; --mut:#7c7c8a; --line:#e7e7ef; --bg:#f7f7fb; --card:#fff;
+    --indigo:#6366f1; --violet:#8b5cf6; --fuchsia:#d946ef; --sky:#0ea5e9; --emerald:#10b981;
+    --amber:#f59e0b; --rose:#f43f5e; --teal:#14b8a6;
+    --a:#6366f1; --a2:#8b5cf6;   /* pipeline A: metadata */
+    --b:#0ea5e9; --b2:#14b8a6;   /* pipeline B: runtime UI */
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 28px}
+  h1,h2,h3{letter-spacing:-.02em;line-height:1.15;font-weight:800}
+  h2{font-size:30px;margin:0 0 4px}
+  h3{font-size:19px;margin:0 0 10px}
+  p{margin:0 0 14px;color:var(--ink2)}
+  code{font-family:var(--mono);font-size:.86em;background:#eeeef6;color:#4b3fb3;padding:1px 6px;border-radius:6px;border:1px solid #e3e3f2}
+  .muted{color:var(--mut)}
+  a{color:var(--indigo);text-decoration:none}
+
+  /* hero */
+  header.hero{background:radial-gradient(1200px 500px at 80% -10%,rgba(139,92,246,.22),transparent),radial-gradient(900px 500px at 0% 0%,rgba(14,165,233,.18),transparent),linear-gradient(180deg,#0e0e1a,#14142a);color:#fff;padding:64px 0 90px;position:relative;overflow:hidden}
+  header.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(transparent,var(--bg));height:60px;top:auto;opacity:.0}
+  .eyebrow{font:600 12px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:#b9b3ff;margin-bottom:18px}
+  header h1{font-size:52px;color:#fff;margin:0 0 16px;max-width:18ch}
+  header h1 .g{background:linear-gradient(100deg,#a5b4fc,#67e8f9,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+  header .lede{font-size:19px;color:#cfcfe6;max-width:62ch}
+  .pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .pill{font:600 13px/1 system-ui;color:#e7e7ff;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);padding:9px 14px;border-radius:999px;backdrop-filter:blur(6px)}
+  .pill b{color:#fff}
+
+  section{padding:54px 0;border-top:1px solid var(--line)}
+  .sec-no{font:700 13px/1 var(--mono);color:var(--mut);letter-spacing:.1em}
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:26px}
+  .lead{font-size:18px;color:var(--ink2);max-width:70ch;margin:-6px 0 26px}
+
+  /* the master flow */
+  .flow{display:grid;grid-template-columns:1fr;gap:0}
+  .lane{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:22px;position:relative;overflow:hidden}
+  .lane:before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px}
+  .lane.A:before{background:linear-gradient(var(--a),var(--a2))}
+  .lane.B:before{background:linear-gradient(var(--b),var(--b2))}
+  .lane-tag{display:inline-flex;align-items:center;gap:8px;font:700 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;border-radius:8px;margin-bottom:6px}
+  .lane.A .lane-tag{color:#4f46e5;background:#eef0ff}
+  .lane.B .lane-tag{color:#0e7490;background:#e6f7fb}
+  .lane h3{margin:8px 0 4px}
+  .steps{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin-top:16px}
+  .step{flex:1 1 150px;min-width:140px;background:#fbfbfe;border:1px solid var(--line);border-radius:13px;padding:13px 14px;position:relative}
+  .step .n{font:700 11px/1 var(--mono);color:#fff;background:var(--ink);width:20px;height:20px;border-radius:6px;display:grid;place-items:center;position:absolute;top:-9px;left:13px}
+  .lane.A .step .n{background:var(--a)} .lane.B .step .n{background:var(--b)}
+  .step h4{margin:6px 0 4px;font-size:14.5px;font-weight:700}
+  .step p{font-size:12.5px;color:var(--mut);margin:0}
+  .arrow{align-self:center;color:#c7c7d6;font-size:22px;flex:0 0 auto}
+
+  /* generic cards grid */
+  .grid{display:grid;gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .card h4{margin:0 0 6px;font-size:15.5px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .card p{font-size:13.5px;margin:0;color:var(--ink2)}
+  .dot{width:9px;height:9px;border-radius:3px;flex:0 0 auto}
+
+  /* node diagram (the graph) */
+  .graph{background:#0f1020;border-radius:18px;padding:30px;color:#dcdcf2;position:relative;overflow:hidden}
+  .graph h3{color:#fff}
+  .tree{font-family:var(--mono);font-size:13px;line-height:1.9;white-space:pre;color:#c7c7e8;overflow-x:auto}
+  .tree b{color:#a5b4fc} .tree .y{color:#fcd34d} .tree .g{color:#6ee7b7} .tree .p{color:#f0abfc} .tree .c{color:#7c7c9a}
+
+  /* agent fan */
+  .fan{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px}
+  .agent{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--violet);border-radius:11px;padding:12px 13px}
+  .agent .nm{font-weight:700;font-size:14px}
+  .agent .role{font-size:11.5px;color:var(--mut);margin-top:2px}
+
+  /* sequence */
+  .seq{counter-reset:s;display:grid;gap:0}
+  .seq .row{display:grid;grid-template-columns:42px 1fr;gap:16px;padding:14px 0;border-bottom:1px dashed var(--line)}
+  .seq .row:last-child{border-bottom:0}
+  .seq .num{counter-increment:s;width:34px;height:34px;border-radius:10px;background:linear-gradient(var(--a),var(--a2));color:#fff;font-weight:800;display:grid;place-items:center}
+  .seq .row.b .num{background:linear-gradient(var(--b),var(--b2))}
+  .seq .what b{font-weight:700} .seq .what{font-size:14.5px}
+  .seq .what .api{font-family:var(--mono);font-size:12px;color:var(--mut)}
+
+  /* GQM/Kimball */
+  .mx{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .mx th,.mx td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  .mx th{background:#fafaff;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2)}
+  .mx tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;font:600 11px/1 var(--mono);padding:4px 8px;border-radius:6px;background:#eef0ff;color:#4f46e5}
+  .tag.k{background:#e6f7fb;color:#0e7490} .tag.g{background:#e7f8ef;color:#0a7c52} .tag.a{background:#fef3e0;color:#b45309}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .frame{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .frame .lbl{font:700 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--mut);margin-bottom:10px}
+
+  /* fixes table */
+  .fix{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .fix th,.fix td{padding:11px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .fix th{background:#fafaff;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2)}
+  .fix tr:last-child td{border-bottom:0}
+  .ok{color:#0a7c52;font-weight:700} .warn{color:#b45309;font-weight:700}
+
+  .callout{background:linear-gradient(110deg,#eef0ff,#fbf0ff);border:1px solid #e3e0ff;border-radius:14px;padding:18px 20px;margin:18px 0}
+  .callout b{color:#4f46e5}
+
+  .mini{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+  .chip{font:600 12px/1 var(--mono);background:#f1f1f9;border:1px solid var(--line);color:#5a5a72;padding:7px 10px;border-radius:8px}
+
+  footer{padding:40px 0 70px;color:var(--mut);font-size:13px}
+  @media(max-width:820px){.g2,.g3,.g4,.split{grid-template-columns:1fr}header h1{font-size:36px}.steps{flex-direction:column}.arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">kf-app-author · generation pipeline</div>
+    <h1>How a Kissflow app is generated — <span class="g">from a BRD to a rich, role-aware UI</span></h1>
+    <p class="lede">A requirements document goes in. Out comes a complete, working Kissflow application — data models, processes, child tables, workflows, roles, permissions, pages and navigation — <em>and</em> a rich React runtime UI composed over it. No metadata is hand-written; every artifact is built deterministically and verified.</p>
+    <div class="pills">
+      <span class="pill"><b>2</b> pipelines</span>
+      <span class="pill"><b>13</b> design agents</span>
+      <span class="pill"><b>deterministic</b> builders</span>
+      <span class="pill"><b>GQM + Kimball</b> composition</span>
+      <span class="pill"><b>zero</b> hand-written metadata</span>
+    </div>
+  </div>
+</header>
+
+<!-- ░░ 0 · THE BIG PICTURE ░░ -->
+<section id="overview">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">00</span><h2>The big picture</h2></div>
+    <p class="lead">Two pipelines run back-to-back. <b style="color:var(--a)">Pipeline A</b> turns a BRD into a live Kissflow app (the system of record). <b style="color:var(--b)">Pipeline B</b> reads that live app back and composes a rich React UI over it. The first builds the <em>truth</em>; the second builds the <em>experience</em>.</p>
+
+    <div class="flow">
+      <div class="lane A">
+        <span class="lane-tag"><span class="dot" style="background:var(--a)"></span>Pipeline A — metadata engine · <code>kf-author-plugin</code></span>
+        <h3>BRD&nbsp;→&nbsp;Live Kissflow app</h3>
+        <div class="steps">
+          <div class="step"><span class="n">1</span><h4>Understand</h4><p>Agents read the BRD → a typed App-Spec (IR).</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">2</span><h4>Build</h4><p><code>buildApp()</code> turns the IR into the entity-graph blob.</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">3</span><h4>Apply</h4><p><code>applyIR()</code> creates flows, publishes, wires access + nav.</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">4</span><h4>Verify</h4><p>Read-after-write checks every flow is Live.</p></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:#c0c0d2;font-size:26px;margin:-6px 0 14px">↓ &nbsp;the live app becomes the input to&nbsp; ↓</div>
+
+      <div class="lane B">
+        <span class="lane-tag"><span class="dot" style="background:var(--b)"></span>Pipeline B — runtime UI · <code>kf-framework</code></span>
+        <h3>Live app&nbsp;→&nbsp;Rich React UI</h3>
+        <div class="steps">
+          <div class="step"><span class="n">1</span><h4>Sync</h4><p><code>kf-sync</code> pulls schema, roles, nav tree.</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">2</span><h4>Import</h4><p><code>kf-import-page</code> distills page specs.</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">3</span><h4>Compose</h4><p><code>kf-gen-page</code> · GQM + Kimball → React pages.</p></div>
+          <div class="arrow">→</div>
+          <div class="step"><span class="n">4</span><h4>Render</h4><p>Starter app-shell · dynamic nav · live data.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ 1 · AGENTS → IR ░░ -->
+<section id="agents">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">01</span><h2>Pipeline A · the agents that read the BRD</h2></div>
+    <p class="lead">A panel of specialist agents collaborates on a shared blackboard (<code>app-spec.json</code>). Each owns one slice and lowers it into a typed IR. The AI never writes raw metadata — it writes <em>intent</em>; deterministic builders write the metadata.</p>
+
+    <div class="fan">
+      <div class="agent"><div class="nm">kf-ba</div><div class="role">BRD → requirements, entities, actors</div></div>
+      <div class="agent"><div class="nm">kf-comprehension</div><div class="role">Domain understanding, glossary</div></div>
+      <div class="agent"><div class="nm">kf-architect</div><div class="role">App shape, page set, journeys</div></div>
+      <div class="agent"><div class="nm">kf-data-architect</div><div class="role">Models, fields, references, child tables</div></div>
+      <div class="agent"><div class="nm">kf-workflow-designer</div><div class="role">Process steps, actors, SLAs</div></div>
+      <div class="agent"><div class="nm">kf-security-designer</div><div class="role">Roles, data-scope, permission cells</div></div>
+      <div class="agent"><div class="nm">kf-experience-designer</div><div class="role">Per-role dashboards + nav (derived)</div></div>
+      <div class="agent"><div class="nm">kf-coherence-critic</div><div class="role">Cross-slice consistency checks</div></div>
+      <div class="agent"><div class="nm">kf-reconciler</div><div class="role">Merge slices, resolve conflicts</div></div>
+      <div class="agent"><div class="nm">kf-seed</div><div class="role">Realistic sample data</div></div>
+      <div class="agent"><div class="nm">kf-verifier</div><div class="role">Validate against the schema</div></div>
+      <div class="agent"><div class="nm">kf-acceptance</div><div class="role">BRD coverage acceptance</div></div>
+      <div class="agent"><div class="nm">kf-author</div><div class="role">Orchestrates the pipeline</div></div>
+    </div>
+
+    <div class="callout">
+      <b>The contract:</b> agents emit an <b>App-Spec IR</b> — roles, lists, forms (with fields, references, child tables, per-form workflows), permissions, pages and a nav tree. It is the single typed hand-off between "what the BRD means" and "what gets built." Two rules are baked into every agent: <b>SDK data only, never mock</b>, and <b>never emit a skeleton page</b>.
+    </div>
+  </div>
+</section>
+
+<!-- ░░ DEEP DIVE · AGENT SYSTEM ░░ -->
+<section id="agent-spec" style="background:linear-gradient(180deg,#fbfaff,var(--bg))">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no" style="color:var(--a)">DEEP DIVE</span><h2>The kf-app-author agent system — detailed spec</h2></div>
+    <p class="lead">A blackboard architecture: every agent reads and writes <b>one shared file</b>, <code>lib/app-spec.json</code> (the App-Spec IR). Each owns exactly one slice and reads the slices beneath it. The agents reason about <em>intent</em>; the engine compiles intent into metadata. No agent ever touches a raw entity-graph blob.</p>
+
+    <div class="callout" style="background:linear-gradient(110deg,#0f1020,#191a33);border-color:#2a2b4a;color:#dcdcf2">
+      <b style="color:#a5b4fc">The invariant:</b> the AI writes the IR; deterministic builders write the metadata; the verifier tries to break it; the reconciler applies it draft-first with a reviewable plan. Quality is <b>enforced by gates</b>, not hoped for.
+    </div>
+  </div>
+</section>
+
+<!-- IR SCHEMA -->
+<section id="ir">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">A1</span><h2>The App-Spec IR · seven slices, one blackboard</h2></div>
+    <p class="lead">The IR is the typed contract between agents. Each slice has a single owner and a strict shape the <code>engine verify</code> step validates.</p>
+    <table class="mx">
+      <tr><th style="width:13%">Slice</th><th style="width:20%">Owner</th><th>Shape (condensed)</th></tr>
+      <tr><td><span class="tag">domain</span></td><td><b>kf-ba</b></td><td><code>{ personas[], journeys[], entities[], business_rules[] }</code> — every item evidence-linked to the BRD</td></tr>
+      <tr><td><span class="tag">understanding</span></td><td><b>kf-comprehension</b></td><td>for an <em>existing</em> app — static model derived from live metadata + sandbox probes</td></tr>
+      <tr><td><span class="tag">architecture</span></td><td><b>kf-architect</b></td><td><code>{ flows[], er_map[], roles[], journey_flow_map[], build_order[] }</code></td></tr>
+      <tr><td><span class="tag">data_model</span></td><td><b>kf-data-architect</b></td><td><code>{ flows:{ &lt;id&gt;:{ fields[], references[], child_tables[], computed[], views[] } } }</code></td></tr>
+      <tr><td><span class="tag">workflow</span></td><td><b>kf-workflow-designer</b></td><td><code>{ processes:{&lt;id&gt;:{steps[]}}, cases:{statuses[],transitions[]}, slas[], notifications[] }</code></td></tr>
+      <tr><td><span class="tag">security</span></td><td><b>kf-security-designer</b></td><td><code>{ roles:{&lt;id&gt;:{flows:{&lt;id&gt;:{scope,fields{},steps{},statuses{}}}}}, data_scope }</code></td></tr>
+      <tr><td><span class="tag">experience</span></td><td><b>kf-experience-designer</b></td><td><code>{ roles:{&lt;id&gt;:{ landing, nav[], dashboard{tiles[]}, pages[] } } }</code> — tiles DERIVED, never authored</td></tr>
+    </table>
+    <p class="muted" style="margin-top:12px;font-size:13.5px">Slices lower from abstract to concrete: <code>domain → architecture → data_model / workflow / security → experience</code>. Each later agent reads everything above it; <code>data_scope</code> in <b>security</b> is the canonical map dashboards and views must reuse — so scope is defined once and applied everywhere.</p>
+  </div>
+</section>
+
+<!-- THE PIPELINE -->
+<section id="pipeline-detail">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">A2</span><h2>The pipeline · who → what → build → secure → present</h2></div>
+    <p class="lead">The orchestrator (<code>/author-app</code>) runs the agents in a canonical order that makes references resolve — roles before the things that reference them, masters before referencers, pages last. <b>Every step is gated by the verifier</b>; the run does not advance until it passes (or the user waives a flagged risk).</p>
+
+    <div class="seq">
+      <div class="row"><div class="num"></div><div class="what"><b>kf-ba</b> — BRD → <span class="tag">domain</span> (personas, journeys, entities, rules). <span class="api">asks clarifying Qs only for true gaps</span></div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>kf-architect</b> — domain → <span class="tag">architecture</span>: the ER map, which entities become form / process / case / list, child-table splits, the role list, journey→flow paths, and the <code>build_order</code>.</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Roles first</b> (data models &amp; permissions reference them) → create app + roles + grant access.</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>kf-data-architect</b> — <span class="tag">data_model</span>: fields/types/required, references (target + lookup/hidden + filter), child tables, computed formulas. Masters/lists created here so refs resolve.</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>kf-workflow-designer</b> — <span class="tag">workflow</span>: process steps + assignees, case statuses + transitions, SLAs, notifications — proven reachable &amp; deadlock-free.</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>kf-security-designer</b> — <span class="tag">security</span>: field/step/status permission matrices per role + the canonical <code>data_scope</code> (my-items / my-team / all). No lockouts.</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>kf-experience-designer</b> — <span class="tag">experience</span>: each role's landing, role-gated nav, and DERIVED dashboards (role × scope × workflow × reports) — pages LAST.</div></div>
+    </div>
+
+    <div class="callout">
+      Between <b>every</b> step sits <b style="color:var(--a)">kf-verifier</b> — it runs <code>engine verify</code> and then <em>adversarially tries to break</em> the slice just produced (lockouts, deadlocks, unreachable states, empty filters, dangling refs). It is a <b>gate</b>: the pipeline does not advance until it passes.
+    </div>
+  </div>
+</section>
+
+<!-- AGENT ROSTER DETAIL -->
+<section id="roster">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">A3</span><h2>The roster · each agent's responsibility</h2></div>
+    <p class="lead">Eight authoring agents lower intent into the IR; four assurance agents gate it; one orchestrates. Each "stays in its lane" — it surfaces what exists, never invents ids, fields, steps, or permission cells outside its slice.</p>
+
+    <table class="mx">
+      <tr><th style="width:18%">Agent</th><th style="width:13%">Kind</th><th>Owns / does</th></tr>
+      <tr><td><b>kf-ba</b></td><td><span class="tag g">author</span></td><td>BRD → evidence-linked <code>domain</code>. Asks clarifying questions only for true gaps.</td></tr>
+      <tr><td><b>kf-comprehension</b></td><td><span class="tag g">author</span></td><td>For existing apps: derive a static model from live metadata, probe a sandbox, ask grounded MCQs for the residue → <code>understanding</code>.</td></tr>
+      <tr><td><b>kf-architect</b></td><td><span class="tag g">author</span></td><td>The judgment gate: ER map, flow typing, child-table splits, role list, journey→flow map, build order → <code>architecture</code>.</td></tr>
+      <tr><td><b>kf-data-architect</b></td><td><span class="tag g">author</span></td><td>Fields, references (with lookup/filter), child tables, computed formulas (compiled to Node trees) → <code>data_model</code>.</td></tr>
+      <tr><td><b>kf-workflow-designer</b></td><td><span class="tag g">author</span></td><td>Steps + assignees, statuses + transitions, SLAs, notifications → <code>workflow</code>.</td></tr>
+      <tr><td><b>kf-security-designer</b></td><td><span class="tag g">author</span></td><td>Permission matrices per role + the canonical data-scope map → <code>security</code>.</td></tr>
+      <tr><td><b>kf-experience-designer</b></td><td><span class="tag g">author</span></td><td>Landing, role-gated nav, DERIVED dashboards → <code>experience</code>.</td></tr>
+      <tr><td><b>kf-seed</b></td><td><span class="tag a">data</span></td><td>Masters &amp; datasets (CSV import), legacy migration, sandbox seeding — mapping + dedup + dry-run, idempotent.</td></tr>
+      <tr><td><b>kf-verifier</b></td><td><span class="tag k">gate</span></td><td>After each step: <code>engine verify</code> + adversarial break attempts. <b>Gates</b> the next step.</td></tr>
+      <tr><td><b>kf-coherence-critic</b></td><td><span class="tag k">gate</span></td><td>After all slices: per-persona / per-goal coherence + an outcome-level completeness matrix. <b>Gates</b> acceptance.</td></tr>
+      <tr><td><b>kf-acceptance</b></td><td><span class="tag k">gate</span></td><td>Runs persona journeys in a sandbox (create → advance workflow → assert state/permission/visibility). Behavioural proof.</td></tr>
+      <tr><td><b>kf-reconciler</b></td><td><span class="tag k">gate</span></td><td>Fronts every change to an existing app: import live → IR, 3-way diff, ownership/drift, draft-first risk-tiered apply.</td></tr>
+      <tr><td><b>kf-author</b></td><td><span class="tag">orchestrate</span></td><td>Drives the canonical authoring flow + constructs the draft-blob entity graph (create-shell → PUT draft → publish).</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- THE GATES -->
+<section id="gates">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">A4</span><h2>The gates · three layers of assurance</h2></div>
+    <p class="lead">Correctness is enforced at three altitudes — per slice, per app, and per journey. Nothing reaches production unproven.</p>
+    <div class="grid g3">
+      <div class="card" style="border-top:4px solid var(--amber)"><h4><span class="dot" style="background:var(--amber)"></span>Per slice · kf-verifier</h4><p>After each step, adversarially tries to break the new slice — lockouts, deadlocks, unreachable states, empty filters, dangling refs. Pipeline stalls until green.</p></div>
+      <div class="card" style="border-top:4px solid var(--violet)"><h4><span class="dot" style="background:var(--violet)"></span>Per app · coherence critic</h4><p>Above the per-slice verifiers: does the whole app hang together per persona &amp; per goal? Meaningful landings, correct scope, no orphans, completeness matrix.</p></div>
+      <div class="card" style="border-top:4px solid var(--emerald)"><h4><span class="dot" style="background:var(--emerald)"></span>Per journey · acceptance</h4><p>Behavioural proof in a sandbox: each persona actually creates an item and advances it through the workflow, asserting state, permission, and visibility at every step.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRINCIPLES + COMMANDS -->
+<section id="principles">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">A5</span><h2>Operating principles &amp; entry points</h2></div>
+    <div class="split" style="margin-bottom:22px">
+      <div class="frame">
+        <div class="lbl">Principles</div>
+        <div class="grid" style="gap:10px">
+          <div class="card" style="padding:13px"><h4 style="font-size:14px">Intent, not metadata</h4><p>The AI writes the IR; the engine compiles it. No agent edits a raw entity-graph blob.</p></div>
+          <div class="card" style="padding:13px"><h4 style="font-size:14px">Evidence-linked</h4><p>Every IR item traces to a journey or business rule — no invented requirements.</p></div>
+          <div class="card" style="padding:13px"><h4 style="font-size:14px">Dry-run &amp; draft-first</h4><p>Always show the plan; build into drafts; never auto-publish to production.</p></div>
+          <div class="card" style="padding:13px"><h4 style="font-size:14px">Live app is the truth</h4><p>For existing apps the reconciler proposes minimal reviewable diffs — never a regenerate, never overwriting dev edits.</p></div>
+        </div>
+      </div>
+      <div class="frame">
+        <div class="lbl">Commands (entry points)</div>
+        <table class="mx">
+          <tr><th>Command</th><th>Scope</th></tr>
+          <tr><td><code>/author-app</code></td><td>orchestrator — the full pipeline, gated end-to-end</td></tr>
+          <tr><td><code>/author-understand</code></td><td>derive understanding of an existing app</td></tr>
+          <tr><td><code>/author-roles</code></td><td>roles + permission matrices (no lockouts)</td></tr>
+          <tr><td><code>/author-model</code></td><td>one data model (form / process / case / dataset)</td></tr>
+          <tr><td><code>/author-page</code></td><td>one page / role experience (derived dashboard)</td></tr>
+          <tr><td><code>/author-seed</code></td><td>import masters, migrate records, seed sandbox</td></tr>
+          <tr><td><code>/author-reconcile</code></td><td>front a change to an existing app (3-way diff)</td></tr>
+        </table>
+        <p class="muted" style="font-size:12.5px;margin-top:10px">Each scoped command runs the same write-IR → verify → dry-run → apply-on-approval loop, on its slice.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ 2 · IR → GRAPH ░░ -->
+<section id="builders">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">02</span><h2>Pipeline A · deterministic builders</h2></div>
+    <p class="lead">A Kissflow app is a flat <em>entity-graph blob</em> keyed by Id, with a Root pointer and Parent→Child id-array relations. <code>buildApp()</code> turns the IR into that blob with no AI in the loop — pure, testable functions.</p>
+
+    <div class="grid g3" style="margin-bottom:22px">
+      <div class="card"><h4><span class="dot" style="background:var(--indigo)"></span>buildForm</h4><p>Sections → rows → columns → fields. Type-aliases (YesNo→Boolean), wires unlinked Selects to lists/masters, defaults Reference lookups.</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--violet)"></span>addChildTable</h4><p>Embeds <code>childOf</code> forms: Model→Row→Column(Model)→child Model→Row→Column(Field)→Field.</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--fuchsia)"></span>addWorkflow</h4><p>ProcessDef → Activities (Start/User/End) → per-field, per-step Permissions + step Resources (assignees).</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--sky)"></span>buildPage</h4><p>Cards → the intermediate format → Kissflow's real <code>transformer.py</code> → rendering-correct page metadata.</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--emerald)"></span>buildPermission</h4><p>Per-(role, model) access cells in the export-verified Permission shape.</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--amber)"></span>lists &amp; masters</h4><p>Value lists (Select sources) and master forms (Reference targets), built first so refs always resolve.</p></div>
+    </div>
+
+    <div class="graph">
+      <h3 style="margin-bottom:14px">The entity graph a process becomes</h3>
+      <div class="tree"><b>Model</b> "BT Request"            <span class="c">← the process (Root)</span>
+├─ <b>Model::Row</b>
+│   ├─ Column <span class="y">(Type=Section)</span> → fields…   <span class="c">parent form layout</span>
+│   └─ Column <span class="y">(Type=Model)</span>  "Attendees"  <span class="c">child table</span>
+│        └─ <b>Model</b> "Attendees"
+│             └─ Row → Column <span class="y">(Type=Field)</span> → <span class="g">Field</span> "Select attendee" <span class="p">(Reference→Employee Master)</span>
+├─ <b>Model::ProcessDef</b>
+│    └─ Activity "Reporting Manager Approval" <span class="y">(UserTask)</span>
+│         ├─ <span class="g">Permission</span> {Column, Editable|ReadOnly}   <span class="c">incl. child-table columns ✔</span>
+│         └─ <span class="g">Resource</span> {AppRole: Reporting_Manager}
+└─ <b>Model::Field</b> × 42  <span class="c">amount, dates, selects, references…</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ 3 · APPLY ░░ -->
+<section id="apply">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">03</span><h2>Pipeline A · applying it live (resiliently)</h2></div>
+    <p class="lead"><code>applyIR()</code> walks the built artifacts and creates them in the real app over REST — then publishes, grants access, and wires navigation. Every call retries transient failures and never throws, so one hiccup can't abandon the run half-built.</p>
+
+    <div class="seq">
+      <div class="row"><div class="num"></div><div class="what"><b>Create flows</b> — one POST per list, master form, and process. <span class="api">POST /flow/2/{acct}/{type}</span></div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Push + publish metadata</b> — PUT the entity blob into each draft, then publish. <span class="api">PUT …/draft → POST …/publish</span></div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Create roles</b> &amp; build the role→id map. <span class="api">POST /app_role/2/{acct}</span></div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Grant access</b> — process Initiate <code>[]</code>, report "View report" <code>["View"]</code>, derived from <em>who can see each page</em> (page.role + nav VisibleTo).</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Build pages</b> — each intermediate → the real transformer → publish to its page id.</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Wire navigation</b> — a Menu per process → sub-menus (My&nbsp;Requests / Approvals / All), role-gated by VisibleTo. Built LAST (pages regenerate nav).</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Set role Preference</b> — DefaultPage + DefaultNavigation, so each role lands on its dashboard instead of a blank screen.</div></div>
+      <div class="row"><div class="num"></div><div class="what"><b>Verify</b> — read-after-write via explore; assert every flow is nested + Live.</div></div>
+    </div>
+
+    <div class="callout">
+      <b>The "role sees nothing" trifecta:</b> a role only experiences its app when <b>all three</b> exist — (1) a role <code>Preference</code> {DefaultPage, DefaultNavigation}, (2) a nav <code>SubMenu.VisibleTo</code> entry, and (3) flow + report member access. Miss one and the screen is blank. applyIR guarantees all three.
+    </div>
+  </div>
+</section>
+
+<!-- ░░ 4 · PIPELINE B SYNC/IMPORT ░░ -->
+<section id="sync">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">04</span><h2>Pipeline B · reading the live app back</h2></div>
+    <p class="lead">The runtime UI never hardcodes anything about the app — it learns it. Three CLI tools turn the live Kissflow app into a buildable description.</p>
+    <div class="grid g3">
+      <div class="card" style="border-top:4px solid var(--b)"><h4>kf-sync</h4><p>Pulls data models + fields, roles, the app's <b>display name</b>, and the full <b>nav tree</b> (menus → submenus → page → <b>VisibleTo roles</b>). → <code>lib/kf-schema.json</code> + <code>kf-context.md</code>.</p></div>
+      <div class="card" style="border-top:4px solid var(--b)"><h4>kf-import-page</h4><p>Distills each page's builder layout into a clean spec — components, their <b>data bindings</b> (<code>flowId</code>/<code>viewId</code>), and section grouping. → <code>lib/pages/*.json</code>.</p></div>
+      <div class="card" style="border-top:4px solid var(--b)"><h4>kf-gen-page</h4><p>Composes rich, varied React pages from the specs + schema. Emits <code>src/pages/&lt;dir&gt;/*.jsx</code>, a shared <code>_metrics.js</code> engine, and <code>lib/nav.json</code> (the role-gated tree).</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ DEEP DIVE · THE FRAMEWORKS ░░ -->
+<section id="frameworks" style="background:linear-gradient(180deg,#f6fcfe,var(--bg))">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no" style="color:var(--b)">DEEP DIVE</span><h2>GQM &amp; Kimball — the two frameworks behind every dashboard</h2></div>
+    <p class="lead">Most generated dashboards look samey because they show <em>the data that happens to exist</em>. We don't compose by guesswork — we borrow two decades-old, battle-tested frameworks. One decides <b>what is worth showing</b>; the other generates <b>the breakdowns for free</b>. Here's what each is, and exactly how we use it.</p>
+
+    <!-- GQM -->
+    <div class="frame" style="margin-bottom:20px;border-left:5px solid var(--emerald)">
+      <div class="lbl" style="color:#0a7c52">GQM · Goal → Question → Metric</div>
+      <h3>What it is</h3>
+      <p><b>Goal-Question-Metric</b> is a measurement framework from Victor Basili and the NASA Software Engineering Lab (1980s). It is strictly <b>top-down</b>: first state a <b>Goal</b> (the purpose), then derive the <b>Questions</b> that tell you whether the goal is being met, and only then choose the <b>Metrics</b> that answer those questions. The discipline it enforces: you measure what answers a real question tied to a goal — never "whatever is easy to count."</p>
+      <h3 style="margin-top:16px">How we use it</h3>
+      <p>We invert dashboard design with it. The #1 failure mode of a generated dashboard is dumping every available field into a widget. Instead, the page's <b>role intent</b> — inferred from which views it binds (<code>myitems</code> / <code>mytasks</code> / <code>admin</code>) — <em>is</em> the Goal. From that goal we plan the questions, and the metrics that answer them become the hero <b>MetricCards</b>. Three roles → three goals → three genuinely different pages.</p>
+
+      <div class="split" style="margin-top:14px">
+        <div>
+          <div class="lbl">Worked example · the approver</div>
+          <table class="mx">
+            <tr><th style="width:22%">G/Q/M</th><th>For an approver</th></tr>
+            <tr><td><span class="tag g">Goal</span></td><td>Clear my approval queue without letting risk slip through.</td></tr>
+            <tr><td><span class="tag a">Question</span></td><td>What's waiting on <em>me</em>? · How much value is at stake? · What's aging past SLA?</td></tr>
+            <tr><td><span class="tag k">Metric</span></td><td><code>Pending mine</code> · <code>Value-at-risk</code> (Σ amount of open items) · <code>Avg age</code> · <code>SLA breaches</code></td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="lbl">The same engine, other roles</div>
+          <table class="mx">
+            <tr><th>Goal (intent)</th><th>Metrics it answers with</th></tr>
+            <tr><td><span class="tag g">requester</span></td><td>my requests · my spend · in-progress · completed</td></tr>
+            <tr><td><span class="tag a">approver</span></td><td>pending · value-at-risk · avg age · SLA breach</td></tr>
+            <tr><td><span class="tag k">finance</span></td><td>total &amp; avg spend · spend trend over time</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- KIMBALL -->
+    <div class="frame" style="border-left:5px solid var(--sky)">
+      <div class="lbl" style="color:#0e7490">Kimball · dimensional modeling</div>
+      <h3>What it is</h3>
+      <p>Ralph Kimball's <b>dimensional modeling</b> is the standard way data warehouses are designed. You model the business as <b>facts</b> (the measurable events) surrounded by <b>dimensions</b> (the descriptive context you slice by) — a <b>star schema</b>. Its whole purpose is to make "<b>measure&nbsp;BY&nbsp;dimension</b>" analysis natural: revenue by region, spend by category, count by status.</p>
+      <h3 style="margin-top:16px">How we use it</h3>
+      <p>The key realization: <b>a Kissflow app is already a star schema</b> — we just read it off the metadata, no modeling required.</p>
+
+      <div class="card" style="background:#0f1020;color:#dcdcf2;margin:14px 0;border:0">
+        <div class="lbl" style="color:#7c7c9a">BT Request, read as a star</div>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;padding:8px 0 4px">
+          <div style="background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;border-radius:14px;padding:16px 20px;text-align:center;font-weight:800">FACT<br><span style="font-weight:600;font-size:12px;opacity:.85">a BT Request instance</span></div>
+          <div style="color:#7c7c9a;font-size:22px">×</div>
+          <div style="display:grid;gap:8px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="chip" style="background:#1a1b34;border-color:#2a2b4a;color:#a5b4fc">Travel Category</span><span class="chip" style="background:#1a1b34;border-color:#2a2b4a;color:#a5b4fc">Company Code</span><span class="chip" style="background:#1a1b34;border-color:#2a2b4a;color:#a5b4fc">Function</span><span class="chip" style="background:#1a1b34;border-color:#2a2b4a;color:#a5b4fc">Cost Center</span></div>
+            <div style="font-size:11.5px;color:#7c7c9a;font-family:var(--mono)">dimensions ↑ &nbsp;(Reference / Select fields)</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;font-size:12.5px;font-family:var(--mono);color:#9b9bc0;border-top:1px solid #26273f;padding-top:12px">
+          <span><b style="color:#6ee7b7">measure</b> = Grand&nbsp;Total&nbsp;₹ (Currency)</span>
+          <span><b style="color:#fcd34d">time axis</b> = Request&nbsp;Date</span>
+        </div>
+      </div>
+
+      <p>From that star, the rollups are <b>declared by the metadata</b> — we don't guess which chart to draw:</p>
+      <div class="mini">
+        <span class="chip">Σ Grand Total <b>by</b> Travel Category → donut</span>
+        <span class="chip">Σ Grand Total <b>by</b> Function → ranked bars</span>
+        <span class="chip">Σ Grand Total <b>over</b> Request Date → area trend</span>
+        <span class="chip">count <b>by</b> stage → pipeline</span>
+      </div>
+      <p class="muted" style="margin-top:12px;font-size:13.5px">Classifier in code: <code>star(fields)</code> picks the measure (amount-named / currency, never a SequenceNumber), the dimensions (Reference/Select, minus noisy id/name fields), and the date. <code>rollup(items, dim, {measure})</code> then produces each breakdown — per flow, so a multi-flow page gets one breakdown per flow.</p>
+    </div>
+
+    <!-- COMBINE -->
+    <div class="callout" style="margin-top:22px">
+      <b style="color:var(--b)">How they combine:</b> <b>GQM</b> picks <em>which</em> metrics and dimensions matter for this role; <b>Kimball</b> turns those into measure-by-dimension rollups automatically; <b>Grammar of Graphics</b> picks the mark (donut/bars/line); <b>Shneiderman's mantra</b> orders the layout (hero → primary → rollups → queue). Content from GQM, structure from Kimball, encoding + layout from the rest — every number computed live from <code>getItems()</code>.
+    </div>
+  </div>
+</section>
+
+<!-- ░░ 5 · GQM + KIMBALL ░░ -->
+<section id="compose">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">05</span><h2>Pipeline B · how pages are composed (GQM + Kimball)</h2></div>
+    <p class="lead">Pages aren't a fixed template — they're <em>composed</em> from established analytics frameworks, so a requester page, an approver page and a finance page genuinely differ, and each flow's own dimensions drive its breakdowns.</p>
+
+    <div class="split" style="margin-bottom:22px">
+      <div class="frame">
+        <div class="lbl">GQM — decides WHAT to show</div>
+        <p style="font-size:14px">Goal → Question → Metric. The page's <b>role intent</b> is inferred from its views:</p>
+        <table class="mx">
+          <tr><th>View</th><th>Intent</th><th>Hero metrics</th></tr>
+          <tr><td><code>myitems</code></td><td><span class="tag g">requester</span></td><td>My requests · my spend · in-progress</td></tr>
+          <tr><td><code>mytasks</code></td><td><span class="tag a">approver</span></td><td>Pending mine · value-at-risk · avg age · SLA breach</td></tr>
+          <tr><td><code>admin</code></td><td><span class="tag k">finance</span></td><td>Total · avg · spend trend</td></tr>
+        </table>
+      </div>
+      <div class="frame">
+        <div class="lbl">Kimball — gives the rollups for free</div>
+        <p style="font-size:14px">Each flow is a <b>star schema</b>, declared in the metadata:</p>
+        <table class="mx">
+          <tr><th>Star part</th><th>From the schema</th></tr>
+          <tr><td><b>Facts</b></td><td>process instances</td></tr>
+          <tr><td><b>Measures</b></td><td>amount / currency fields</td></tr>
+          <tr><td><b>Dimensions</b></td><td>Reference/Select fields (Cost Center, Vendor, Function…)</td></tr>
+          <tr><td><b>Time axis</b></td><td>a date field</td></tr>
+        </table>
+        <p style="font-size:13px;margin-top:10px" class="muted">Rollups = measure <b>by</b> each dimension, generated automatically. Per-flow, so a multi-flow page gets one breakdown per flow.</p>
+      </div>
+    </div>
+
+    <table class="mx">
+      <tr><th>Layer</th><th>Framework</th><th>What it decides</th></tr>
+      <tr><td><span class="tag g">content</span></td><td>GQM (Goal-Question-Metric)</td><td>which metrics matter for this role</td></tr>
+      <tr><td><span class="tag k">analytics</span></td><td>Kimball dimensional model</td><td>the measure-by-dimension rollups</td></tr>
+      <tr><td><span class="tag">encoding</span></td><td>Grammar of Graphics (<code>widget-rank</code>)</td><td>donut (few) · bars (many) · line (trend)</td></tr>
+      <tr><td><span class="tag a">layout</span></td><td>Shneiderman's mantra · Few</td><td>hero band → primary chart → rollups → actionable queue</td></tr>
+    </table>
+
+    <div class="callout" style="margin-top:22px">
+      Result: <b>hero MetricCards</b> (live number + MoM delta arrow + sparkline) → a <b>primary chart</b> (trend or pipeline) → <b>one dimensional breakdown per bound flow</b> → the <b>actionable queue</b> with a "New&nbsp;…" create button and row-click approve/reject. Every number is computed live from <code>getItems()</code> — nothing hardcoded.
+    </div>
+  </div>
+</section>
+
+<!-- ░░ 6 · COMPONENT SYSTEM ░░ -->
+<section id="widgets">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">06</span><h2>Pipeline B · the widget &amp; data layer</h2></div>
+    <p class="lead">A no-mock component library renders the composed pages. Data flows through one adapter; the nav and brand are derived entirely from the synced metadata.</p>
+    <div class="grid g2">
+      <div class="card"><h4><span class="dot" style="background:var(--indigo)"></span>MetricCard</h4><p>Advanced KPI card — icon, big number, up/down delta badge, sub-text, and a recharts sparkline. Currency vs count aware (₹ vs Σ).</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--teal)"></span>recharts charts</h4><p><code>RBreakdown</code> auto-picks donut (≤5) or ranked bars; <code>RArea</code> trends. Blank labels filtered; empty → honest EmptyState.</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--emerald)"></span>live-kf adapter</h4><p>SDK-shaped data ops over REST. 15s GET cache + in-flight dedup (kills the 429 storm). Fetches full process records.</p></div>
+      <div class="card"><h4><span class="dot" style="background:var(--amber)"></span>dynamic shell</h4><p>App brand = <code>schema.app.name</code>; nav = <code>lib/nav.json</code> tree, filtered by the active role's VisibleTo. Zero hardcoding.</p></div>
+    </div>
+    <div class="mini">
+      <span class="chip">useItems → getItems()</span><span class="chip">rollup(items, dim|fn)</span><span class="chip">valueAtRisk · aging · SLA</span><span class="chip">monthly trend · deltaPct</span><span class="chip">role-gated NavGroups</span><span class="chip">NewButton + ItemForm</span>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ 7 · FIXES ░░ -->
+<section id="fixes">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">07</span><h2>Hard-won correctness — gaps found &amp; closed</h2></div>
+    <p class="lead">Every one of these is fixed <em>in the pipeline</em> (engine / agents / generator), so the next BRD inherits all of them — not patched on one app.</p>
+    <table class="fix">
+      <tr><th>Area</th><th>Gap</th><th>Fix</th><th></th></tr>
+      <tr><td>Publish</td><td>Phantom Select refs, empty Reference lookups, standalone child tables, ignored per-form workflows</td><td>Resolve-only refs, default lookups, <code>childOf</code> embedding, per-form workflow build</td><td class="ok">✓</td></tr>
+      <tr><td>Resilience</td><td>One transient <code>fetch failed</code> aborted the whole apply</td><td>Retry + never-throw HTTP client</td><td class="ok">✓</td></tr>
+      <tr><td>Access</td><td>Approver queues "no access to component"</td><td>Role-aware views + access derived from the nav</td><td class="ok">✓</td></tr>
+      <tr><td>Nav</td><td>Roles landed on blank screens; nav not role-filtered</td><td>Role Preference + dynamic nav tree from VisibleTo</td><td class="ok">✓</td></tr>
+      <tr><td>Child tables</td><td>Rendered as empty headers in the form</td><td>Grant child-table columns per-step permissions (else hidden)</td><td class="ok">✓</td></tr>
+      <tr><td>UI quality</td><td>Identical, skeleton, view-only pages</td><td>GQM+Kimball composition · never-skeleton rule · actions on every page</td><td class="ok">✓</td></tr>
+      <tr><td>Data layer</td><td><code>/myitems</code> returns only system fields to a REST key; child-table rows need submit</td><td>Full-record fetch (status/stage/aging live); business-field values render in-product</td><td class="warn">REST-limited</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ░░ 8 · DATA REALITY ░░ -->
+<section id="data">
+  <div class="wrap">
+    <div class="sec-head"><span class="sec-no">08</span><h2>One honest constraint</h2></div>
+    <p class="lead">The dev runtime reads the app over REST with an integration key. That surface is intentionally narrow for processes.</p>
+    <div class="split">
+      <div class="frame"><div class="lbl">Works over REST (dev preview)</div><p style="font-size:14px">Counts · workflow <b>stage / pipeline</b> · status · SLA &amp; aging · the nav · actions · charts — all live.</p></div>
+      <div class="frame"><div class="lbl">Needs the in-product runtime</div><p style="font-size:14px">Process <b>business-field values</b> (dimensions + amounts) — <code>/myitems</code> projects only <code>Name</code> + system fields to an integration key. They render when the same pages run <b>inside Kissflow</b>, where the SDK has a real session.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>kf-app-author</b> — BRD → typed App-Spec IR → deterministic builders → validate → publish → sync → GQM/Kimball compose → render. The AI writes intent; the builders write metadata; everything is verified.</p>
+    <p class="muted">Pipeline A: <code>kf-author-plugin/engine</code> · <code>kf-author-plugin/agents</code> &nbsp;·&nbsp; Pipeline B: <code>packages/app-ui/bin</code> · <code>kf-plugin/agents</code> · <code>starter</code></p>
+  </div>
+</footer>
+
+</body>
+</html>

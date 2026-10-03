@@ -1,0 +1,1786 @@
+{
+  "app": {
+    "id": "Retail_Store_Management_A00",
+    "name": "Retail Store Management"
+  },
+  "roles": [
+    {
+      "id": "RoCb_NwheP5s",
+      "name": "Admin Head",
+      "access": [
+        "Store_Data_A00",
+        "Vashi_Site_Acquistion_A00",
+        "Vashi_Setup_Operations_A00",
+        "Site_Selection_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhmmU0",
+      "name": "Business Head",
+      "access": [
+        "Store_Data_A00",
+        "Foot_Fall_A00",
+        "Catalogue_A00",
+        "Filters_A00",
+        "Budget_details_A00",
+        "Store_Inventory_A00",
+        "Progress_Performance_A00",
+        "PMC_Team_A00",
+        "Layout_Type_A00",
+        "Layout_Sections_A00",
+        "Capex_Approval_A00",
+        "Site_Acquisition_Process_A00",
+        "Catalog_Management_A00",
+        "Government_Permissions_A00",
+        "Layout_s_Design_A00",
+        "Vashi_Site_Acquistion_A00",
+        "Vashi_Setup_Operations_A00",
+        "Site_Selection_A00",
+        "Customer_Service_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_Nwhqyf4",
+      "name": "CFO",
+      "access": [
+        "Vashi_Site_Acquistion_A00",
+        "Vashi_Setup_Operations_A00",
+        "Site_Selection_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_Nwhqyf5",
+      "name": "Category Head",
+      "access": [
+        "Vashi_Site_Acquistion_A00",
+        "Vashi_Setup_Operations_A00",
+        "Site_Selection_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_Nwhqyf6",
+      "name": "Cluster Head",
+      "access": [
+        "Catalogue_A00",
+        "Budget_details_A00",
+        "Store_Inventory_A00",
+        "Capex_Approval_A00",
+        "Site_Acquisition_Process_A00",
+        "Catalog_Management_A00",
+        "Site_Selection_A00",
+        "Customer_Service_A00"
+      ]
+    },
+    {
+      "id": "RoCb_Nwhqyf7",
+      "name": "Customer Service",
+      "access": [
+        "Customer_Service_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhvAr8",
+      "name": "Design Team",
+      "access": [
+        "Layout_s_Design_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhvAr9",
+      "name": "Diligence Review Team",
+      "access": [
+        "Site_Acquisition_Process_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhvArA",
+      "name": "HR Head",
+      "access": [
+        "Vashi_Site_Acquistion_A00",
+        "Vashi_Setup_Operations_A00",
+        "Site_Selection_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhvArB",
+      "name": "Legal Head",
+      "access": [
+        "Site_Acquisition_Process_A00",
+        "Vashi_Site_Acquistion_A00",
+        "Site_Selection_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhzN3C",
+      "name": "Negotiations Team",
+      "access": [
+        "Site_Acquisition_Process_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhzN3D",
+      "name": "Operations Lead",
+      "access": [
+        "Vashi_Setup_Operations_A00",
+        "Site_Selection_A00",
+        "Projects_A00"
+      ]
+    },
+    {
+      "id": "RoCb_NwhzN3E",
+      "name": "Project Manager",
+      "access": [
+        "Capex_Approval_A00",
+        "Site_Acquisition_Process_A00",
+        "Site_Selection_A00"
+      ]
+    },
+    {
+      "id": "RoCb_Nwi3ZFG",
+      "name": "Site Analyst",
+      "access": [
+        "Site_Selection_A00"
+      ]
+    },
+    {
+      "id": "RoCb_Nwi3ZFH",
+      "name": "User",
+      "access": [
+        "Site_Selection_A00"
+      ]
+    },
+    {
+      "id": "RoCb_Nwi3ZFI",
+      "name": "Warehouse Head",
+      "access": [
+        "Vashi_Site_Acquistion_A00",
+        "Vashi_Setup_Operations_A00",
+        "Site_Selection_A00",
+        "Projects_A00"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "id": "Dashboard_S_V1_A00",
+      "route": "index",
+      "title": "Dashboard",
+      "roles": [
+        "*"
+      ],
+      "nav": {
+        "label": "Dashboard",
+        "icon": "LayoutDashboard"
+      },
+      "theme": "glossy",
+      "widgets": [
+        {
+          "type": "hero",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Budget_details_A00",
+            "field": "Remaining_Budget"
+          },
+          "gate": "Budget_details_A00",
+          "props": {
+            "label": "Total project budget",
+            "agg": "sum",
+            "format": "currency"
+          }
+        },
+        {
+          "type": "kpirow",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Summary"
+          },
+          "props": {
+            "label": "Pipeline at a glance",
+            "cards": [
+              {
+                "label": "Sites in pipeline",
+                "agg": "count",
+                "tone": "indigo"
+              },
+              {
+                "label": "Stores tracked",
+                "agg": "count",
+                "binding": {
+                  "flowType": "Form",
+                  "flowId": "Store_Data_A00"
+                },
+                "tone": "sky"
+              },
+              {
+                "label": "YTD revenue",
+                "agg": "sum",
+                "binding": {
+                  "flowType": "Form",
+                  "flowId": "Store_Data_A00",
+                  "field": "YTD_Revenue"
+                },
+                "tone": "emerald",
+                "format": "currency"
+              },
+              {
+                "label": "YTD footfall",
+                "agg": "sum",
+                "binding": {
+                  "flowType": "Form",
+                  "flowId": "Store_Data_A00",
+                  "field": "YTD_Footfall"
+                },
+                "tone": "violet"
+              }
+            ]
+          }
+        },
+        {
+          "type": "segmentbar",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Summary"
+          },
+          "props": {
+            "label": "Site acquisition pipeline"
+          }
+        },
+        {
+          "type": "donut",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Summary"
+          },
+          "props": {
+            "label": "Project status",
+            "center": "Total sites"
+          }
+        },
+        {
+          "type": "map",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "field": "Store_GeoLocation",
+            "fields": [
+              "Untitled_Field",
+              "Location_1",
+              "Store_GeoLocation"
+            ]
+          },
+          "props": {
+            "label": "Stores"
+          }
+        },
+        {
+          "type": "chart",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Budget_details_A00",
+            "groupField": "Cost_Centre_ID",
+            "field": "Remaining_Budget"
+          },
+          "gate": "Budget_details_A00",
+          "props": {
+            "label": "Budget by cost centre",
+            "agg": "sum",
+            "format": "currency"
+          }
+        },
+        {
+          "type": "timeline",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "fields": [
+              "Summary",
+              "Actual_Start_Date",
+              "Planned_End_date"
+            ]
+          },
+          "props": {
+            "label": "Project timeline",
+            "titleField": "Summary",
+            "startField": "Actual_Start_Date",
+            "endField": "Planned_End_date"
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Site_Acquistion_A00",
+            "view": "myitems"
+          },
+          "props": {
+            "label": "My site acquisitions",
+            "max": 5
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Setup_Operations_A00",
+            "view": "mytasks"
+          },
+          "props": {
+            "label": "My operations tasks",
+            "max": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "Site_Selection_S_A00",
+      "route": "site-selection",
+      "title": "Site Selection",
+      "roles": [
+        "RoCb_NwhmmU0",
+        "RoCb_Nwi3ZFG",
+        "RoCb_Nwhqyf6",
+        "RoCb_NwhzN3E",
+        "RoCb_Nwi3ZFH",
+        "RoCb_NwheP5s",
+        "RoCb_Nwhqyf4",
+        "RoCb_Nwhqyf5",
+        "RoCb_NwhvArA",
+        "RoCb_NwhvArB",
+        "RoCb_NwhzN3D",
+        "RoCb_Nwi3ZFI"
+      ],
+      "nav": {
+        "label": "Site Selection",
+        "icon": "MapPin"
+      },
+      "theme": "glossy",
+      "header": {
+        "title": "Site",
+        "accent": "Selection",
+        "subtitle": "The site-acquisition pipeline at a glance — every stage, live from cases",
+        "actions": [
+          {
+            "type": "newButton",
+            "ref": "ss_new",
+            "binding": {
+              "flowType": "Case",
+              "flowId": "Projects_A00"
+            },
+            "props": {
+              "label": "New site",
+              "icon": "Plus"
+            }
+          }
+        ]
+      },
+      "widgets": [
+        {
+          "id": "ss_hero",
+          "type": "hero",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00"
+          },
+          "variant": "gradient",
+          "tone": "indigo",
+          "props": {
+            "label": "Sites in pipeline",
+            "agg": "count",
+            "format": "number",
+            "countUp": true,
+            "gradient": true,
+            "caption": "Total Projects_A00 cases across all stages",
+            "emptyText": "No sites in the pipeline yet",
+            "loadingText": "Loading pipeline…"
+          }
+        },
+        {
+          "id": "ss_kpis",
+          "type": "kpirow",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Untitled_Field"
+          },
+          "variant": "glossy",
+          "props": {
+            "label": "Pipeline by stage",
+            "countUp": true,
+            "cards": [
+              {
+                "label": "Shortlisted",
+                "agg": "count",
+                "group": "Shortlisted",
+                "tone": "sky",
+                "icon": "ListChecks"
+              },
+              {
+                "label": "Under Review",
+                "agg": "count",
+                "group": "Under Review",
+                "tone": "amber",
+                "icon": "Hourglass"
+              },
+              {
+                "label": "Finalized",
+                "agg": "count",
+                "group": "Finalized",
+                "tone": "emerald",
+                "icon": "CircleCheck"
+              },
+              {
+                "label": "Dropped",
+                "agg": "count",
+                "group": "Dropped",
+                "tone": "rose",
+                "icon": "CircleX"
+              }
+            ]
+          }
+        },
+        {
+          "id": "ss_segment",
+          "type": "segmentbar",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Untitled_Field"
+          },
+          "variant": "glossy",
+          "tone": "indigo",
+          "props": {
+            "label": "Acquisition pipeline",
+            "order": [
+              "Shortlisted",
+              "Under Review",
+              "Finalized",
+              "On Hold",
+              "Dropped"
+            ],
+            "colorByIndex": true,
+            "emptyText": "No pipeline data yet",
+            "loadingText": "Loading pipeline…"
+          }
+        },
+        {
+          "id": "ss_funnel",
+          "type": "funnel",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Untitled_Field"
+          },
+          "variant": "glossy",
+          "tone": "indigo",
+          "props": {
+            "label": "Stage funnel",
+            "agg": "count",
+            "format": "number",
+            "order": [
+              "Shortlisted",
+              "Under Review",
+              "Finalized"
+            ],
+            "colorByIndex": true,
+            "emptyText": "No stage data yet",
+            "loadingText": "Loading stages…"
+          }
+        },
+        {
+          "id": "ss_donut",
+          "type": "donut",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Untitled_Field"
+          },
+          "variant": "legend",
+          "tone": "indigo",
+          "props": {
+            "label": "Stage share",
+            "agg": "count",
+            "center": "Total sites",
+            "showLegend": true,
+            "colorByIndex": true,
+            "emptyText": "No stage data yet",
+            "loadingText": "Loading stages…"
+          }
+        },
+        {
+          "id": "ss_kanban",
+          "type": "kanban",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Untitled_Field",
+            "fields": [
+              "Summary",
+              "Site_Acquistion_ID",
+              "Untitled_Field"
+            ]
+          },
+          "variant": "neutral",
+          "tone": "neutral",
+          "props": {
+            "label": "Acquisition pipeline board",
+            "cardTitle": "Summary",
+            "cardFields": [
+              {
+                "label": "Site ID",
+                "field": "Site_Acquistion_ID"
+              }
+            ],
+            "groupOrder": [
+              "Shortlisted",
+              "Under Review",
+              "Finalized",
+              "On Hold",
+              "Dropped"
+            ],
+            "neutralCards": true,
+            "noBorders": true,
+            "emptyText": "No cases on the board yet",
+            "loadingText": "Loading board…"
+          }
+        },
+        {
+          "id": "ss_new",
+          "type": "form",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00"
+          },
+          "variant": "modal",
+          "props": {
+            "label": "New site",
+            "newButton": true,
+            "hidden": true
+          }
+        }
+      ],
+      "layout": [
+        {
+          "row": "hero",
+          "cells": [
+            {
+              "ref": "ss_hero",
+              "span": 12
+            }
+          ]
+        },
+        {
+          "row": "kpis",
+          "cells": [
+            {
+              "ref": "ss_kpis",
+              "span": 12
+            }
+          ]
+        },
+        {
+          "row": "primary",
+          "cols": 1,
+          "cells": [
+            {
+              "ref": "ss_segment",
+              "span": 12,
+              "panel": {
+                "title": "Acquisition pipeline"
+              }
+            }
+          ]
+        },
+        {
+          "row": "secondary",
+          "cols": 2,
+          "cells": [
+            {
+              "ref": "ss_funnel",
+              "span": 7,
+              "panel": {
+                "title": "Stage funnel"
+              }
+            },
+            {
+              "ref": "ss_donut",
+              "span": 5,
+              "panel": {
+                "title": "Stage share"
+              }
+            }
+          ]
+        },
+        {
+          "row": "board",
+          "cols": 1,
+          "cells": [
+            {
+              "ref": "ss_kanban",
+              "span": 12,
+              "panel": {
+                "title": "Acquisition pipeline board"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Projects_Kanban_S_A00",
+      "route": "projects-kanban",
+      "title": "Projects",
+      "roles": [
+        "RoCb_NwhmmU0",
+        "RoCb_NwheP5s",
+        "RoCb_Nwi3ZFI",
+        "RoCb_Nwhqyf4",
+        "RoCb_Nwhqyf5",
+        "RoCb_NwhvAr8",
+        "RoCb_NwhvArA",
+        "RoCb_NwhzN3D",
+        "RoCb_NwhvArB"
+      ],
+      "nav": {
+        "label": "Projects",
+        "icon": "KanbanSquare"
+      },
+      "theme": "glossy",
+      "widgets": [
+        {
+          "type": "hero",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Summary"
+          },
+          "props": {
+            "label": "Active projects",
+            "agg": "count"
+          }
+        },
+        {
+          "type": "kpirow",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Summary"
+          },
+          "props": {
+            "label": "Projects by stage"
+          }
+        },
+        {
+          "type": "kanban",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "groupField": "Summary",
+            "fields": [
+              "Summary",
+              "Site_Acquistion_ID",
+              "Actual_Start_Date",
+              "Planned_End_date"
+            ]
+          },
+          "props": {
+            "label": "Project board",
+            "cardTitle": "Summary"
+          }
+        },
+        {
+          "type": "timeline",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Projects_A00",
+            "fields": [
+              "Summary",
+              "Actual_Start_Date",
+              "Planned_End_date"
+            ]
+          },
+          "props": {
+            "label": "Project timeline",
+            "titleField": "Summary",
+            "startField": "Actual_Start_Date",
+            "endField": "Planned_End_date"
+          }
+        }
+      ]
+    },
+    {
+      "id": "Operations_A00",
+      "route": "operations",
+      "title": "Operations",
+      "roles": [
+        "RoCb_NwhmmU0",
+        "RoCb_NwheP5s",
+        "RoCb_Nwhqyf5",
+        "RoCb_NwhzN3D",
+        "RoCb_Nwi3ZFI",
+        "RoCb_Nwhqyf4",
+        "RoCb_NwhvArA"
+      ],
+      "nav": {
+        "label": "Operations",
+        "icon": "Briefcase"
+      },
+      "theme": "glossy",
+      "widgets": [
+        {
+          "type": "panel",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Setup_Operations_A00"
+          },
+          "props": {
+            "label": "Vashi - Setup & Operations"
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Setup_Operations_A00",
+            "view": "myitems"
+          },
+          "props": {
+            "label": "My items",
+            "max": 10
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Setup_Operations_A00",
+            "view": "mytasks"
+          },
+          "props": {
+            "label": "My tasks",
+            "max": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "Vashi_Warehouse_A00",
+      "route": "vashi-warehouse",
+      "title": "Warehouse",
+      "roles": [
+        "RoCb_NwheP5s",
+        "RoCb_NwhmmU0",
+        "RoCb_Nwhqyf4",
+        "RoCb_NwhvArA",
+        "RoCb_Nwi3ZFI",
+        "RoCb_Nwhqyf5",
+        "RoCb_NwhvArB"
+      ],
+      "nav": {
+        "label": "Warehouse",
+        "icon": "Building2"
+      },
+      "theme": "glossy",
+      "widgets": [
+        {
+          "type": "panel",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Site_Acquistion_A00"
+          },
+          "props": {
+            "label": "Vashi - Site Acquisition"
+          }
+        },
+        {
+          "type": "kpi",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Site_Acquistion_A00",
+            "field": "Rental_Cost"
+          },
+          "props": {
+            "label": "Total rental cost",
+            "agg": "sum",
+            "format": "currency"
+          }
+        },
+        {
+          "type": "map",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Site_Acquistion_A00",
+            "field": "Property_Location",
+            "fields": [
+              "Property_Name_1",
+              "Property_Location"
+            ]
+          },
+          "props": {
+            "label": "Properties"
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Site_Acquistion_A00",
+            "view": "myitems"
+          },
+          "props": {
+            "label": "My items",
+            "max": 10
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Vashi_Site_Acquistion_A00",
+            "view": "mytasks"
+          },
+          "props": {
+            "label": "My tasks",
+            "max": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "Customer_Service_Page_A00",
+      "route": "customer-service",
+      "title": "Customer Service",
+      "roles": [
+        "RoCb_Nwhqyf7",
+        "RoCb_Nwhqyf6",
+        "RoCb_NwhmmU0"
+      ],
+      "nav": {
+        "label": "Customer Service",
+        "icon": "Headset"
+      },
+      "theme": "glossy",
+      "widgets": [
+        {
+          "type": "hero",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Customer_Service_A00",
+            "groupField": "Statu"
+          },
+          "props": {
+            "label": "Open cases",
+            "agg": "count"
+          }
+        },
+        {
+          "type": "kpirow",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Customer_Service_A00",
+            "groupField": "Priorit"
+          },
+          "props": {
+            "label": "Cases by priority"
+          }
+        },
+        {
+          "type": "kanban",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Customer_Service_A00",
+            "groupField": "Statu",
+            "fields": [
+              "Summary",
+              "Case_ID",
+              "Priorit",
+              "Account_Name"
+            ]
+          },
+          "props": {
+            "label": "Service board",
+            "cardTitle": "Summary"
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Case",
+            "flowId": "Customer_Service_A00",
+            "fields": [
+              "Summary",
+              "Priorit",
+              "Statu",
+              "Account_Name",
+              "Email_1"
+            ]
+          },
+          "props": {
+            "label": "All cases",
+            "max": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "Capex_Approval_Page_A00",
+      "route": "capex",
+      "title": "Capex Approvals",
+      "roles": [
+        "RoCb_NwhmmU0",
+        "RoCb_Nwhqyf6",
+        "RoCb_NwhzN3E"
+      ],
+      "nav": {
+        "label": "Capex",
+        "icon": "ReceiptText"
+      },
+      "theme": "glossy",
+      "widgets": [
+        {
+          "type": "hero",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Capex_Approval_A00",
+            "field": "Remaining_Budget"
+          },
+          "gate": "Capex_Approval_A00",
+          "props": {
+            "label": "Remaining budget",
+            "agg": "sum",
+            "format": "currency"
+          }
+        },
+        {
+          "type": "kpirow",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Capex_Approval_A00",
+            "groupField": "Department"
+          },
+          "props": {
+            "label": "Requests by department"
+          }
+        },
+        {
+          "type": "chart",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Capex_Approval_A00",
+            "groupField": "Cost_Centre_ID",
+            "field": "Remaining_Budget"
+          },
+          "gate": "Capex_Approval_A00",
+          "props": {
+            "label": "Budget by cost centre",
+            "agg": "sum",
+            "format": "currency"
+          }
+        },
+        {
+          "type": "form",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Capex_Approval_A00"
+          },
+          "props": {
+            "label": "Raise capex request",
+            "newButton": true
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Process",
+            "flowId": "Capex_Approval_A00",
+            "view": "myitems",
+            "fields": [
+              "CapexName",
+              "Description",
+              "Department",
+              "Remaining_Budget"
+            ]
+          },
+          "props": {
+            "label": "My requests",
+            "max": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "Catalogue_Page_A00",
+      "route": "catalogue",
+      "title": "Catalogue",
+      "roles": [
+        "RoCb_NwhmmU0",
+        "RoCb_Nwhqyf6"
+      ],
+      "nav": {
+        "label": "Catalogue",
+        "icon": "BookOpen"
+      },
+      "theme": "glossy",
+      "widgets": [
+        {
+          "type": "kpi",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Catalogue_A00"
+          },
+          "props": {
+            "label": "SKUs in catalogue",
+            "agg": "count"
+          }
+        },
+        {
+          "type": "form",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Catalogue_A00"
+          },
+          "props": {
+            "label": "Add SKU",
+            "newButton": true
+          }
+        },
+        {
+          "type": "table",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Catalogue_A00",
+            "fields": [
+              "SKU_Name",
+              "Description"
+            ]
+          },
+          "props": {
+            "label": "Catalogue",
+            "max": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "Inventory_A00",
+      "route": "inventory",
+      "title": "Inventory",
+      "roles": [
+        "RoCb_NwhmmU0",
+        "RoCb_Nwhqyf6"
+      ],
+      "nav": {
+        "label": "Inventory",
+        "icon": "Boxes"
+      },
+      "theme": "glossy",
+      "header": {
+        "title": "Stock",
+        "accent": "Intelligence",
+        "subtitle": "Live availability across every store and category",
+        "actions": [
+          {
+            "type": "newButton",
+            "ref": "inv_new",
+            "binding": {
+              "flowType": "Form",
+              "flowId": "Store_Inventory_A00"
+            },
+            "props": {
+              "label": "New item",
+              "icon": "Plus"
+            }
+          }
+        ]
+      },
+      "widgets": [
+        {
+          "id": "inv_hero",
+          "type": "hero",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Inventory_A00",
+            "field": "Available_Inventory"
+          },
+          "variant": "gradient",
+          "tone": "indigo",
+          "props": {
+            "label": "Total available inventory",
+            "agg": "sum",
+            "format": "number",
+            "countUp": true,
+            "gradient": true,
+            "caption": "Sum of Available_Inventory across all stock records",
+            "emptyText": "No inventory recorded yet"
+          }
+        },
+        {
+          "id": "inv_kpis",
+          "type": "kpirow",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Inventory_A00",
+            "groupField": "Category"
+          },
+          "variant": "glossy",
+          "props": {
+            "label": "Inventory at a glance",
+            "countUp": true,
+            "cards": [
+              {
+                "label": "SKU records",
+                "agg": "count",
+                "tone": "indigo",
+                "icon": "Boxes"
+              },
+              {
+                "label": "Available inventory",
+                "agg": "sum",
+                "field": "Available_Inventory",
+                "tone": "emerald",
+                "icon": "PackageCheck",
+                "format": "number"
+              },
+              {
+                "label": "Categories",
+                "agg": "distinct",
+                "field": "Category",
+                "tone": "sky",
+                "icon": "Tags"
+              },
+              {
+                "label": "Stores covered",
+                "agg": "distinct",
+                "field": "Store_Name",
+                "tone": "violet",
+                "icon": "Store"
+              }
+            ]
+          }
+        },
+        {
+          "id": "inv_by_category",
+          "type": "chart",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Inventory_A00",
+            "groupField": "Category",
+            "field": "Available_Inventory"
+          },
+          "variant": "bars",
+          "tone": "indigo",
+          "props": {
+            "label": "Inventory by category",
+            "agg": "sum",
+            "format": "number",
+            "orientation": "horizontal",
+            "sort": "desc",
+            "max": 8,
+            "colorByIndex": true,
+            "emptyText": "No category data yet",
+            "loadingText": "Loading categories…"
+          }
+        },
+        {
+          "id": "inv_by_store",
+          "type": "chart",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Inventory_A00",
+            "groupField": "Store_Name",
+            "field": "Available_Inventory"
+          },
+          "variant": "bars",
+          "tone": "sky",
+          "props": {
+            "label": "Inventory by store",
+            "agg": "sum",
+            "format": "number",
+            "orientation": "horizontal",
+            "sort": "desc",
+            "max": 8,
+            "colorByIndex": true,
+            "emptyText": "No store data yet",
+            "loadingText": "Loading stores…"
+          }
+        },
+        {
+          "id": "inv_table",
+          "type": "table",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Inventory_A00",
+            "fields": [
+              "Store_Name",
+              "SKU_ID",
+              "Category",
+              "Available_Inventory",
+              "Demand_to_Supply_Gap"
+            ]
+          },
+          "variant": "glossy",
+          "props": {
+            "label": "Store inventory",
+            "max": 25,
+            "clickableRows": true,
+            "emptyText": "No stock records yet — add your first item",
+            "loadingText": "Loading inventory…"
+          }
+        },
+        {
+          "id": "inv_new",
+          "type": "form",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Inventory_A00"
+          },
+          "variant": "modal",
+          "props": {
+            "label": "Add inventory record",
+            "newButton": true,
+            "hidden": true
+          }
+        }
+      ],
+      "layout": [
+        {
+          "row": "hero",
+          "cells": [
+            {
+              "ref": "inv_hero",
+              "span": 12
+            }
+          ]
+        },
+        {
+          "row": "kpis",
+          "cells": [
+            {
+              "ref": "inv_kpis",
+              "span": 12
+            }
+          ]
+        },
+        {
+          "row": "primary",
+          "cols": 2,
+          "cells": [
+            {
+              "ref": "inv_by_category",
+              "span": 6,
+              "panel": {
+                "title": "Inventory by category"
+              }
+            },
+            {
+              "ref": "inv_by_store",
+              "span": 6,
+              "panel": {
+                "title": "Inventory by store"
+              }
+            }
+          ]
+        },
+        {
+          "row": "detail",
+          "cols": 1,
+          "cells": [
+            {
+              "ref": "inv_table",
+              "span": 12,
+              "panel": {
+                "title": "Store inventory"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "stores",
+      "route": "stores",
+      "title": "Store Info",
+      "roles": [
+        "RoCb_NwheP5s",
+        "RoCb_NwhmmU0"
+      ],
+      "nav": {
+        "label": "Store Info",
+        "icon": "Store"
+      },
+      "theme": "glossy",
+      "header": {
+        "title": "Store",
+        "accent": "Performance",
+        "subtitle": "Revenue, footfall and reach across every retail store",
+        "actions": [
+          {
+            "type": "newButton",
+            "ref": "store_new",
+            "binding": {
+              "flowType": "Form",
+              "flowId": "Store_Data_A00"
+            },
+            "props": {
+              "label": "New store",
+              "icon": "Plus"
+            }
+          }
+        ]
+      },
+      "widgets": [
+        {
+          "id": "store_hero",
+          "type": "hero",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "field": "YTD_Revenue"
+          },
+          "variant": "gradient",
+          "tone": "emerald",
+          "props": {
+            "label": "Total YTD revenue",
+            "agg": "sum",
+            "format": "currency",
+            "countUp": true,
+            "gradient": true,
+            "caption": "Sum of YTD_Revenue across all stores",
+            "emptyText": "No store revenue recorded yet",
+            "loadingText": "Loading revenue…"
+          }
+        },
+        {
+          "id": "store_kpis",
+          "type": "kpirow",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "groupField": "Location_1"
+          },
+          "variant": "glossy",
+          "props": {
+            "label": "Stores at a glance",
+            "countUp": true,
+            "cards": [
+              {
+                "label": "Total stores",
+                "agg": "count",
+                "tone": "indigo",
+                "icon": "Store"
+              },
+              {
+                "label": "Total YTD revenue",
+                "agg": "sum",
+                "field": "YTD_Revenue",
+                "tone": "emerald",
+                "icon": "IndianRupee",
+                "format": "currency"
+              },
+              {
+                "label": "Total YTD footfall",
+                "agg": "sum",
+                "field": "YTD_Footfall",
+                "tone": "sky",
+                "icon": "Users",
+                "format": "number"
+              },
+              {
+                "label": "Avg. revenue / store",
+                "agg": "avg",
+                "field": "YTD_Revenue",
+                "tone": "violet",
+                "icon": "TrendingUp",
+                "format": "currency"
+              }
+            ]
+          }
+        },
+        {
+          "id": "store_map",
+          "type": "map",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "field": "Store_GeoLocation",
+            "fields": [
+              "Untitled_Field",
+              "Location_1",
+              "Store_GeoLocation"
+            ]
+          },
+          "variant": "glossy",
+          "props": {
+            "label": "Store locations",
+            "nameField": "Untitled_Field",
+            "cityField": "Location_1",
+            "geoField": "Store_GeoLocation",
+            "resolveBy": "Location_1",
+            "emptyText": "No store locations yet",
+            "loadingText": "Locating stores…"
+          }
+        },
+        {
+          "id": "store_rev_by_loc",
+          "type": "donut",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "groupField": "Location_1",
+            "field": "YTD_Revenue"
+          },
+          "variant": "legend",
+          "tone": "indigo",
+          "props": {
+            "label": "Revenue by location",
+            "agg": "sum",
+            "format": "currency",
+            "center": "Total",
+            "showLegend": true,
+            "sort": "desc",
+            "max": 6,
+            "colorByIndex": true,
+            "emptyText": "No revenue by location yet",
+            "loadingText": "Loading locations…"
+          }
+        },
+        {
+          "id": "store_footfall_by_store",
+          "type": "chart",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "groupField": "Untitled_Field",
+            "field": "YTD_Footfall"
+          },
+          "variant": "bars",
+          "tone": "sky",
+          "props": {
+            "label": "Footfall by store",
+            "agg": "sum",
+            "format": "number",
+            "orientation": "horizontal",
+            "sort": "desc",
+            "max": 8,
+            "colorByIndex": true,
+            "emptyText": "No footfall data yet",
+            "loadingText": "Loading stores…"
+          }
+        },
+        {
+          "id": "store_rev_by_store",
+          "type": "chart",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "groupField": "Untitled_Field",
+            "field": "YTD_Revenue"
+          },
+          "variant": "bars",
+          "tone": "emerald",
+          "props": {
+            "label": "Revenue by store",
+            "agg": "sum",
+            "format": "currency",
+            "orientation": "horizontal",
+            "sort": "desc",
+            "max": 8,
+            "colorByIndex": true,
+            "emptyText": "No revenue data yet",
+            "loadingText": "Loading stores…"
+          }
+        },
+        {
+          "id": "store_table",
+          "type": "table",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00",
+            "fields": [
+              "Untitled_Field",
+              "Location_1",
+              "YTD_Revenue",
+              "YTD_Footfall"
+            ]
+          },
+          "variant": "glossy",
+          "props": {
+            "label": "All stores",
+            "max": 25,
+            "clickableRows": true,
+            "emptyText": "No stores yet — add your first store",
+            "loadingText": "Loading stores…"
+          }
+        },
+        {
+          "id": "store_new",
+          "type": "form",
+          "binding": {
+            "flowType": "Form",
+            "flowId": "Store_Data_A00"
+          },
+          "variant": "modal",
+          "props": {
+            "label": "New store",
+            "newButton": true,
+            "hidden": true
+          }
+        }
+      ],
+      "layout": [
+        {
+          "row": "hero",
+          "cells": [
+            {
+              "ref": "store_hero",
+              "span": 12
+            }
+          ]
+        },
+        {
+          "row": "kpis",
+          "cells": [
+            {
+              "ref": "store_kpis",
+              "span": 12
+            }
+          ]
+        },
+        {
+          "row": "primary",
+          "cols": 2,
+          "cells": [
+            {
+              "ref": "store_map",
+              "span": 6,
+              "panel": {
+                "title": "Store locations"
+              }
+            },
+            {
+              "ref": "store_rev_by_loc",
+              "span": 6,
+              "panel": {
+                "title": "Revenue by location"
+              }
+            }
+          ]
+        },
+        {
+          "row": "secondary",
+          "cols": 2,
+          "cells": [
+            {
+              "ref": "store_footfall_by_store",
+              "span": 6,
+              "panel": {
+                "title": "Footfall by store"
+              }
+            },
+            {
+              "ref": "store_rev_by_store",
+              "span": 6,
+              "panel": {
+                "title": "Revenue by store"
+              }
+            }
+          ]
+        },
+        {
+          "row": "detail",
+          "cols": 1,
+          "cells": [
+            {
+              "ref": "store_table",
+              "span": 12,
+              "panel": {
+                "title": "All stores"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "seed": {
+    "env": {
+      "domain": "dev-lcncdemo.kissflow.com",
+      "account": "AclohbCfcAX3m",
+      "app": "RE_Funds_Dept_v7_A00",
+      "target": "LIVE dev (demo data, task-directed)"
+    },
+    "generated": "2026-07-10T15:09:56.399Z",
+    "agent": "kf-seed",
+    "sources": [
+      {
+        "id": "inline-demo-dataset",
+        "kind": "authored",
+        "file": "runs/re-funds-seed/seed-data.mjs",
+        "note": "Saudi RE funds demo set (SAR scale) authored against lib/kf-schema.json field ids"
+      }
+    ],
+    "mappings": [
+      {
+        "flow": "Fund_A06",
+        "fields": 34,
+        "refs": {
+          "Fund_owner_user": "UsLXU_pC0ZNWN",
+          "Fund_Manager": "UsLXU_pC0ZNWN"
+        }
+      },
+      {
+        "flow": "Vendor_A33",
+        "fields": 27
+      },
+      {
+        "flow": "TimeLine_A06|Key_Figures_A06|SPV_A06|SPE_A06|Project_Timeline_A06|Budget_A06|Fund_Health_A06",
+        "refs": {
+          "Fund": "resolved Fund_name → Fund_A06 _id"
+        }
+      },
+      {
+        "flow": "Payment_A07",
+        "refs": {
+          "Fund": "Fund_A06 _id",
+          "Vendor_ID": "Vendor_A33 _id"
+        }
+      }
+    ],
+    "schema_changes": [
+      {
+        "flow": "Fund_A06",
+        "field": "Fund_firm",
+        "change": "Select→Text",
+        "reason": "REQUIRED; backing list Fund_Firm_A06 empty (list data API 403) — blocked ALL fund submits (verified 400)",
+        "backup": "runs/re-funds-seed/backup-draft-Fund_A06.json"
+      },
+      {
+        "flow": "Fund_A06",
+        "field": "Status",
+        "change": "Select→Text",
+        "reason": "non-blocking but demo-required (Active/Closed chips, closed KPI)"
+      },
+      {
+        "flow": "Fund_A06",
+        "field": "Property_Type",
+        "change": "Select→Text",
+        "reason": "non-blocking but demo-required (AUM donut, asset tiles)"
+      },
+      {
+        "flow": "Vendor_A33",
+        "field": "Class_ID",
+        "change": "Select→Text",
+        "reason": "REQUIRED; backing list Vendor_Class_ID_A06 empty — blocked ALL vendor submits",
+        "backup": "runs/re-funds-seed/backup-draft-Vendor_A33.json"
+      }
+    ],
+    "validation": {
+      "accepted": 71,
+      "rejected": []
+    },
+    "load_results": [
+      {
+        "flow": "Fund_A06",
+        "inserted": 8,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Fund_name"
+      },
+      {
+        "flow": "Vendor_A33",
+        "inserted": 10,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Vendor_ID"
+      },
+      {
+        "flow": "TimeLine_A06",
+        "inserted": 8,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Fund._id (1/fund)"
+      },
+      {
+        "flow": "Key_Figures_A06",
+        "inserted": 8,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Fund._id (1/fund)"
+      },
+      {
+        "flow": "SPV_A06",
+        "inserted": 8,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "SPV_CR_No"
+      },
+      {
+        "flow": "SPE_A06",
+        "inserted": 4,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "SPE_Registration_No"
+      },
+      {
+        "flow": "Project_Timeline_A06",
+        "inserted": 4,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Fund._id"
+      },
+      {
+        "flow": "Budget_A06",
+        "inserted": 4,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Fund._id+Date"
+      },
+      {
+        "flow": "Fund_Health_A06",
+        "inserted": 6,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Fund._id+Task"
+      },
+      {
+        "flow": "Title_Deed_A06",
+        "inserted": 6,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Deed_number"
+      },
+      {
+        "flow": "Payment_A07",
+        "inserted": 5,
+        "updated": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "idempotency_key": "Description (local ledger runs/re-funds-seed/payments-ledger.json — process list API closed to dev key)"
+      }
+    ],
+    "unpopulated": {
+      "Fund_A06": "Activity_Type, Project_Country, Project_City, Currency, Offering_Type (list-backed Selects, lists empty + list API 403), Fund_logo (Attachment), Contracts_* (derived)",
+      "Payment_A07": "Document_Type, Currency_ID, payment_method (Selects), Voucher_No (auto sequence)",
+      "skipped_flows": "Financial_Statements_A06, Insurance_A06 (required empty-list Selects; graft not justified), 1-field stub forms (Bank_Info/BOD_Info/Third_Parties/Last_Update/Financing_Facility/Unit_Holder_List)"
+    }
+  }
+}

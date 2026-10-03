@@ -35,6 +35,8 @@ should take seconds; anything beyond that is wasted user-visible time.
 - **python3** on PATH (`python3 --version`) — needed **only** for native page publishing. Data
   models, workflows, roles and permissions build fine **without** it; only native pages need it.
 - **macOS, Linux or Windows x64** — the engine ships as a sealed build per platform.
+- **npm with access to the npm registry** — only for custom React UIs. The first React build sets up
+  the build tools once (about 2 minutes, ~400 MB in the user's home folder); native pages don't need it.
 
 ## 2. Engine check
 Tell the user first: *"The first run downloads the build engine for this platform (~100 MB, once per
