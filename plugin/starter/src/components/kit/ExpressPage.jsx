@@ -1341,8 +1341,9 @@ function resolveViewer(spec, rows, fields, kf) {
     return { field, value: values[0], matched: false, total: values.length };
   const self = [kf?.user?.Name, kf?.user?.Email, kf?.user?._id].find(Boolean);
   if (self) return { field, value: cellText(self), matched: false, total: values.length };
-  if (!values.length) return null;
-  return { field, value: values[0], matched: false, total: values.length };
+  // NO IDENTITY AT ALL — a live host that returned an empty user. Pinning to someone's rows would show
+  // one person another's records, so the page stays scoped and shows nothing.
+  return { field, value: null, matched: false, total: values.length };
 }
 
 export function ExpressPage({ page, sectionRenderers = {} }) {

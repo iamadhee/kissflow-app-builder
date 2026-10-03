@@ -266,6 +266,14 @@ export function createMockKf(schema) {
         for (const key of Object.keys(data))
             if (m?.fields.some(f => (f.id === key || f.name === key) && isComputed(f)))
                 throw new Error(`COMPUTED_READ_ONLY: ${key}`);
+        // Live Kissflow matches people by <field>._id and rejects a bare name, so preview rejects it too.
+        for (const [key, value] of Object.entries(data)) {
+            const field = m?.fields.find(f => f.id === key || f.name === key);
+            if (!field || value == null || value === "" || !/^(user|userpicker)$/i.test(String(field.type || "")))
+                continue;
+            if (typeof value !== "object" || Array.isArray(value) || typeof value._id !== "string" || !value._id)
+                throw new Error(`USER_VALUE_INVALID: ${key} needs a user object with an _id (for example kf.user), not a name`);
+        }
     };
     refreshComputed();
     /**

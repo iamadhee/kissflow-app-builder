@@ -1,4 +1,3 @@
-// GENERATED from starter/src/components/kit/case-status.js (sha256:0855d1d0cdcaef73). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
 // case-status.js — pure helpers for Kissflow board (case) items: live status fields and actions.
 
 // A live board item carries its status as _status_id / _status_name / _category. Pages (and the

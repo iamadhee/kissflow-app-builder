@@ -1,4 +1,4 @@
-// GENERATED from starter/src/components/kit/ExpressPage.jsx (sha256:5000c76a0fa542d7). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
+// GENERATED from starter/src/components/kit/ExpressPage.jsx (sha256:b139b867b82c0637). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
 /**
  * ExpressPage — the deterministic page grammar used by the express compiler.
  *
@@ -1342,8 +1342,9 @@ function resolveViewer(spec, rows, fields, kf) {
     return { field, value: values[0], matched: false, total: values.length };
   const self = [kf?.user?.Name, kf?.user?.Email, kf?.user?._id].find(Boolean);
   if (self) return { field, value: cellText(self), matched: false, total: values.length };
-  if (!values.length) return null;
-  return { field, value: values[0], matched: false, total: values.length };
+  // NO IDENTITY AT ALL — a live host that returned an empty user. Pinning to someone's rows would show
+  // one person another's records, so the page stays scoped and shows nothing.
+  return { field, value: null, matched: false, total: values.length };
 }
 
 export function ExpressPage({ page, sectionRenderers = {} }) {

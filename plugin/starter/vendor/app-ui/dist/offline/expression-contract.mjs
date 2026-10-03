@@ -100,14 +100,57 @@ export function expressionFields(ast) {
 // Deliberately bounded replay support. Unsupported native functions must produce a finding,
 // not a guessed value or a passing simulation. Extend only with adapter conformance tests.
 export const REPLAY_FUNCTIONS = Object.freeze(["IF", "AND", "OR", "NOT", "ISBLANK", "SUM", "MIN", "MAX", "AVERAGE", "ABS", "ROUND", "CEIL", "FLOOR", "MOD", "LENGTH", "CONCATENATE", "TOTEXT", "TOUPPERCASE", "TOLOWERCASE", "TRIM", "TODAY", "NOW", "GETVALUE", "DATEDIFF", "DAY", "MONTH", "YEAR"]);
-// Date arithmetic the corpus needs everywhere (days open, age, overdue, SLA): DATEDIFF(later, earlier) is the
-// number of whole calendar days from `earlier` to `later` (negative when reversed), on ISO dates or timestamps.
-const DAY_MS = 86400000;
-const parseIso = (name, v) => { const t = Date.parse(v); if (typeof v !== "string" || !Number.isFinite(t))
-    throw new Error(`${name} requires ISO dates`); return t; };
+// Date arithmetic mirrors the platform's DATEDIFF(start, end, unit, holidays = true): the order of the two dates does
+// not matter, the unit is mandatory, and with holidays on, weekend time is not counted. Replay assumes a
+// Saturday/Sunday weekend and no account holiday calendar; the live account's calendar can differ.
+const DAY_MS = 86_400_000;
+export const DATEDIFF_UNITS = Object.freeze(["day", "hour", "minute", "second", "month", "year"]);
+const parseIso = (name, v) => { const t = Date.parse(v); if (typeof v !== "string" || !Number.isFinite(t)) throw new Error(`${name} requires ISO dates`); return t; };
+const dayStart = (t) => Math.floor(t / DAY_MS) * DAY_MS;
+const isWeekend = (t) => [0, 6].includes(new Date(t).getUTCDay());
+const addMonths = (t, months) => {
+  const d = new Date(t), y = d.getUTCFullYear(), m = d.getUTCMonth() + months, ty = y + Math.floor(m / 12), tm = ((m % 12) + 12) % 12;
+  const last = new Date(Date.UTC(ty, tm + 1, 0)).getUTCDate();
+  return Date.UTC(ty, tm, Math.min(d.getUTCDate(), last), d.getUTCHours(), d.getUTCMinutes(), d.getUTCSeconds(), d.getUTCMilliseconds());
+};
+// dateutil.relativedelta(later, earlier) for later >= earlier: whole months first, then the remainder.
+const relativeDelta = (later, earlier) => {
+  const a = new Date(later), b = new Date(earlier);
+  let months = (a.getUTCFullYear() - b.getUTCFullYear()) * 12 + (a.getUTCMonth() - b.getUTCMonth());
+  if (addMonths(earlier, months) > later) months -= 1;
+  const rest = (later - addMonths(earlier, months)) / 1000;
+  return { years: Math.trunc(months / 12), months: months % 12, days: Math.floor(rest / 86400), hours: Math.floor((rest % 86400) / 3600), minutes: Math.floor((rest % 3600) / 60) };
+};
+function datediff(start, end, unit, holidays = true) {
+  if (start == null || end == null || start === "" || end === "" || !unit) return null;
+  const resn = String(unit).toLowerCase();
+  if (!DATEDIFF_UNITS.includes(resn)) throw new Error(`DATEDIFF unit must be one of ${DATEDIFF_UNITS.join(", ")}`);
+  let a = parseIso("DATEDIFF", start), b = parseIso("DATEDIFF", end);
+  if (a > b) [a, b] = [b, a];
+  let seconds = Math.floor((b - a) / 1000);
+  if (holidays) {
+    const first = dayStart(a), last = dayStart(b);
+    if (first !== last || !isWeekend(last)) {
+      for (let day = first; day <= last; day += DAY_MS) {
+        if (!isWeekend(day)) continue;
+        if (day === last) seconds -= Math.floor((b - day) / 1000);
+        else if (day === first) seconds -= Math.floor((day + DAY_MS - a) / 1000);
+        else seconds -= 86400;
+      }
+    } else seconds = 0;
+  }
+  if (resn === "day") return seconds / 86400;
+  if (resn === "hour") return seconds / 3600;
+  if (resn === "minute") return seconds / 60;
+  if (resn === "second") return seconds;
+  const d = relativeDelta(a + seconds * 1000, a);
+  return resn === "year" ? d.years + d.months / 12 + d.days / 365.2425 + d.hours / 8765.82 + d.minutes / 525949.2
+    : d.years * 12 + d.months + d.days / 30 + d.hours / 730.485 + d.minutes / 43829.1;
+}
+const datePart = (name, get) => (v) => (v == null || v === "" ? null : get(new Date(parseIso(name, v))));
 export const dateFunctions = Object.freeze({
-    DATEDIFF: (a, b) => Math.trunc((parseIso("DATEDIFF", a) - parseIso("DATEDIFF", b)) / DAY_MS),
-    DAY: (v) => new Date(parseIso("DAY", v)).getUTCDate(), MONTH: (v) => new Date(parseIso("MONTH", v)).getUTCMonth() + 1, YEAR: (v) => new Date(parseIso("YEAR", v)).getUTCFullYear(),
+  DATEDIFF: datediff,
+  DAY: datePart("DAY", (d) => d.getUTCDate()), MONTH: datePart("MONTH", (d) => d.getUTCMonth() + 1), YEAR: datePart("YEAR", (d) => d.getUTCFullYear()),
 });
 // Number.ROUND uses Python's ties-to-even with no precision, Decimal HALF_UP with
 // explicit precision. JavaScript Math.round differs for negative ties in both cases.

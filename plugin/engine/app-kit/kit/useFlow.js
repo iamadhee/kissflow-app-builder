@@ -1,4 +1,4 @@
-// GENERATED from starter/src/components/kit/useFlow.js (sha256:bea920a4396df5d3). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
+// GENERATED from starter/src/components/kit/useFlow.js (sha256:1097789e9ec691ac). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
 /**
  * useFlow — one place that knows how to reach a Kissflow flow.
  *
