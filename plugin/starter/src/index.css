@@ -66,9 +66,13 @@ html.dark body {
   background-image: none;
 }
 
-a {
-  color: var(--brand-600);
-  text-decoration: none;
+/* Layered so component utilities win: an unlayered link colour painted a primary link-button's
+   label in the same brand colour as its fill. */
+@layer base {
+  a {
+    color: var(--brand-600);
+    text-decoration: none;
+  }
 }
 
 /* ---- Shell layout ----

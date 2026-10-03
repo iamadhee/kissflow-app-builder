@@ -28,7 +28,8 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
    node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" language-catalog design <theme-id> --app-id <slug> --app-name "<name>" \
      --rationale "<one line: why this theme/archetype fits THIS domain>" \
      --record runs/current \
-     [--archetype rail-left|rail-dark|top-bar|rail-right] [--density compact|comfortable|airy]
+     [--archetype rail-left|rail-dark|top-bar|rail-right] [--density compact|comfortable|airy] \
+     --role-switcher <rail-footer|header-end|profile-chip>:<compact|profile>
    ```
    `--record` appends the layout + theme choice to `decisions.md` as the next `D<n>` — the nav
    position is a design decision the customer signs off on, not a CLI flag; the design check fails
@@ -59,7 +60,7 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
      and may make one compiler-directed repair. Assembly waits for every receipt. The engine continues
      to own schema/SDK bindings, scopes, loading/error/empty states and allowed actions; builders own
      faithful custom React composition and interactions.
-   - Build/assemble: `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current` → stages the
+   - Build/assemble: `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current --final` → stages the
      pages into the React kit, builds, smoke-tests every role and route in a real browser, and writes
      `runs/current/prototype/index.html`. A failed build never replaces a working prototype; fix what
      the log names and re-run. Do not route comprehensive through the Express page compiler. A
@@ -76,7 +77,7 @@ Pre-req: `/author-plan` produced `runs/current/app-spec.json` + `decisions.md`.
    actionability and research fidelity. It must prove that the selected candidate and every required
    anatomy marker survived into rendered pixels, then writes `prototype/qa/visual-verdict.json`.
    - On BLOCK, send only `repairBrief` to `kf-prototype-builder`, rebuild the failing pages
-     (`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current`), recapture both viewports and
+     (`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current --final`), recapture both viewports and
      re-run visual QA.
    - Cap the loop at three repair rounds. More tokens in one monolithic pass are not a substitute for
      rendered feedback. If blockers remain after round three, report them and stop; never mark ready.

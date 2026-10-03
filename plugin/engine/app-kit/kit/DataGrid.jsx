@@ -1,4 +1,4 @@
-// GENERATED from starter/src/components/kit/DataGrid.jsx (sha256:31a105886b530fa5). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
+// GENERATED from starter/src/components/kit/DataGrid.jsx (sha256:7e2b5eefb92b9e71). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
 import React from 'react';
 import Table from './Table.jsx';
 import Button from './Button.jsx';
@@ -40,7 +40,7 @@ function DataGrid({ columns = [], rows = [], onOpen, openLabel = 'Open', classNa
     ? { key: column, label: column, render: (row) => formatCell(row?.[column]) }
     : column);
   if (onOpen) normalized.push({
-    key: '__open', label: 'Actions', sizing: 'action', sortable: false,
+    key: '__open', label: 'Actions', sizing: 'action', sortable: false, pin: 'end',
     minWidth: actionColumnWidth(openLabel),
     render: (row) => <Button rank="quiet" onClick={() => onOpen(row)} data-cx-action="open-record">{openLabel}</Button>,
   });

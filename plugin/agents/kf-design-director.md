@@ -65,15 +65,15 @@ from the selected catalog entry.
 Ground the theme choice in the domain and say why in `rationale` — one line, citing what about this
 business argues for it. Catalog validation owns contrast and chart-ramp integrity.
 
-## Output — commit the `design` slice
+## Output — write `design` into `runs/current/prototype/experience-spec.json` (merge, do not clobber other keys)
 `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" language-catalog design <id> --app-id <slug> --app-name "<name>" --rationale "<why>" --record runs/current` prints the compatibility design slice plus its canonical
-`language`, `density`, `shell`, and registry trail. Save that slice verbatim to a private JSON file and commit it with
-`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" ir-graph-cli commit-slice design <file> --base-revision latest`. The commit
-refreshes `runs/current/app-spec.json`; never edit that file directly, because the next commit overwrites it. The CLI already
+`language`, `density`, `shell`, `roleSwitcher`, and registry trail. Pass your role-switcher choice as
+`--role-switcher <placement>:<variant>` (for example `header-end:compact`). Merge the printed slice into
+`runs/current/prototype/experience-spec.json` verbatim. The CLI already
 requires and stores your `rationale`; do not restructure or hand-tune generated color/type/shape
 values. They are a compatibility projection of the selected catalog theme, not override inputs.
 
-Verify it: the committed `design` slice carries `language`, `shell`, `density` and `rationale` exactly as
+Verify it: the merged `design` slice carries `language`, `shell`, `density` and `rationale` exactly as
 printed; a missing or edited key fails the prototype build's theme check.
 
 ## Hard rules

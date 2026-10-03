@@ -55,6 +55,8 @@ Apply the spec to the dev account, per the **UI mode chosen in Step 0**:
 work on re-run. In an env that caps bash call duration a full apply won't finish in one call: **run it
 in the background**, or just **re-run `apply`** — it continues from the checkpoint (no re-publishing)
 — until it reports 0 errors. Delete `apply-state.json` to force a clean re-apply.
+Each error carries Kissflow's own message. To see every failed platform response in full, prefix the
+command with `KF_DEBUG=1`.
 
 `apply` auto-handles **account name collisions** (a flow/list name already taken in the dev account) —
 it reuses the existing flow or creates an app-prefixed copy; **don't stop to manually rename + re-plan**.

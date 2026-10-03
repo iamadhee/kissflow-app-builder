@@ -101,7 +101,7 @@ builder owns the rest.
 
 Do not compile after each page. Finish all assigned page and widget files, then run exactly once:
 
-`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current`
+`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current --final`
 
 On failure, read only the build log it prints. It names the exact source, contract or smoke finding. Make
 one bounded repair touching only the named files and run the same command once more. A second failure

@@ -1,4 +1,4 @@
-// GENERATED from starter/src/components/kit/Table.jsx (sha256:545409f1a4a884a6). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
+// GENERATED from starter/src/components/kit/Table.jsx (sha256:f38b6c9b9f14b039). Do not edit: change the source and run `npm run sync:kit` in packages/kernel; a hand edit here fails the kernel suite.
 import React from "react";
 import { BadgeSizeContext } from "./Badge.jsx";
 import { semanticToneToken } from "./semanticTone.js";
@@ -369,6 +369,9 @@ function Table({
     if (i < stickyColumns) run += intelligentSizing ? allocatedWidths[i] : columnWidth(c, COLUMN_MIN_WIDTH);
   });
   const pinned = (i) => stickyColumns > 0 && i < stickyColumns;
+  /* A column declared `pin: 'end'` (row actions) stays visible at the right edge while wide rows
+     scroll, instead of sitting past the scroll boundary. */
+  const pinnedEnd = (i) => columns[i]?.pin === 'end' && !pinned(i);
   const lastPinned = stickyColumns > 0 ? Math.min(stickyColumns, columns.length) - 1 : -1;
 
   /* Compact uppercase metadata on the quiet control surface. The first and last cells
@@ -454,7 +457,8 @@ function Table({
                       headCell,
                       onSort && 'cursor-pointer select-none',
                       stickyHeader && 'sticky top-0 z-[2]',
-                      pinned(i) && 'sticky z-[3]'
+                      pinned(i) && 'sticky z-[3]',
+                      pinnedEnd(i) && 'sticky right-0 z-[3]'
                     )}
                     style={Object.assign(
                       {
@@ -544,7 +548,8 @@ function Table({
                             '[&_[data-tone]]:whitespace-normal [&_[data-tone]]:leading-tight [&_[data-tone]]:max-w-full',
                             c.align === 'right' && 'text-right font-data-emphasis tabular-nums',
                             pinned(ci) && 'sticky z-[1]',
-                            pinned(ci) && ci === lastPinned && 'border-0 border-r border-solid border-ctl-border'
+                            pinned(ci) && ci === lastPinned && 'border-0 border-r border-solid border-ctl-border',
+                            pinnedEnd(ci) && 'sticky right-0 z-[1] border-0 border-l border-solid border-ctl-border'
                           )}
                           style={Object.assign(
                             {
@@ -552,7 +557,8 @@ function Table({
                               ...(intelligentSizing ? null : { maxWidth: COLUMN_MAX_WIDTH }),
                               overflowWrap: 'break-word',
                             },
-                            pinned(ci) ? { left: offsets[ci], background: cellBg } : null
+                            pinned(ci) ? { left: offsets[ci], background: cellBg } : null,
+                            pinnedEnd(ci) ? { background: cellBg } : null
                           )}
                         >
                           {ci === 0 && tone ? (

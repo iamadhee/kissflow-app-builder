@@ -52,7 +52,9 @@ Standard lines (adapt to the app):
 Result lines stay concrete and non-technical, e.g. *"✓ Mapped 3 roles and one approval process."* /
 *"✓ Live in Kissflow — 1 process, 3 dashboards, 2 notifications ready to turn on."* For the fast-path
 (one planner), still narrate the phases: *"Assembling the structure, approval flow, permissions and
-dashboards…"* then the result. End with the plain summary of what was built.
+dashboards…"* then the result. End with the plain summary of what was built. Take automation counts
+from the apply report's `automations:` lines: say which are switched off, incomplete or not created,
+and never call an automation live.
 
 **Always end with the time taken.** The run is timeline-stamped, so close the report with the total
 wall-clock — e.g. *"⏱ Built in 1m57s."* — and, when the user wants detail, the per-stage breakdown

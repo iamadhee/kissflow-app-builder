@@ -63,7 +63,7 @@ function FilterChip({ label, value, count, active = false, onClick, onClear, dis
   return (
     <span
       className={cx(
-        'inline-flex items-center h-8 rounded-lg border border-solid text-sm',
+        'inline-flex items-center h-8 max-w-full min-w-0 rounded-lg border border-solid text-sm',
         'transition-[background-color,border-color,color] ease-ctl duration-[var(--default-transition-duration)]',
         on
           ? 'bg-field-selected border-brand-600 text-brand-text'
@@ -77,13 +77,14 @@ function FilterChip({ label, value, count, active = false, onClick, onClear, dis
         onClick={onClick}
         disabled={disabled}
         className={cx(
-          'inline-flex items-center gap-2 h-full px-3 bg-transparent border-0 text-inherit cursor-pointer rounded-lg',
+          'inline-flex items-center gap-2 h-full min-w-0 px-3 bg-transparent border-0 text-inherit cursor-pointer rounded-lg',
           'outline-none focus-visible:ring-2 focus-visible:ring-brand-ring',
           onClear && on && 'pr-2'
         )}
       >
-        <span className="whitespace-nowrap">{label}</span>
-        {value != null ? <span className="font-medium whitespace-nowrap">{value}</span> : null}
+        {/* A long label or value truncates inside a narrow rail instead of overflowing it. */}
+        <span className="truncate min-w-0" title={typeof label === 'string' ? label : undefined}>{label}</span>
+        {value != null ? <span className="font-medium truncate min-w-0" title={typeof value === 'string' ? value : undefined}>{value}</span> : null}
         {count != null ? (
           /* tabular, and a step down in weight: the count is what the label is ABOUT, never a
              second label competing with it. On an applied chip it inherits the chip's own ink. */

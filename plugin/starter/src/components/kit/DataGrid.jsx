@@ -39,7 +39,7 @@ function DataGrid({ columns = [], rows = [], onOpen, openLabel = 'Open', classNa
     ? { key: column, label: column, render: (row) => formatCell(row?.[column]) }
     : column);
   if (onOpen) normalized.push({
-    key: '__open', label: 'Actions', sizing: 'action', sortable: false,
+    key: '__open', label: 'Actions', sizing: 'action', sortable: false, pin: 'end',
     minWidth: actionColumnWidth(openLabel),
     render: (row) => <Button rank="quiet" onClick={() => onOpen(row)} data-cx-action="open-record">{openLabel}</Button>,
   });

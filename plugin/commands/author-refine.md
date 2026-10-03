@@ -26,7 +26,7 @@ Pre-req: a current run with `runs/current/app-spec.json` (from `/author-plan`).
 5. **Regenerate + snapshot** — re-render the review page
    (`node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" review runs/current/app-spec.json runs/current/decisions.md runs/current/open-questions.md > runs/current/review.html`),
    and rebuild only the prototype pages the change touched: `kf-prototype-builder` edits the affected
-   `prototype/pages/*.jsx`, then `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current`.
+   `prototype/pages/*.jsx`, then `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" proto-react runs/current --final`.
    A refine edits what moved; regenerating every role loses work the user has already accepted.
    Finish with `node "${CLAUDE_PLUGIN_ROOT}/bin/kf.mjs" runs snapshot "<one-line summary of the changes>"`
    (new version vN+1).
